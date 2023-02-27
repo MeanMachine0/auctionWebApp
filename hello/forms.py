@@ -24,4 +24,3 @@ class ListItemForm(forms.Form):
     endDateTime = forms.DateTimeField(label='End date and time')
     acceptReturns = forms.BooleanField(label='Accept returns', required=False)
     description = forms.CharField(widget=forms.Textarea, label='Description')
-
