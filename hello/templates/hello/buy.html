@@ -4,13 +4,11 @@
 {% endblock %}
 {% block content %}
   <h1>Buy Items</h1>
-  <ul>
-    {% for item in items %}
-      <a href={{ item.id }}> 
-        <p>{{ item.name }} - ${{ item.startingPrice }} id: {{ item.id }}</p> 
-      </a>
-    {% empty %}
-      <li>No items found.</li>
-    {% endfor %}
-  </ul>
+  {% for item in items %}
+    <a href={{ item.id }}> 
+      <p>{{ item.name }} - ${{ item.startingPrice }} id: {{ item.id }}</p> 
+    </a>
+  {% empty %}
+    <li>No items found.</li>
+  {% endfor %}
 {% endblock %}
