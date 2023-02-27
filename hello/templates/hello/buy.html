@@ -12,7 +12,7 @@
         <p>Postage Cost: ${{ item.postageCost }}</p>
         <p>Bid Increment: ${{ item.bidIncrement }}</p>
         <p>Condition: {{ item.get_condition_display }}</p>
-        <p>End Date: test {{ item.endDateTime }}</p>
+        <p>End Date: {{ item.endDateTime }}</p>
         <p>Accepts Returns: {% if item.acceptReturns %}Yes{% else %}No{% endif %}</p>
         <p>Description: {{ item.description }}</p>
       </li>
