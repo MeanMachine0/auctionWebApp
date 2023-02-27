@@ -1,0 +1,11 @@
+{% extends "hello/layout.html" %}
+{% block title %}
+    List an Item
+{% endblock %}
+{% block content %}
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}

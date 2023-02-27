@@ -1,0 +1,23 @@
+{% extends "hello/layout.html" %}
+{% block title %}
+    Buy Items
+{% endblock %}
+{% block content %}
+  <h1>Buy Items</h1>
+  <ul>
+    {% for item in items %}
+      <li>
+        <h2>{{ item.name }}</h2>
+        <p>Starting Price: ${{ item.startingPrice }}</p>
+        <p>Postage Cost: ${{ item.postageCost }}</p>
+        <p>Bid Increment: ${{ item.bidIncrement }}</p>
+        <p>Condition: {{ item.get_condition_display }}</p>
+        <p>End Date: {{ item.endDateTime }}</p>
+        <p>Accepts Returns: {% if item.acceptReturns %}Yes{% else %}No{% endif %}</p>
+        <p>Description: {{ item.description }}</p>
+      </li>
+    {% empty %}
+      <li>No items found.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
