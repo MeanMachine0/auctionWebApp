@@ -1,5 +1,5 @@
 import re
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.utils.timezone import datetime
 from django.http import HttpResponse
@@ -11,6 +11,7 @@ from hello.forms import ListItemForm
 from hello.models import ListItem
 from .forms import ListItemForm
 from .models import ListItem
+from django.views.generic.detail import DetailView
 
 class HomeListView(ListView):
     """Renders the home page, with a list of all messages."""
@@ -19,6 +20,10 @@ class HomeListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(HomeListView, self).get_context_data(**kwargs)
         return context
+     
+def itemDetail(request, pk):
+    item = get_object_or_404(ListItem, pk=pk)
+    return render(request, 'hello/itemDetail.html', {'item': item})
 
 def about(request):
     return render(request, "hello/about.html")
@@ -26,9 +31,9 @@ def about(request):
 def contact(request):
     return render(request, "hello/contact.html")
 
-def buy(request):
+def browse(request):
     items = ListItem.objects.all()
-    return render(request, "hello/buy.html", {"items": items})
+    return render(request, "hello/browse.html", {"items": items})
 
 def listAnItem(request):
     if request.method == 'POST':
@@ -45,22 +50,22 @@ def listAnItem(request):
                 acceptReturns=item_data['acceptReturns'],
                 description=item_data['description']
             )
-            return redirect('buy')
+            return redirect('itemListed')
     else:
         form = ListItemForm()
     return render(request, 'hello/listAnItem.html', {'form': form})
 
-def hello_there(request, name):
+def helloThere(request, name):
     return render(
         request,
-        "hello/hello_there.html",
+        "hello/helloThere.html",
         {
             "name": name,
             "date": datetime.now()
         }
     )
 
-def log_message(request):
+def logMessage(request):
     form = LogMessageForm(request.POST or None)
 
     if request.method == "POST":
@@ -70,5 +75,7 @@ def log_message(request):
             message.save()
             return redirect("home")
     else:
-        return render(request, "hello/log_message.html", {"form": form})
+        return render(request, "hello/logMessage.html", {"form": form})
     
+def itemListed(request):
+    return render(request, "hello/itemListed.html")

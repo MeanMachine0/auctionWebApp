@@ -10,10 +10,12 @@ home_list_view = views.HomeListView.as_view(
 
 urlpatterns = [
     path("", home_list_view, name="home"),
-    path("hello/<name>", views.hello_there, name="hello_there"),
+    path("hello/<name>", views.helloThere, name="helloThere"),
     path("about/", views.about, name="about"),
     path("contact/", views.contact, name="contact"),
-    path("log/", views.log_message, name="log"),
-    path("buy/", views.buy, name="buy"),
+    path("log/", views.logMessage, name="logMessage"),
+    path("browse/", views.browse, name="browse"),
     path("listAnItem/", views.listAnItem, name="listAnItem"),
+    path("browse/<int:pk>/", views.itemDetail, name="itemDetail"),
+    path("itemListed", views.itemListed, name="itemListed")
 ]

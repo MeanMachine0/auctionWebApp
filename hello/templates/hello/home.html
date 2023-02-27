@@ -1,6 +1,6 @@
 {% extends "hello/layout.html" %}
 {% block title %}
-    Home
+    Auction - Home
 {% endblock %}
 {% block content %}
     <h2>Logged messages</h2>
@@ -27,6 +27,6 @@
             </tbody>
         </table>
     {% else %}
-        <p>No messages have been logged. Use the <a href="{% url 'log' %}">Log Message form</a>.</p>
+        <p>No messages have been logged. Use the <a href="{% url 'logMessage' %}">Log Message form</a>.</p>
     {% endif %}
 {% endblock %}

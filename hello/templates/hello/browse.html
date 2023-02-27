@@ -1,14 +1,12 @@
 {% extends "hello/layout.html" %}
 {% block title %}
-    Buy Items
+    Auction - Browse Items
 {% endblock %}
 {% block content %}
-  <h1>Buy Items</h1>
+  <h1>Browse Items</h1>
   {% for item in items %}
     <li>
-      <a href={{ item.id }}> 
-        {{ item.name }} - ${{ item.startingPrice }} id: {{ item.id }}
-      </a>    
+      <a href="{% url 'itemDetail' pk=item.id %}">{{ item.name }}</a> - £{{ item.startingPrice }}
     </li>
   {% empty %}
     <li>No items found.</li>
