@@ -36,7 +36,8 @@ def browse(request):
         form = SortByForm(request.POST)
         if form.is_valid():
             items = ListItem.objects.all()
-            context = {"items": items.order_by(form.cleaned_data["sortBy"]), "form": form}
+            sortedItems = items.order_by(form.cleaned_data["sortBy"]) if form.cleaned_data["ascending"] is True else items.order_by(f"-{form.cleaned_data['sortBy']}")
+            context = {"items": sortedItems, "form": form}
             return render(request, "hello/browse.html", context)
     else:
         form = SortByForm()
