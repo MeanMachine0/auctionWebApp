@@ -1,7 +1,10 @@
 {% extends "hello/layout.html" %}
 {% block title %}
-Auction - Item Listed
+    Auction - Item Listed
 {% endblock %}
 {% block content %}
-<p>Your item was listed successfully!</p>
+    <p>Your item: "{{ item.name }}" has been listed.</p>
+    <p>
+        <a href="{% url 'itemDetail' pk=item.pk %}">[Go to item listing]</a>
+    </p>
 {% endblock %}

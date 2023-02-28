@@ -17,5 +17,5 @@ urlpatterns = [
     path("browse/", views.browse, name="browse"),
     path("listAnItem/", views.listAnItem, name="listAnItem"),
     path("browse/<int:pk>/", views.itemDetail, name="itemDetail"),
-    path("itemListed", views.itemListed, name="itemListed")
+    path("listAnItem/itemListed/<int:pk>/", views.itemListed, name="itemListed"),
 ]

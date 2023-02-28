@@ -36,6 +36,8 @@ def browse(request):
         form = SortByForm(request.POST)
         if form.is_valid():
             items = ListItem.objects.all()
+            for item in items:
+                print(str(item.pk))
             sortedItems = items.order_by(form.cleaned_data["sortBy"]) if form.cleaned_data["ascending"] is True else items.order_by(f"-{form.cleaned_data['sortBy']}")
             context = {"items": sortedItems, "form": form}
             return render(request, "hello/browse.html", context)
@@ -60,7 +62,7 @@ def listAnItem(request):
                 acceptReturns=item_data["acceptReturns"],
                 description=item_data["description"]
             )
-            return redirect("itemListed")
+            return redirect("itemListed/" + str(item.pk) + "/")
     else:
         form = ListItemForm()
     return render(request, "hello/listAnItem.html", {"form": form})
@@ -87,5 +89,6 @@ def logMessage(request):
     else:
         return render(request, "hello/logMessage.html", {"form": form})
     
-def itemListed(request):
-    return render(request, "hello/itemListed.html")
+def itemListed(request, pk):
+    item = get_object_or_404(ListItem, pk=pk)
+    return render(request, "hello/itemListed.html", {"item": item})
