@@ -4,11 +4,17 @@
 {% endblock %}
 {% block content %}
   <h1>Browse Items</h1>
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+  </form>
+  <br>
   {% for item in items %}
     <li>
-      <a href="{% url 'itemDetail' pk=item.id %}">{{ item.name }}</a> - £{{ item.startingPrice }}
+      <a href="{% url "itemDetail" pk=item.id %}">{{ item.name }}</a> - £{{ item.price }}
     </li>
   {% empty %}
-    <li>No items found.</li>
+    No items found.
   {% endfor %}
 {% endblock %}

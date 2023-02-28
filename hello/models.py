@@ -13,16 +13,16 @@ class LogMessage(models.Model):
 
 class ListItem(models.Model):
     name = models.CharField(max_length=100)
-    startingPrice = models.DecimalField(decimal_places=2, max_digits=10)
+    price = models.DecimalField(decimal_places=2, max_digits=10)
     postageCost = models.DecimalField(decimal_places=2, max_digits=10)
     bidIncrement = models.DecimalField(decimal_places=2, max_digits=10)
     conditionChoices = [
-        ('new', 'New'),
-        ('excellent', 'Excellent'),
-        ('good', 'Good'),
-        ('used', 'Used'),
-        ('refurbished', 'Refurbished'),
-        ('partsOnly', 'Parts Only'),
+        ("new", "New"),
+        ("excellent", "Excellent"),
+        ("good", "Good"),
+        ("used", "Used"),
+        ("refurbished", "Refurbished"),
+        ("partsOnly", "Parts Only"),
     ]
     condition = models.CharField(max_length=20, choices=conditionChoices)
     endDateTime = models.DateTimeField()

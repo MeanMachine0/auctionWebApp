@@ -11,7 +11,7 @@ from hello.forms import ListItemForm
 from hello.models import ListItem
 from .forms import ListItemForm
 from .models import ListItem
-from django.views.generic.detail import DetailView
+from .forms import SortByForm
 
 class HomeListView(ListView):
     """Renders the home page, with a list of all messages."""
@@ -23,7 +23,7 @@ class HomeListView(ListView):
      
 def itemDetail(request, pk):
     item = get_object_or_404(ListItem, pk=pk)
-    return render(request, 'hello/itemDetail.html', {'item': item})
+    return render(request, "hello/itemDetail.html", {"item": item})
 
 def about(request):
     return render(request, "hello/about.html")
@@ -32,28 +32,37 @@ def contact(request):
     return render(request, "hello/contact.html")
 
 def browse(request):
-    items = ListItem.objects.all()
-    return render(request, "hello/browse.html", {"items": items})
+    if request.method == "POST":
+        form = SortByForm(request.POST)
+        if form.is_valid():
+            items = ListItem.objects.all()
+            context = {"items": items.order_by(form.cleaned_data["sortBy"]), "form": form}
+            return render(request, "hello/browse.html", context)
+    else:
+        form = SortByForm()
+        items = ListItem.objects.all()
+        context = {"items": items.order_by("id"), "form": form}
+        return render(request, "hello/browse.html", context)
 
 def listAnItem(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = ListItemForm(request.POST)
         if form.is_valid():
             item_data = form.cleaned_data
             item = ListItem.objects.create(
-                name=item_data['name'],
-                startingPrice=item_data['startingPrice'],
-                postageCost=item_data['postageCost'],
-                bidIncrement=item_data['bidIncrement'],
-                condition=item_data['condition'],
-                endDateTime=item_data['endDateTime'],
-                acceptReturns=item_data['acceptReturns'],
-                description=item_data['description']
+                name=item_data["name"],
+                price=item_data["price"],
+                postageCost=item_data["postageCost"],
+                bidIncrement=item_data["bidIncrement"],
+                condition=item_data["condition"],
+                endDateTime=item_data["endDateTime"],
+                acceptReturns=item_data["acceptReturns"],
+                description=item_data["description"]
             )
-            return redirect('itemListed')
+            return redirect("itemListed")
     else:
         form = ListItemForm()
-    return render(request, 'hello/listAnItem.html', {'form': form})
+    return render(request, "hello/listAnItem.html", {"form": form})
 
 def helloThere(request, name):
     return render(
