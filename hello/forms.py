@@ -33,4 +33,4 @@ class SortByForm(forms.Form):
         ("endDateTime", "Time Remaining"),
     ]
     sortBy = forms.ChoiceField(choices=sortByChoices, label="Sort By")
-    ascending = forms.BooleanField(label="Ascending", required=False)
+    ascending = forms.BooleanField(label="Ascending", required=False, initial=True)
