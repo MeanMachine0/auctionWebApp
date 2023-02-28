@@ -36,6 +36,9 @@ def browse(request):
         form = SortByForm(request.POST)
         if form.is_valid():
             items = ListItem.objects.all()
+            itemsToDelete = items.filter(name="test")
+            for item in itemsToDelete:
+                item.delete()
             for item in items:
                 print(str(item.pk))
             sortedItems = items.order_by(form.cleaned_data["sortBy"]) if form.cleaned_data["ascending"] is True else items.order_by(f"-{form.cleaned_data['sortBy']}")

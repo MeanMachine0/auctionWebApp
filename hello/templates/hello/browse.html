@@ -3,11 +3,11 @@
     Auction - Browse Items
 {% endblock %}
 {% block content %}
-  <h1>Browse Items</h1>
-  <form method="POST">
+  <h2>Browse Items</h2>
+  <form method="POST" class="sortByMenu">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Apply</button>
+    <button type="submit" style="margin-bottom: 10px;">Apply</button>
   </form>
   <br>
   {% for item in items %}

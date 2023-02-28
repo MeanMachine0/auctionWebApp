@@ -1,14 +1,11 @@
-.message {
-    font-weight: 600;
-    color: blue;
-}
-
 .navbar {
-    background-color: lightslategray;
-    font-size: 1em;
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    color: white;
-    padding: 8px 5px 8px 5px;
+    border: 2px solid black;
+    border-radius: 40px;
+    padding: 10px 20px;
+    background-color: lightblue;
+    font-size: 24px;
+    font-family: "Segoe UI", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, sans-serif;
+    font-weight: 600;
 }
 
 .navbar a {
@@ -17,18 +14,125 @@
 }
 
 .navbar-brand {
-    font-size: 1.2em;
+    font-size: 30px;
     font-weight: 600;
 }
 
 .navbar-item {
-    font-variant: small-caps;
-    margin-left: 30px;
+    margin-left: 95px;
 }
 
 .body-content {
     padding: 5px;
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family:"Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h2 {
+    border: 2px solid black;
+    border-radius: 30px;
+    padding: 10px 20px;
+    background-color: lightblue;
+    display: inline-block;
+}
+
+h4 {
+    border: 2px solid black;
+    border-radius: 30px;
+    padding: 10px 20px;
+    background-color: lightblue;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+li {
+    border: 2px solid black;
+    border-radius: 20px;
+    padding: 5px 10px;
+    background-color: lightblue;
+    font-family: "Segoe UI";
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+p {
+    font-family: "Segoe UI";
+}
+
+.summary {
+    border: 2px solid black;
+    border-radius: 30px;
+    padding: 10px 20px;
+    background-color: lightblue;
+    font-family: "Segoe UI";
+    line-height: 35px;
+    display: inline-block;
+    margin-top: 0px;
+    vertical-align: top;
+}
+
+body {
+    background: dimgray;
+    font-size: 20px;
+}
+
+input {
+    border: 2px solid black;
+    border-radius: 20px;
+    padding: 5px 10px;
+    background-color: lightblue;
+    font-family: "Segoe UI";
+    font-size: 20px;
+}
+
+textarea {
+    border: 2px solid black;
+    border-radius: 30px;
+    padding: 10px 20px;
+    background-color: lightblue;
+    font-family: "Segoe UI";
+}
+
+button[type="submit"] {
+    border: 2px solid black;
+    border-radius: 20px;
+    padding: 5px 10px;
+    background-color: lightblue;
+    font-family: "Segoe UI";
+    font-size: 20px;
+}
+
+button[type="submit"]:hover{
+    border: 2px solid black;
+    border-radius: 20px;
+    padding: 5px 10px;
+    background-color: lightblue;
+    font-family: "Segoe UI";
+    font-size: 20px;
+    box-shadow: 0px 0px 10px yellow;
+    opacity: 1;
+}
+
+form[class="sortByMenu"]{
+    border: 2px solid black;
+    border-radius: 20px;
+    padding: 5px 10px;
+    background-color: lightblue;
+    font-family: "Segoe UI";
+    font-size: 20px;
+    width: 250px;
+}
+  
+table {
+    border: 2px solid black;
+    border-radius: 30px;
+    padding: 10px 20px;
+    background-color: lightblue;
+    font-family: "Segoe UI";
+}
+
+.message {
+    font-weight: 600;
+    color: blue;
 }
 
 input[name=message] {

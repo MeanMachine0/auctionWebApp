@@ -20,7 +20,7 @@ class ListItemForm(forms.Form):
         ("refurbished", "Refurbished"),
         ("partsOnly", "Parts Only"),
     ]
-    condition = forms.ChoiceField(choices=conditionChoices, label="Condition")
+    condition = forms.ChoiceField(choices=conditionChoices, label="Condition", widget=forms.Select(attrs={"style": "background-color: lightblue"}))
     endDateTime = forms.DateTimeField(label="End date and time")
     acceptReturns = forms.BooleanField(label="Accept returns", required=False)
     description = forms.CharField(widget=forms.Textarea, label="Description")
@@ -32,5 +32,5 @@ class SortByForm(forms.Form):
         ("price", "Price"),
         ("endDateTime", "Time Remaining"),
     ]
-    sortBy = forms.ChoiceField(choices=sortByChoices, label="Sort By")
+    sortBy = forms.ChoiceField(choices=sortByChoices, label="Sort By", widget=forms.Select(attrs={"style": "background-color: lightblue;" "font-size: 20px;" "border: 2px solid black;"}))
     ascending = forms.BooleanField(label="Ascending", required=False, initial=True)

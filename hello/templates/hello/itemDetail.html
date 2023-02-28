@@ -3,12 +3,26 @@
     Auction - {{ item.name }}
 {% endblock %}
 {% block content %}
-  <h2>{{ item.name }}</h2>
-  <p>Starting Price: £{{ item.price }}</p>
-  <p>Postage Cost: £{{ item.postageCost }}</p>
-  <p>Bid Increment: £{{ item.bidIncrement }}</p>
-  <p>Condition: {{ item.get_condition_display }}</p>
-  <p>End Date: {{ item.endDateTime }}</p>
-  <p>Accepts Returns: {% if item.acceptReturns %}Yes{% else %}No{% endif %}</p>
-  <p>Description: {{ item.description }}</p>
+  <h2>
+    {{ item.name }}
+  </h2> 
+  <br>
+  <h4 style="margin-top: 0px;">
+    Summary
+  </h4>
+  <h4 style="position: absolute; left: 315px; margin-top: 0px;">
+    Description
+  </h4>
+  <br>
+  <p class="summary">
+    Current Price: £{{ item.price }} <br>
+    Postage Cost: £{{ item.postageCost }} <br>
+    Bid Increment: £{{ item.bidIncrement }} <br>
+    Condition: {{ item.get_condition_display }} <br>
+    Ends at: {{ item.endDateTime|date:"M d Y, H:i" }} <br>
+    Accepts Returns: {% if item.acceptReturns %}Yes{% else %}No{% endif %}    
+  </p>
+  <p class="summary" style="position: absolute; left: 315px; margin: 0px 10px 0px 0px;">
+    {{ item.description }} This is a very long item description that I created with going over the edge of the line as the main reason for it being a very long item description.
+  </p>
 {% endblock %}
