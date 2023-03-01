@@ -1,20 +1,25 @@
-{% extends "hello/layout.html" %}
+{% extends "hello/twoColumnTemplate.html" %}
+
 {% block title %}
     Auction - Browse Items
 {% endblock %}
-{% block content %}
+
+{% block list %}
   <h2>Browse Items</h2>
-  <form method="POST" class="sortByMenu">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" style="margin-bottom: 10px;">Apply</button>
-  </form>
-  <br>
   {% for item in items %}
-    <li>
+    <li style="width: calc(100% - 30px);">
       <a href="{% url 'itemDetail' pk=item.pk %}">{{ item.name }}</a> - £{{ item.price }}
     </li>
   {% empty %}
     No items found.
   {% endfor %}
+{% endblock %}
+
+{% block form %}
+  <h3 style="margin-top: 35px;">Sort/Filter Menu</h3>
+  <form method="POST" class="sortAndFilterByMenu">
+    {% csrf_token %}
+    {{ sortAndFilterByForm.as_p }}
+    <button type="submit" style="margin-bottom: 10px;">Apply</button>
+  </form>
 {% endblock %}

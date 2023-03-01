@@ -16,28 +16,32 @@
     color: inherit;
 }
 
-.navbar-brand {
+.navbarBrand {
     font-size: 30px;
     font-weight: 600;
 }
 
-.navbar-item {
+.navbarItem {
     margin-left: calc(0.2 * (100% - 700px));
     font-size: 24px;
 }
 
 @media (max-width: 750px) {
-    .navbar-item {
+    .navbarItem {
         margin-left: 0;
     }
 }
 
-.body-content {
+.bodyContent {
     padding: 5px;
 }
 
 h2 {
     color: rgb(224, 224, 224);
+}
+
+h3 {
+    color:rgb(224, 224, 224);
 }
 
 h4 {
@@ -107,7 +111,7 @@ button[type="submit"]:hover {
     opacity: 1;
 }
 
-form[class="sortByMenu"]{
+.sortAndFilterByMenu {
     border: 2px solid black;
     border-radius: 20px;
     padding: 5px 10px;
@@ -115,7 +119,17 @@ form[class="sortByMenu"]{
     font-size: 20px;
     width: 250px;
 }
-  
+
+.listContainer {
+    float: left;
+    width: calc(100% - 300px);
+}
+
+.formContainer {
+    float: right;
+    width: 280px;
+}
+
 table {
     border: 2px solid black;
     border-radius: 30px;

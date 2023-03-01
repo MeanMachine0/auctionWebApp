@@ -18,8 +18,15 @@
 </div>
 
 <div class="bodyContent">
-    {% block content %}
-    {% endblock %}
+    <div class="listContainer">
+        {% block list %}
+        {% endblock %}
+    </div>
+    <div class="formContainer">
+        {% block form %}
+        {% endblock %}
+    </div>
+    <div style="clear: both;"></div>
     <hr/>
     <footer style="color: rgb(224, 224, 224);">
         &copy; 2023
