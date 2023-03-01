@@ -32,23 +32,17 @@ class SortAndFilterByForm(forms.Form):
         ("price", "Price"),
         ("endDateTime", "Time Remaining"),
     ]
-    conditionChoices = [
-        ("new", "New"),
-        ("excellent", "Excellent"),
-        ("good", "Good"),
-        ("used", "Used"),
-        ("refurbished", "Refurbished"),
-        ("partsOnly", "Parts Only"),
-    ]
+    conditions = ("new", "excellent", "good", "used", "refurbished", "partsOnly")
+    
     sortBy = forms.ChoiceField(choices=sortByChoices, label="Sort By", widget=forms.Select(attrs={"style": "background-color: lightblue;" "font-size: 20px;" "border: 2px solid black;"}))
     ascending = forms.BooleanField(label="Ascending", required=False, initial=True)
-    lThan = forms.DecimalField(label="Price >", decimal_places=2, initial=0)
-    gThan = forms.DecimalField(label="Price <", decimal_places=2, initial=99999999)
-    isNew = forms.BooleanField(label=conditionChoices[0][1], required=False, initial=True)
-    isExcellent = forms.BooleanField(label=conditionChoices[1][1], required=False, initial=True)
-    isGood = forms.BooleanField(label=conditionChoices[2][1], required=False, initial=True)
-    isUsed = forms.BooleanField(label=conditionChoices[3][1], required=False, initial=True)
-    isRefurbished = forms.BooleanField(label=conditionChoices[4][1], required=False, initial=True)
-    isPartsOnly = forms.BooleanField(label=conditionChoices[5][1], required=False, initial=True)
+    lThan = forms.DecimalField(label="Price ≥", decimal_places=2, initial=0)
+    gThan = forms.DecimalField(label="Price ≤", decimal_places=2, initial=999999999999)
+    new = forms.BooleanField(label="New", required=False, initial=True)
+    excellent = forms.BooleanField(label="Excellent", required=False, initial=True)
+    good = forms.BooleanField(label="Good", required=False, initial=True)
+    used = forms.BooleanField(label="Used", required=False, initial=True)
+    refurbished = forms.BooleanField(label="Refurbished", required=False, initial=True)
+    partsOnly = forms.BooleanField(label="Parts Only", required=False, initial=True)
     areReturnsAccepted = forms.BooleanField(label="Returns Accepted", required=False, initial=True)
     areReturnsNotAccepted = forms.BooleanField(label="Returns Not Accepted", required=False, initial=True)

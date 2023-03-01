@@ -12,6 +12,7 @@ from hello.models import ListItem
 from .forms import ListItemForm
 from .models import ListItem
 from .forms import SortAndFilterByForm
+from django.db.models import Q
 
 class HomeListView(ListView):
     """Renders the home page, with a list of all messages."""
@@ -39,11 +40,21 @@ def browse(request):
             itemsToDelete = items.filter(name="test")
             for item in itemsToDelete:
                 item.delete()
-            for item in items:
-                print(str(item.pk))
-            sortedItems = items.order_by(sortAndFilterByForm.cleaned_data["sortBy"]) if sortAndFilterByForm.cleaned_data["ascending"] is True else items.order_by(f"-{sortAndFilterByForm.cleaned_data['sortBy']}")
+
+            conditionsFilter = ["", "", "", "", "", ""]
+            for i in range(6):
+                if sortAndFilterByForm.cleaned_data[sortAndFilterByForm.conditions[i]] is True:
+                    conditionsFilter[i] = sortAndFilterByForm.conditions[i]
+
+            filteredItems = items.filter(Q(price__range=(sortAndFilterByForm.cleaned_data["lThan"], sortAndFilterByForm.cleaned_data["gThan"])) & (Q(condition = conditionsFilter[0]) | Q(condition = conditionsFilter[1]) | Q(condition = conditionsFilter[2]) | Q(condition = conditionsFilter[3]) | Q(condition = conditionsFilter[4]) | Q(condition = conditionsFilter[5])) & (Q(acceptReturns = (sortAndFilterByForm.cleaned_data["areReturnsAccepted"] == True)) | Q(acceptReturns = (sortAndFilterByForm.cleaned_data["areReturnsNotAccepted"] == False))))
+
+            if sortAndFilterByForm.cleaned_data["ascending"] is True:
+                sortedAndFilteredItems = filteredItems.order_by(sortAndFilterByForm.cleaned_data["sortBy"])  
+            else:
+                sortedAndFilteredItems = filteredItems.order_by(f"-{sortAndFilterByForm.cleaned_data['sortBy']}")
+
             context = {
-                "items": sortedItems, 
+                "items": sortedAndFilteredItems, 
                 "sortAndFilterByForm": sortAndFilterByForm,
                 }
             return render(request, "hello/browse.html", context)
