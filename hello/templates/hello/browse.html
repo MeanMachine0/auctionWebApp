@@ -4,7 +4,7 @@
     Auction - Browse Items
 {% endblock %}
 
-{% block content %}
+{% block leftContent %}
   <h2>Browse Items</h2>
   {% for item in items %}
     <li style="width: calc(100% - 30px); max-width: 600px;">
@@ -15,7 +15,7 @@
   {% endfor %}
 {% endblock %}
 
-{% block form %}
+{% block rightContent %}
   <h3 style="margin-top: 35px;">Sort/Filter Menu</h3>
   <form method="POST" class="sortAndFilterByMenu">
     {% csrf_token %}

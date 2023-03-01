@@ -4,11 +4,13 @@
     Auction - {{ item.name }}
 {% endblock %}
 
-{% block content %}
-  <h2 style="margin-bottom: 10px;">
+{% block subHeader %}
+  <h2>
     {{ item.name }}
   </h2> 
-  <br>
+{% endblock %}
+
+{% block leftContent %}
   <p class="summary" style="float: left;">
     <strong>Summary:</strong><br>
     Current Price: £{{ item.price }}<br>
@@ -18,7 +20,10 @@
     Ends at: {{ item.endDateTime|date:"M d Y, H:i" }}<br>
     Accepts Returns: {% if item.acceptReturns %}Yes{% else %}No{% endif %}    
   </p>
-  <p class="summary" style="float: right; margin: 0px 10px 0px 0px;">
+{% endblock %}
+
+{% block rightContent %}
+  <p class="summary" style="float: right;">
     <strong>Description:</strong><br>
     {{ item.description }} This is a very long item description that I created with going over the edge of the line as the main reason for it being a very long item description.
   </p>

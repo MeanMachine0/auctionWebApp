@@ -18,12 +18,17 @@
 </div>
 
 <div class="centralContainer">
+    {% block subHeader %}
+    {% endblock %}
+</div>
+
+<div class="centralContainer">
     <div class="leftContainer">
-        {% block content %}
+        {% block leftContent %}
         {% endblock %}
     </div>
     <div class="rightContainer">
-        {% block form %}
+        {% block rightContent %}
         {% endblock %}
     </div>
     <div style="clear: both;"></div>
