@@ -32,9 +32,11 @@
     }
 }
 
-.bodyContent {
-    padding: 5px;
-}
+.centralContainer {
+    display: flex;
+    justify-content: center;
+    
+  }
 
 h2 {
     color: rgb(224, 224, 224);
@@ -86,11 +88,14 @@ input {
     font-size: 20px;
 }
 
-textarea {
+Textarea {
     border: 2px solid black;
     border-radius: 30px;
     padding: 10px 20px;
     background-color: lightblue;
+    width: 270px;
+    height: 120px;
+    font-size: 20px;
 }
 
 button[type="submit"] {
@@ -123,11 +128,13 @@ button[type="submit"]:hover {
 .leftContainer {
     float: left;
     width: calc(100% - 300px);
+    max-width: 550px;
 }
 
 .rightContainer {
-    float: right;
+    float: left;
     width: 280px;
+    margin-left: 20px;
 }
 
 table {

@@ -11,7 +11,7 @@ from hello.forms import ListItemForm
 from hello.models import ListItem
 from .forms import ListItemForm
 from .models import ListItem
-from .forms import SortAndFilterByForm
+from .forms import BrowseForm
 from django.db.models import Q
 
 class HomeListView(ListView):
@@ -34,8 +34,8 @@ def contact(request):
 
 def browse(request):
     if request.method == "POST":
-        sortAndFilterByForm = SortAndFilterByForm(request.POST)
-        if sortAndFilterByForm.is_valid():
+        browseForm = BrowseForm(request.POST)
+        if browseForm.is_valid():
             items = ListItem.objects.all()
             itemsToDelete = items.filter(name="test")
             for item in itemsToDelete:
@@ -43,28 +43,28 @@ def browse(request):
 
             conditionsFilter = ["", "", "", "", "", ""]
             for i in range(6):
-                if sortAndFilterByForm.cleaned_data[sortAndFilterByForm.conditions[i]] is True:
-                    conditionsFilter[i] = sortAndFilterByForm.conditions[i]
+                if browseForm.cleaned_data[browseForm.conditions[i]] is True:
+                    conditionsFilter[i] = browseForm.conditions[i]
 
-            filteredItems = items.filter(Q(price__range=(sortAndFilterByForm.cleaned_data["lThan"], sortAndFilterByForm.cleaned_data["gThan"])) & (Q(condition = conditionsFilter[0]) | Q(condition = conditionsFilter[1]) | Q(condition = conditionsFilter[2]) | Q(condition = conditionsFilter[3]) | Q(condition = conditionsFilter[4]) | Q(condition = conditionsFilter[5])) & (Q(acceptReturns = (sortAndFilterByForm.cleaned_data["areReturnsAccepted"] == True)) | Q(acceptReturns = (sortAndFilterByForm.cleaned_data["areReturnsNotAccepted"] == False))))
+            filteredItems = items.filter(Q(name__icontains=browseForm.cleaned_data["search"]) & Q(price__range=(browseForm.cleaned_data["lThan"], browseForm.cleaned_data["gThan"])) & (Q(condition = conditionsFilter[0]) | Q(condition = conditionsFilter[1]) | Q(condition = conditionsFilter[2]) | Q(condition = conditionsFilter[3]) | Q(condition = conditionsFilter[4]) | Q(condition = conditionsFilter[5])) & (Q(acceptReturns = (browseForm.cleaned_data["areReturnsAccepted"] == True)) | Q(acceptReturns = (browseForm.cleaned_data["areReturnsNotAccepted"] == False))))
 
-            if sortAndFilterByForm.cleaned_data["ascending"] is True:
-                sortedAndFilteredItems = filteredItems.order_by(sortAndFilterByForm.cleaned_data["sortBy"])  
+            if browseForm.cleaned_data["ascending"] is True:
+                sortedAndFilteredItems = filteredItems.order_by(browseForm.cleaned_data["sortBy"])  
             else:
-                sortedAndFilteredItems = filteredItems.order_by(f"-{sortAndFilterByForm.cleaned_data['sortBy']}")
+                sortedAndFilteredItems = filteredItems.order_by(f"-{browseForm.cleaned_data['sortBy']}")
 
             context = {
                 "items": sortedAndFilteredItems, 
-                "sortAndFilterByForm": sortAndFilterByForm,
+                "browseForm": browseForm,
                 }
             return render(request, "hello/browse.html", context)
         
     else:
-        sortAndFilterByForm = SortAndFilterByForm()
+        browseForm = BrowseForm()
         items = ListItem.objects.all()
         context = {
             "items": items.order_by("id"), 
-            "sortAndFilterByForm": sortAndFilterByForm,
+            "browseForm": browseForm,
             }
         return render(request, "hello/browse.html", context)
 

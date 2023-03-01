@@ -7,7 +7,7 @@
 {% block content %}
   <h2>Browse Items</h2>
   {% for item in items %}
-    <li style="width: calc(100% - 30px);">
+    <li style="width: calc(100% - 30px); max-width: 600px;">
       <a href="{% url 'itemDetail' pk=item.pk %}">{{ item.name }}</a> - £{{ item.price }}
     </li>
   {% empty %}
@@ -19,7 +19,8 @@
   <h3 style="margin-top: 35px;">Sort/Filter Menu</h3>
   <form method="POST" class="sortAndFilterByMenu">
     {% csrf_token %}
-    {{ sortAndFilterByForm.as_p }}
+    {{ browseForm.as_p }}
+    <hr color="black">
     <button type="submit" style="margin-bottom: 10px;">Apply</button>
   </form>
 {% endblock %}

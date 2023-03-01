@@ -25,7 +25,7 @@ class ListItemForm(forms.Form):
     acceptReturns = forms.BooleanField(label="Accept returns", required=False)
     description = forms.CharField(widget=forms.Textarea, label="Description")
 
-class SortAndFilterByForm(forms.Form):
+class BrowseForm(forms.Form):
     sortByChoices = [
         ("id", "Id"),
         ("name", "Name"),
@@ -34,10 +34,11 @@ class SortAndFilterByForm(forms.Form):
     ]
     conditions = ("new", "excellent", "good", "used", "refurbished", "partsOnly")
     
+    search = forms.CharField(label="Search", required=False, widget=forms.TextInput(attrs={"style": "width: 155px;"}))
     sortBy = forms.ChoiceField(choices=sortByChoices, label="Sort By", widget=forms.Select(attrs={"style": "background-color: lightblue;" "font-size: 20px;" "border: 2px solid black;"}))
     ascending = forms.BooleanField(label="Ascending", required=False, initial=True)
-    lThan = forms.DecimalField(label="Price ≥", decimal_places=2, initial=0)
-    gThan = forms.DecimalField(label="Price ≤", decimal_places=2, initial=999999999999)
+    lThan = forms.DecimalField(label="Price ≥", decimal_places=2, initial=0, widget=forms.TextInput(attrs={"style": "width: 150px;"}))
+    gThan = forms.DecimalField(label="Price ≤", decimal_places=2, initial=999999999999, widget=forms.TextInput(attrs={"style": "width: 150px;"}))
     new = forms.BooleanField(label="New", required=False, initial=True)
     excellent = forms.BooleanField(label="Excellent", required=False, initial=True)
     good = forms.BooleanField(label="Good", required=False, initial=True)
