@@ -120,12 +120,12 @@ button[type="submit"]:hover {
     width: 250px;
 }
 
-.listContainer {
+.leftContainer {
     float: left;
     width: calc(100% - 300px);
 }
 
-.formContainer {
+.rightContainer {
     float: right;
     width: 280px;
 }
