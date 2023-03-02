@@ -16,7 +16,7 @@
     color: inherit;
 }
 
-.navbarBrand {
+.navbarCurrent {
     font-size: 30px;
     font-weight: 600;
 }
@@ -40,12 +40,10 @@
 .leftContainer {
     float: left;
     width: calc(100% - 300px);
-    max-width: 550px;
 }
 
 .rightContainer {
     float: left;
-    width: 280px;
     margin-left: 20px;
 }
 
@@ -80,10 +78,8 @@ li {
     border-radius: 30px;
     padding: 10px 20px;
     background-color: lightblue;
-    line-height: 35px;
-    display: inline-block;
-    vertical-align: top;
-    margin: 0px 0px 0px 0px
+    line-height: 30px;
+    margin: 0px 0px 0px 0px;
 }
 
 body {

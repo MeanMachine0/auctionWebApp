@@ -9,7 +9,7 @@
 
 <body>
 <div class="navbar">
-    <a href="{% url 'home' %}" class="navbarItem">Home</a>
+    <a href="{% url 'home' %}" class="navbarItem" style="margin-left: 0px;">Home</a>
     <a href="{% url 'logMessage' %}" class="navbarItem">Log Message</a>
     <a href="{% url 'about' %}" class="navbarItem">About</a>
     <a href="{% url 'contact' %}" class="navbarItem">Contact</a>
@@ -18,10 +18,15 @@
 </div>
 
 <div class="centralContainer">
+    {% block subheader %}
+    {% endblock %}
+</div>
+
+<div class="centralContainer">
     {% block content %}
     {% endblock %}
-    
 </div>
+
 <hr/>
 <footer style="color: rgb(224, 224, 224);">
     &copy; 2023

@@ -1,17 +1,18 @@
-{% extends "hello/twoColumnTemplate.html" %}
+{% extends "hello/layout.html" %}
 
 {% block title %}
-    Auction - {{ item.name }}
+Auction - {{ item.name }}
 {% endblock %}
 
-{% block subHeader %}
-  <h2>
-    {{ item.name }}
-  </h2> 
+{% block subheader %}
+<h2>
+  {{ item.name }}
+</h2> 
 {% endblock %}
 
-{% block leftContent %}
-  <p class="summary" style="float: left;">
+{% block content %}
+<div class="leftContainer" style="max-width: 300px;">
+  <p class="summary" style="max-width: 245px;">
     <strong>Summary:</strong><br>
     Current Price: £{{ item.price }}<br>
     Postage Cost: £{{ item.postageCost }}<br>
@@ -20,11 +21,14 @@
     Ends at: {{ item.endDateTime|date:"M d Y, H:i" }}<br>
     Accepts Returns: {% if item.acceptReturns %}Yes{% else %}No{% endif %}    
   </p>
-{% endblock %}
+</div>
 
-{% block rightContent %}
-  <p class="summary" style="float: right;">
+<div class="rightContainer" style="max-width: 50vw;">
+  <p class="summary">
     <strong>Description:</strong><br>
     {{ item.description }} This is a very long item description that I created with going over the edge of the line as the main reason for it being a very long item description.
   </p>
+</div>
+
+<div style="clear: both;"></div>
 {% endblock %}

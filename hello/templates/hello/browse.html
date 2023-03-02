@@ -1,21 +1,20 @@
-{% extends "hello/twoColumnTemplate.html" %}
-
+{% extends "hello/layout.html" %}
 {% block title %}
-    Auction - Browse Items
+Auction - Browse Items
 {% endblock %}
-
-{% block leftContent %}
+{% block content %}
+<div class="leftContainer" style="max-width: 550px;">
   <h2>Browse Items</h2>
   {% for item in items %}
-    <li style="width: calc(100% - 30px); max-width: 600px;">
-      <a href="{% url 'itemDetail' pk=item.pk %}">{{ item.name }}</a> - £{{ item.price }}
-    </li>
+  <li style="width: calc(100% - 30px); max-width: 600px;">
+    <a href="{% url 'itemDetail' pk=item.pk %}">{{ item.name }}</a> - £{{ item.price }}
+  </li>
   {% empty %}
     No items found.
   {% endfor %}
-{% endblock %}
+</div>
 
-{% block rightContent %}
+<div class="rightContainer" style="width: 280px;">
   <h3 style="margin-top: 35px;">Sort/Filter Menu</h3>
   <form method="POST" class="sortAndFilterByMenu">
     {% csrf_token %}
@@ -23,4 +22,7 @@
     <hr color="black">
     <button type="submit" style="margin-bottom: 10px;">Apply</button>
   </form>
+</div>
+
+<div style="clear: both;"></div>
 {% endblock %}
