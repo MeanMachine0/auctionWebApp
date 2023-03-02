@@ -1,8 +1,19 @@
 {% extends "hello/layout.html" %}
+
 {% block title %}
 Auction - Browse Items
 {% endblock %}
+
 {% block content %}
+<script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#collapse').click(function() {
+      $('#sortAndFilterByMenu').slideToggle();
+    });
+  });
+</script>
+
 <div class="leftContainer" style="max-width: 550px;">
   <h2>Browse Items</h2>
   {% for item in items %}
@@ -15,8 +26,11 @@ Auction - Browse Items
 </div>
 
 <div class="rightContainer" style="width: 280px;">
-  <h3 style="margin-top: 35px;">Sort/Filter Menu</h3>
-  <form method="POST" class="sortAndFilterByMenu">
+  <button id="collapse" style="background-color: dimgray; border: 0px; margin-top: 40px">
+    <h2 style="margin-right: 105px; margin-top: 0px">Sort/Filter Menu</h3>
+  </button>
+  
+  <form method="POST" id="sortAndFilterByMenu" class="sortAndFilterByMenu">
     {% csrf_token %}
     {{ browseForm.as_p }}
     <hr color="black">
