@@ -14,23 +14,22 @@ Auction - Browse Items
   });
 </script>
 
-<div class="leftContainer" style="max-width: 550px;">
-  <h2>Browse Items</h2>
+<div style="max-width: 800px;">
+  <h2>
+    Browse Items <button id="collapse" style="color: rgb(224, 224, 224); background-color: dimgray; font-size: 18px; border: 0px;">Toggle →</button>
+  </h2>
   {% for item in items %}
-  <li style="width: calc(100% - 30px); max-width: 600px;">
+  <li style="max-width: 800px;">
     <a href="{% url 'itemDetail' pk=item.pk %}">{{ item.name }}</a> - £{{ item.price }}
   </li>
   {% empty %}
-    No items found.
+    <p style="color: rgb(224, 224, 224)">No items found.</p>
   {% endfor %}
 </div>
 
-<div class="rightContainer" style="width: 280px;">
-  <button id="collapse" style="background-color: dimgray; border: 0px; margin-top: 40px">
-    <h2 style="margin-right: 105px; margin-top: 0px">Sort/Filter Menu</h3>
-  </button>
-  
-  <form method="POST" id="sortAndFilterByMenu" class="sortAndFilterByMenu">
+<div id="sortAndFilterByMenu" class="rightContainer" style="width: 280px;">
+  <h3 style="margin: 35px 0px 20px 0px;">Menu</h3>
+  <form method="POST" class="sortAndFilterByMenu">
     {% csrf_token %}
     {{ browseForm.as_p }}
     <hr color="black">

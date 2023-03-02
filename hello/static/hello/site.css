@@ -40,6 +40,12 @@
     width: calc(100% - 300px);
 }
 
+@media (max-width: 750px) {
+    .leftContainer {
+        max-width: 550px;
+    }
+}
+
 .rightContainer {
     float: left;
     margin-left: 20px;
@@ -62,6 +68,16 @@ h4 {
     margin-bottom: 10px;
 }
 
+ul {
+    border: 2px solid black;
+    border-radius: 20px;
+    padding: 5px 10px;
+    background-color: lightblue;
+    font-size: 20px;
+    margin-bottom: 10px;
+    list-style-type: none;
+}
+
 li {
     border: 2px solid black;
     border-radius: 20px;
@@ -69,9 +85,10 @@ li {
     background-color: lightblue;
     font-size: 20px;
     margin-bottom: 10px;
+    list-style-type: none;
 }
 
-.summary {
+.textBlock {
     border: 2px solid black;
     border-radius: 30px;
     padding: 10px 20px;
