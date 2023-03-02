@@ -9,9 +9,9 @@ class LogMessageForm(forms.ModelForm):
 
 class ListItemForm(forms.Form):
     name = forms.CharField(label="Item name")
-    price = forms.DecimalField(label="Starting price", decimal_places=2)
-    postageCost = forms.DecimalField(label="Postage cost", decimal_places=2)
-    bidIncrement = forms.DecimalField(label="Bid increment", decimal_places=2)
+    price = forms.DecimalField(label="Starting price (£)", decimal_places=2)
+    postageCost = forms.DecimalField(label="Postage cost (£)", decimal_places=2)
+    bidIncrement = forms.DecimalField(label="Bid increment (£)", decimal_places=2)
     conditionChoices = [
         ("new", "New"),
         ("excellent", "Excellent"),
@@ -37,8 +37,8 @@ class BrowseForm(forms.Form):
     search = forms.CharField(label="Search", required=False, widget=forms.TextInput(attrs={"style": "width: 155px;"}))
     sortBy = forms.ChoiceField(choices=sortByChoices, label="Sort By", widget=forms.Select(attrs={"style": "background-color: lightblue;" "font-size: 20px;" "border: 2px solid black;"}))
     ascending = forms.BooleanField(label="Ascending", required=False, initial=True)
-    lThan = forms.DecimalField(label="Price ≥", decimal_places=2, initial=0, widget=forms.TextInput(attrs={"style": "width: 150px;"}))
-    gThan = forms.DecimalField(label="Price ≤", decimal_places=2, initial=999999999999, widget=forms.TextInput(attrs={"style": "width: 150px;"}))
+    lThan = forms.DecimalField(label="Price (£) ≥", decimal_places=2, initial=0, widget=forms.TextInput(attrs={"style": "width: 120px;"}))
+    gThan = forms.DecimalField(label="Price (£) ≤", decimal_places=2, initial=9999999999, widget=forms.TextInput(attrs={"style": "width: 120px;"}))
     new = forms.BooleanField(label="New", required=False, initial=True)
     excellent = forms.BooleanField(label="Excellent", required=False, initial=True)
     good = forms.BooleanField(label="Good", required=False, initial=True)
