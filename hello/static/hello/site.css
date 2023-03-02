@@ -8,7 +8,6 @@
     border-radius: 40px;
     padding: 10px 20px;
     background-color: lightblue;
-    font-weight: 600;
 }
 
 .navbar a {
@@ -17,8 +16,7 @@
 }
 
 .navbarCurrent {
-    font-size: 30px;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .navbarItem {

@@ -2,10 +2,17 @@
 {% block title %}
     Auction - List an Item
 {% endblock %}
+
+{% block subheader %}
+    <h2 style="margin-bottom: 0px;">List an Item</h2>
+{% endblock %}
+
 {% block content %}
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">List Item</button>        
+        <div class="centralContainer">
+            <button type="submit">List Item</button>
+        </div>        
     </form>
 {% endblock %}

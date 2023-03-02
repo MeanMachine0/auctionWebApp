@@ -1,5 +1,24 @@
 <!DOCTYPE html>
 <html>
+<script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Get the current URL path
+    var url = window.location.pathname;
+    
+    // Loop through each navbar item
+    $('.navbarItem').each(function() {
+        // Get the link's URL path
+        var link = $(this).attr('href');
+        
+        // Check if the link's URL matches the current URL
+        if (link === url) {
+            // Add the navbarCurrent class to the link
+            $(this).addClass('navbarCurrent');
+        }
+    });
+});
+</script>  
 <head>
     <meta charset="utf-8"/>
     <title>{% block title %}{% endblock %}</title>
@@ -9,13 +28,14 @@
 
 <body>
 <div class="navbar">
-    <a href="{% url 'home' %}" class="navbarItem" style="margin-left: 0px;">Home</a>
-    <a href="{% url 'logMessage' %}" class="navbarItem">Log Message</a>
-    <a href="{% url 'about' %}" class="navbarItem">About</a>
-    <a href="{% url 'contact' %}" class="navbarItem">Contact</a>
-    <a href="{% url 'browse' %}" class="navbarItem">Browse Items</a>
-    <a href="{% url 'listAnItem' %}" class="navbarItem">List an Item</a>
+    <a href="{% url 'home' %}" id="home" class="navbarItem" style="margin-left: 0px;">Home</a>
+    <a href="{% url 'logMessage' %}" id="logMessage" class="navbarItem">Log Message</a>
+    <a href="{% url 'about' %}" id="about" class="navbarItem">About</a>
+    <a href="{% url 'contact' %}" id="contact" class="navbarItem">Contact</a>
+    <a href="{% url 'browse' %}" id="browse" class="navbarItem">Browse Items</a>
+    <a href="{% url 'listAnItem' %}" id="listAnItem" class="navbarItem">List an Item</a>
 </div>
+    
 
 <div class="centralContainer">
     {% block subheader %}
