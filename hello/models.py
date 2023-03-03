@@ -34,7 +34,7 @@ class ListItem(models.Model):
     condition = models.CharField(max_length=20, choices=conditionChoices)
     endDateTime = models.DateTimeField()
     acceptReturns = models.BooleanField(default=False)
-    description = models.TextField()
+    description = models.TextField(max_length=1000)
 
     def __str__(self):
         return self.name

@@ -1,6 +1,6 @@
 from django import forms
 from hello.models import LogMessage
-from hello.models import ListItem
+import hello.validators as validators
 
 class LogMessageForm(forms.ModelForm):
     class Meta:
@@ -8,7 +8,7 @@ class LogMessageForm(forms.ModelForm):
         fields = ("message",)   # NOTE: the trailing comma is required
 
 class ListItemForm(forms.Form):
-    name = forms.CharField(label="Item name")
+    name = forms.CharField(label="Item name", max_length=40)
     price = forms.DecimalField(label="Starting price (£)", decimal_places=2)
     postageCost = forms.DecimalField(label="Postage cost (£)", decimal_places=2)
     bidIncrement = forms.DecimalField(label="Bid increment (£)", decimal_places=2)
@@ -21,9 +21,9 @@ class ListItemForm(forms.Form):
         ("partsOnly", "Parts Only"),
     ]
     condition = forms.ChoiceField(choices=conditionChoices, label="Condition", widget=forms.Select(attrs={"style": "background-color: lightblue"}))
-    endDateTime = forms.DateTimeField(label="End date and time")
+    endDateTime = forms.DateTimeField(label="End date and time", validators=[validators.future])
     acceptReturns = forms.BooleanField(label="Accept returns", required=False)
-    description = forms.CharField(widget=forms.Textarea, label="Description")
+    description = forms.CharField(widget=forms.Textarea, label="Description", max_length=1000)
 
 class BrowseForm(forms.Form):
     sortByChoices = [
