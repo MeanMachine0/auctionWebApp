@@ -2,6 +2,23 @@
 {% block title %}
     Auction - About Us
 {% endblock %}
+
+{% block loggedInAs %}
+    {% if username %}
+    <p style="color: rgb(224, 224, 224)">
+        Logged in as: {{ username }}.
+        <br>
+        <a href="{% url 'logout' %}">Logout</a>
+    </p>
+    {% else %}
+    <p style="color: rgb(224, 224, 224)">
+        You are not logged in. 
+        <br>
+        <a href="{% url 'login' %}">Login</a>
+    </p>
+    {% endif %}
+{% endblock %}
+
 {% block content %}
-    <p style="color: rgb(224, 224, 224);">About page for the Visual Studio Code Django tutorial.</p>
+    <p style="color: rgb(224, 224, 224); margin-top: -40px;">About page for the Visual Studio Code Django tutorial.</p>
 {% endblock %}

@@ -17,6 +17,8 @@ messageListView = views.MessageListView.as_view(
 
 urlpatterns = [
     path("", homeListView, name="home"),
+    path("login/", views.loginView, name="login"),
+    path("logout/", views.logoutView, name="logout"),
     path("hello/<name>", views.helloThere, name="helloThere"),
     path("about/", views.about, name="about"),
     path("contact/", views.contact, name="contact"),

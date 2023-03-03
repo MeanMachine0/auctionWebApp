@@ -2,13 +2,30 @@
 {% block title %}
     Auction - Home
 {% endblock %}
+
+{% block loggedInAs %}
+    {% if username %}
+    <p style="color: rgb(224, 224, 224)">
+        Logged in as: {{ username }}.
+        <br>
+        <a href="{% url 'logout' %}">Logout</a>
+    </p>
+    {% else %}
+    <p style="color: rgb(224, 224, 224)">
+        You are not logged in. 
+        <br>
+        <a href="{% url 'login' %}">Login</a>
+    </p>
+    {% endif %}
+{% endblock %}
+
 {% block subheader %}
-<h2>Recently Sold Items</h2>
+<h2 style="margin-top: -40px;">Recently Sold Items</h2>
 {% endblock %}
 {% block content %}
 <ul class="itemList">
     {% for item in itemList %}
-        <li>
+        <li class="borderli">
             {{ item.name }} at {{ item.soldDateTime|date:"M d Y, H:i" }}
         </li>
     {% empty %}

@@ -1,8 +1,7 @@
-import re
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import AuthenticationForm
 from django.utils.timezone import datetime
-from django.http import HttpResponse
 from django.shortcuts import redirect
 from hello.forms import LogMessageForm
 from hello.models import LogMessage
@@ -15,10 +14,17 @@ from .models import LogItem
 from .forms import BrowseForm
 from django.db.models import Q
 
+def getUsername(request):
+    username = None
+    if request.user.is_authenticated:
+        username = request.user.username
+    return username
+
 class HomeListView(ListView):
     model = LogItem
     def get_context_data(self, **kwargs):
         context = super(HomeListView, self).get_context_data(**kwargs)
+        context["username"]  = getUsername(self.request)
         return context
 
 class MessageListView(ListView):
@@ -27,16 +33,43 @@ class MessageListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(MessageListView, self).get_context_data(**kwargs)
         return context
+
+AuthenticationForm.error_messages = {
+    "invalid_login": "Invalid username and/or password.",
+    "inactive": "This account is inactive."
+}
+
+def loginView(request):
+    if request.method == "POST":
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            username = request.POST["username"]
+            password = request.POST["password"]
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                print("Logged in as " + username + ".")
+                return redirect("/")
+            else:
+                username = None
+                return render(request, "hello/login.html", {"form": form, "username": username})
+    else:
+        form = AuthenticationForm()
+    return render(request, "hello/login.html", {"form": form, "username": getUsername(request)})
      
+def logoutView(request): 
+    logout(request)
+    return redirect("/")
+
 def itemDetail(request, pk):
     item = get_object_or_404(ListItem, pk=pk)
-    return render(request, "hello/itemDetail.html", {"item": item})
+    return render(request, "hello/itemDetail.html", {"item": item, "username": getUsername(request)})
 
 def about(request):
-    return render(request, "hello/about.html")
+    return render(request, "hello/about.html", {"username": getUsername(request)})
 
 def contact(request):
-    return render(request, "hello/contact.html")
+    return render(request, "hello/contact.html", {"username": getUsername(request)})
 
 def browse(request):
     if request.method == "POST":
@@ -67,6 +100,7 @@ def browse(request):
             context = {
                 "items": sortedAndFilteredItems, 
                 "browseForm": browseForm,
+                "username": getUsername(request),
                 }
             return render(request, "hello/browse.html", context)
         
@@ -76,6 +110,7 @@ def browse(request):
         context = {
             "items": items.order_by("id"), 
             "browseForm": browseForm,
+            "username": getUsername(request)
             }
         return render(request, "hello/browse.html", context)
 
@@ -97,7 +132,7 @@ def listAnItem(request):
             return redirect("itemListed/" + str(item.pk) + "/")
     else:
         form = ListItemForm()
-    return render(request, "hello/listAnItem.html", {"form": form})
+    return render(request, "hello/listAnItem.html", {"form": form, "username": getUsername(request)})
 
 def helloThere(request, name):
     return render(
@@ -105,7 +140,8 @@ def helloThere(request, name):
         "hello/helloThere.html",
         {
             "name": name,
-            "date": datetime.now()
+            "date": datetime.now(),
+            "username": getUsername(),
         }
     )
 
@@ -123,4 +159,4 @@ def logMessage(request):
     
 def itemListed(request, pk):
     item = get_object_or_404(ListItem, pk=pk)
-    return render(request, "hello/itemListed.html", {"item": item})
+    return render(request, "hello/itemListed.html", {"item": item, "username": getUsername(request)})

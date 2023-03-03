@@ -68,7 +68,7 @@ h4 {
     margin-bottom: 10px;
 }
 
-li {
+.borderli {
     border: 2px solid black;
     border-radius: 20px;
     padding: 5px 10px;
@@ -142,6 +142,21 @@ table {
     border-radius: 30px;
     padding: 10px 20px;
     background-color: lightblue;
+}
+
+.login {
+    text-align: center;
+    border: 2px solid black;
+    border-radius: 30px;
+    padding: 10px 20px;
+    background-color: lightblue;
+}
+
+.login li {
+    font-size: 20px;
+    font-weight: 600;
+    color: red;
+    list-style-type: none;
 }
 
 .message {

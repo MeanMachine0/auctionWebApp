@@ -4,8 +4,24 @@
 Auction - {{ item.name }}
 {% endblock %}
 
+{% block loggedInAs %}
+    {% if username %}
+    <p style="color: rgb(224, 224, 224)">
+        Logged in as: {{ username }}.
+        <br>
+        <a href="{% url 'logout' %}">Logout</a>
+    </p>
+    {% else %}
+    <p style="color: rgb(224, 224, 224)">
+        You are not logged in. 
+        <br>
+        <a href="{% url 'login' %}">Login</a>
+    </p>
+    {% endif %}
+{% endblock %}
+
 {% block subheader %}
-<h2>
+<h2 style="margin-top: -40px;">
   {{ item.name }}
 </h2> 
 {% endblock %}

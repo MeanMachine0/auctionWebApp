@@ -1,27 +1,25 @@
 {% extends "hello/layout.html" %}
 {% block title %}
-    Auction - Item Listed
+Auction - Login
 {% endblock %}
 
 {% block loggedInAs %}
     {% if username %}
     <p style="color: rgb(224, 224, 224)">
         Logged in as: {{ username }}.
-        <br>
-        <a href="{% url 'logout' %}">Logout</a>
     </p>
     {% else %}
     <p style="color: rgb(224, 224, 224)">
         You are not logged in. 
-        <br>
-        <a href="{% url 'login' %}">Login</a>
     </p>
     {% endif %}
 {% endblock %}
 
 {% block content %}
-    <p style="margin-top: -40px;">Your item: "{{ item.name }}" has been listed.</p>
-    <p>
-        <a href="{% url 'itemDetail' pk=item.pk %}">[Go to item listing]</a>
-    </p>
+<form method="POST" class="login">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <hr color="black">
+    <button type="submit" style="margin-bottom: 5px;">Login</button>
+</form>
 {% endblock %}
