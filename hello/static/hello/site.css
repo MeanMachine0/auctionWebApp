@@ -68,16 +68,6 @@ h4 {
     margin-bottom: 10px;
 }
 
-ul {
-    border: 2px solid black;
-    border-radius: 20px;
-    padding: 5px 10px;
-    background-color: lightblue;
-    font-size: 20px;
-    margin-bottom: 10px;
-    list-style-type: none;
-}
-
 li {
     border: 2px solid black;
     border-radius: 20px;
@@ -163,7 +153,11 @@ input[name=message] {
     width: 80%;
 }
 
-.message_list th,td {
+.itemList {
+    font-size: 20px;
+}
+
+.messageList th,td {
     text-align: left;
     padding-right: 15px;
 }

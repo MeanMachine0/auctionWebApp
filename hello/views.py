@@ -11,15 +11,21 @@ from hello.forms import ListItemForm
 from hello.models import ListItem
 from .forms import ListItemForm
 from .models import ListItem
+from .models import LogItem
 from .forms import BrowseForm
 from django.db.models import Q
 
 class HomeListView(ListView):
-    """Renders the home page, with a list of all messages."""
+    model = LogItem
+    def get_context_data(self, **kwargs):
+        context = super(HomeListView, self).get_context_data(**kwargs)
+        return context
+
+class MessageListView(ListView):
     model = LogMessage
 
     def get_context_data(self, **kwargs):
-        context = super(HomeListView, self).get_context_data(**kwargs)
+        context = super(MessageListView, self).get_context_data(**kwargs)
         return context
      
 def itemDetail(request, pk):
