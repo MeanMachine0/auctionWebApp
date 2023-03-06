@@ -159,6 +159,26 @@ table {
     list-style-type: none;
 }
 
+.submitBid {
+    color: rgb(224, 224, 224);
+}
+
+.submitBid p {
+    display: inline-block;
+}
+
+.submitBid input {
+    max-width: 150px;
+}
+
+.submitBid label {
+    color:rgb(224, 224, 224);
+}
+
+.listAnItem label {
+    color:rgb(224, 224, 224);
+}
+
 .message {
     font-weight: 600;
     color: blue;

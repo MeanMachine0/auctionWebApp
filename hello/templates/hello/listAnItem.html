@@ -26,7 +26,7 @@
 {% endblock %}
 
 {% block content %}
-    <form method="POST">
+    <form method="POST" class="listAnItem">
         {% csrf_token %}
         {{ form.as_p }}
         <div class="centralContainer">

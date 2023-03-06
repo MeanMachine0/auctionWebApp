@@ -50,3 +50,13 @@ Auction - {{ item.name }}
 
 <div style="clear: both;"></div>
 {% endblock %}
+
+{% block additionalContent %}
+<div class="centralContainer">
+  <form method="POST" class="submitBid">
+    {% csrf_token %}
+    {{ bidForm.as_p }}
+    <button type="submit">Submit Bid</button>
+  </form>  
+</div>
+{% endblock %}

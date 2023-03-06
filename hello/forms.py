@@ -47,3 +47,6 @@ class BrowseForm(forms.Form):
     partsOnly = forms.BooleanField(label="Parts Only", required=False, initial=True)
     areReturnsAccepted = forms.BooleanField(label="Returns Accepted", required=False, initial=True)
     areReturnsNotAccepted = forms.BooleanField(label="Returns Not Accepted", required=False, initial=True)
+
+class BidForm(forms.Form):
+    bid = forms.DecimalField(label="Bid (£)", decimal_places=2, max_digits=10)

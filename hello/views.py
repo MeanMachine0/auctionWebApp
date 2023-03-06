@@ -6,15 +6,14 @@ from django.shortcuts import redirect
 from django.views.generic import ListView
 from django.db.models import Q
 from .models import LogMessage, LogItem, ListItem, Account
-from .forms import LogMessageForm, ListItemForm, BrowseForm
+from .forms import LogMessageForm, ListItemForm, BrowseForm, BidForm
 
 def getUsernameBalance(request):
     username = None
     balance = None
     if request.user.is_authenticated:
         username = request.user.username
-        account = Account.objects.all().get(user__username=username)
-        balance = account.balance
+        balance = Account.objects.all().get(user__username=username).balance
     return (username, balance)
 
 class HomeListView(ListView):
@@ -60,8 +59,19 @@ def logoutView(request):
     return redirect("/")
 
 def itemDetail(request, pk):
-    item = get_object_or_404(ListItem, pk=pk)
-    return render(request, "hello/itemDetail.html", {"item": item, "username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})
+    if request.method == "POST":
+        bidForm = BidForm(request.POST)
+        if bidForm.is_valid():
+            item = ListItem.objects.all().get(pk=pk)
+
+            context={"bidForm": bidForm, "item": item, "username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])}
+    else:
+        item = get_object_or_404(ListItem, pk=pk)
+        bidForm = BidForm()
+        context={"bidForm": bidForm, "item": item, "username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])}
+
+    return render(request, "hello/itemDetail.html", context)
+    
 
 def about(request):
     return render(request, "hello/about.html", {"username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})
