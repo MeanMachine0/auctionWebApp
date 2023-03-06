@@ -5,7 +5,7 @@ import hello.validators as validators
 class LogMessageForm(forms.ModelForm):
     class Meta:
         model = LogMessage
-        fields = ("message",)   # NOTE: the trailing comma is required
+        fields = ("message",)   
 
 class ListItemForm(forms.Form):
     name = forms.CharField(label="Item name", max_length=40)

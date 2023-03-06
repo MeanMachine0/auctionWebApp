@@ -3,28 +3,26 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.timezone import datetime
 from django.shortcuts import redirect
-from hello.forms import LogMessageForm
-from hello.models import LogMessage
 from django.views.generic import ListView
-from hello.forms import ListItemForm
-from hello.models import ListItem
-from .forms import ListItemForm
-from .models import ListItem
-from .models import LogItem
-from .forms import BrowseForm
 from django.db.models import Q
+from .models import LogMessage, LogItem, ListItem, Account
+from .forms import LogMessageForm, ListItemForm, BrowseForm
 
-def getUsername(request):
+def getUsernameBalance(request):
     username = None
+    balance = None
     if request.user.is_authenticated:
         username = request.user.username
-    return username
+        account = Account.objects.all().get(user__username=username)
+        balance = account.balance
+    return (username, balance)
 
 class HomeListView(ListView):
     model = LogItem
     def get_context_data(self, **kwargs):
         context = super(HomeListView, self).get_context_data(**kwargs)
-        context["username"]  = getUsername(self.request)
+        context["username"]  = getUsernameBalance(self.request)[0]
+        context["balance"] = str(getUsernameBalance(self.request)[1])
         return context
 
 class MessageListView(ListView):
@@ -55,7 +53,7 @@ def loginView(request):
                 return render(request, "hello/login.html", {"form": form, "username": username})
     else:
         form = AuthenticationForm()
-    return render(request, "hello/login.html", {"form": form, "username": getUsername(request)})
+    return render(request, "hello/login.html", {"form": form, "username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})
      
 def logoutView(request): 
     logout(request)
@@ -63,13 +61,13 @@ def logoutView(request):
 
 def itemDetail(request, pk):
     item = get_object_or_404(ListItem, pk=pk)
-    return render(request, "hello/itemDetail.html", {"item": item, "username": getUsername(request)})
+    return render(request, "hello/itemDetail.html", {"item": item, "username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})
 
 def about(request):
-    return render(request, "hello/about.html", {"username": getUsername(request)})
+    return render(request, "hello/about.html", {"username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})
 
 def contact(request):
-    return render(request, "hello/contact.html", {"username": getUsername(request)})
+    return render(request, "hello/contact.html", {"username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})
 
 def browse(request):
     if request.method == "POST":
@@ -100,7 +98,7 @@ def browse(request):
             context = {
                 "items": sortedAndFilteredItems, 
                 "browseForm": browseForm,
-                "username": getUsername(request),
+                "username": getUsernameBalance(request),
                 }
             return render(request, "hello/browse.html", context)
         
@@ -110,7 +108,8 @@ def browse(request):
         context = {
             "items": items.order_by("id"), 
             "browseForm": browseForm,
-            "username": getUsername(request)
+            "username": getUsernameBalance(request)[0],
+            "balance": str(getUsernameBalance(request)[1]),
             }
         return render(request, "hello/browse.html", context)
 
@@ -132,7 +131,7 @@ def listAnItem(request):
             return redirect("itemListed/" + str(item.pk) + "/")
     else:
         form = ListItemForm()
-    return render(request, "hello/listAnItem.html", {"form": form, "username": getUsername(request)})
+    return render(request, "hello/listAnItem.html", {"form": form, "username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})
 
 def helloThere(request, name):
     return render(
@@ -141,7 +140,7 @@ def helloThere(request, name):
         {
             "name": name,
             "date": datetime.now(),
-            "username": getUsername(),
+            "username": getUsernameBalance(),
         }
     )
 
@@ -159,4 +158,4 @@ def logMessage(request):
     
 def itemListed(request, pk):
     item = get_object_or_404(ListItem, pk=pk)
-    return render(request, "hello/itemListed.html", {"item": item, "username": getUsername(request)})
+    return render(request, "hello/itemListed.html", {"item": item, "username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})

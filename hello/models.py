@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 class LogItem(models.Model):
     name = models.CharField(max_length=40)
@@ -34,6 +35,16 @@ class ListItem(models.Model):
     endDateTime = models.DateTimeField()
     acceptReturns = models.BooleanField(default=False)
     description = models.TextField(max_length=1000)
+    numBids = models.IntegerField(default=0)
+    sold = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
+    
+class Account(models.Model): 
+    user=models.OneToOneField(User, null=True, on_delete=models.CASCADE)
+    address=models.CharField(max_length=40)
+    balance=models.DecimalField(decimal_places=2, max_digits=10, default=0)
+
+    def __str__(self):
+        return str(self.user)
