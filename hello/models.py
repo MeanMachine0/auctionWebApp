@@ -2,11 +2,19 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
+from django.db.models import CheckConstraint, Q
 
 class Accounts(models.Model): 
     user=models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     address=models.CharField(max_length=40)
     balance=models.DecimalField(decimal_places=2, max_digits=10, default=0, validators=[MinValueValidator(0)])
+
+    class Meta:
+        constraints = (
+            CheckConstraint(
+                check=Q(balance__gte=0), 
+                name="minBalance"),
+            )
 
     def __str__(self):
         return str(self.user)
@@ -51,12 +59,13 @@ class EndedItems(models.Model):
     ]
     condition = models.CharField(max_length=20, choices=conditionChoices)
     endDateTime = models.DateTimeField("Date/Time Logged")
-    acceptReturns = models.BooleanField(default=False)
+    acceptReturns = models.BooleanField()
     description = models.TextField(max_length=1000)
-    numBids = models.IntegerField(default=0)
-    sold = models.BooleanField(default=False)
-    buyerId = models.CharField(default="placeholder", max_length=40)
-    sellerId = models.CharField(default="placeholder", max_length=40)
+    numBids = models.IntegerField()
+    sold = models.BooleanField()
+    buyerId = models.CharField(max_length=40, blank=True, null=True)
+    sellerId = models.CharField(max_length=40)
+    destinationAddress = models.CharField(max_length=40, blank=True, null=True)
 
     def __str__(self):
         date = timezone.localtime(self.endDateTime)

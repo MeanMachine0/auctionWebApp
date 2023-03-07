@@ -12,16 +12,18 @@ def transferItems():
     endedItems = Items.objects.filter(endDateTime__lte=timezone.now())
     soldItems = endedItems.filter(numBids__gte=1)    
     numEndedItems = endedItems.count()
-
-    if endedItems.count() > 0:
+    if numEndedItems > 0:
         singPlural = " items" if numEndedItems > 1 else " item"
         print("Transferring " + str(numEndedItems) + singPlural + "...")
         for item in soldItems:
             transaction = True
             while transaction is True:
                 price = item.price
-                buyer = Accounts.objects.all().get(user__username=item.buyerId)
-                seller = Accounts.objects.all().get(user__username=item.sellerId)
+                buyer = Accounts.objects.get(user__username=item.buyerId)
+                seller = Accounts.objects.get(user__username=item.sellerId)
+                address = None
+                bId = None
+                isSold = False
                 #Attempting buyer side of transaction:
                 try:
                     buyer.balance -= price
@@ -41,14 +43,22 @@ def transferItems():
                     buyer.save()
                     transaction = False
 
-                if transaction is True: 
-                    item.sold = True
-                    item.save()
+            if transaction is True: 
+                address=buyer.address
+                bId=buyer.pk
+                isSold=True
+                        
+            EndedItems.objects.create(name=item.name, salePrice=price, postageCost=item.postageCost, bidIncrement=item.bidIncrement, 
+                                    condition=item.condition, endDateTime=item.endDateTime, acceptReturns=item.acceptReturns,
+                                    description=item.description, numBids=item.numBids, sold=isSold, buyerId=bId, 
+                                    sellerId=item.sellerId, destinationAddress=address)
                     
         for item in endedItems:
-            EndedItems.objects.create(name=item.name, salePrice=item.price, postageCost=item.postageCost, bidIncrement=item.bidIncrement, 
+            if item not in soldItems:
+                EndedItems.objects.create(name=item.name, salePrice=item.price, postageCost=item.postageCost, bidIncrement=item.bidIncrement, 
                                         condition=item.condition, endDateTime=item.endDateTime, acceptReturns=item.acceptReturns,
-                                        description=item.description, numBids=item.numBids, sold=item.sold, buyerId=item.buyerId, sellerId=item.sellerId)
+                                        description=item.description, numBids=item.numBids, sold=False, buyerId=None, 
+                                        sellerId=item.sellerId, destinationAddress=None)    
         endedItems.delete()
         print(str(numEndedItems) + singPlural + " transferred.")
 

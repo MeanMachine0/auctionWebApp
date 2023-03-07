@@ -39,7 +39,8 @@ Auction - {{ item.name }}
     Ended at: {{ item.endDateTime|date:"M d Y, H:i" }}<br>
     Accepts Returns: {% if item.acceptReturns %}Yes{% else %}No{% endif %}<br>
     Bids: {{item.numBids}}<br>
-    Seller: {{item.sellerId}}
+    Seller: {{item.sellerId}}<br>
+    {{item.destinationAddress}} and {{item.buyerId}}
   </p>
 </div>
 

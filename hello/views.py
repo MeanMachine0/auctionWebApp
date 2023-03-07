@@ -14,7 +14,7 @@ def getUsernameBalance(request):
     if request.user.is_authenticated:
         username = request.user.username
         pK = request.user.pk
-        balance = Accounts.objects.all().get(user__pk=pK).balance
+        balance = Accounts.objects.get(user__pk=pK).balance
     return (username, balance)
 
 class HomeListView(ListView):
@@ -62,8 +62,7 @@ def itemDetail(request, pk):
     balance = getUsernameBalance(request)[1]
     if request.method == "POST":
         bidForm = BidForm(request.POST)
-        item = Items.objects.all().get(pk=pk)
-        records = Accounts.objects.all()
+        item = Items.objects.get(pk=pk)
         if request.user.is_authenticated:
             if bidForm.is_valid():
                 bid = bidForm.cleaned_data["bid"]
@@ -71,7 +70,7 @@ def itemDetail(request, pk):
                 if bid >= minPrice and balance >= bid:
                     item.price = bid
                     item.numBids += 1
-                    item.buyerId = Accounts.objects.all().get(user__pk=request.user.pk)
+                    item.buyerId = Accounts.objects.get(user__pk=request.user.pk)
                     item.save()
                     message = "Bid Submitted."
                 elif bid < minPrice:
@@ -155,7 +154,7 @@ def listAnItem(request):
                     endDateTime=item_data["endDateTime"],
                     acceptReturns=item_data["acceptReturns"],
                     description=item_data["description"],
-                    sellerId=Accounts.objects.all().get(user__pk=request.user.pk),
+                    sellerId=Accounts.objects.get(user__pk=request.user.pk),
                 )
                 return redirect("itemListed/" + str(item.pk) + "/")
         else:

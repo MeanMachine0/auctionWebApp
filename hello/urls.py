@@ -4,7 +4,7 @@ from .models import EndedItems
 from hello.models import LogMessage
 
 homeListView = views.HomeListView.as_view(
-    queryset=EndedItems.objects.order_by("-endDateTime")[:100],
+    queryset=EndedItems.objects.filter(sold=True).order_by("-endDateTime")[:100],
     context_object_name="itemList",
     template_name="hello/home.html",
 )
