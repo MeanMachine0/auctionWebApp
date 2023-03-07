@@ -124,7 +124,8 @@ def browse(request):
             context = {
                 "items": sortedAndFilteredItems, 
                 "browseForm": browseForm,
-                "username": getUsernameBalance(request),
+                "username": getUsernameBalance(request)[0],
+                "balance": str(getUsernameBalance(request)[1]),
                 }
             return render(request, "hello/browse.html", context)
         
