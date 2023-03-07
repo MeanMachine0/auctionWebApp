@@ -28,10 +28,14 @@
 <ul class="itemList">
     {% for item in itemList %}
         <li class="borderli">
-            {{ item.name }} at {{ item.soldDateTime|date:"M d Y, H:i" }}
+            <a href="{% url 'endedItemDetail' pk=item.pk %}">{{item.name}}</a> at {{ item.endDateTime|date:"M d Y, H:i" }}
         </li>
     {% empty %}
         <p style="color: rgb(224, 224, 224)">No items found.</p>
     {% endfor %}
 </ul>
 {% endblock %}
+
+<li class="borderli" style="max-width: 800px;">
+    <a href="{% url 'itemDetail' pk=item.pk %}">{{ item.name }}</a> - £{{ item.price }}
+  </li>

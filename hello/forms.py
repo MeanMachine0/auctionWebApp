@@ -7,7 +7,7 @@ class LogMessageForm(forms.ModelForm):
         model = LogMessage
         fields = ("message",)   
 
-class ListItemForm(forms.Form):
+class ItemsForm(forms.Form):
     name = forms.CharField(label="Item name", max_length=40)
     price = forms.DecimalField(label="Starting price (£)", decimal_places=2)
     postageCost = forms.DecimalField(label="Postage cost (£)", decimal_places=2)

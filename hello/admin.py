@@ -1,4 +1,7 @@
 from django.contrib import admin
-from .models import Account
+from .models import Accounts, Items, EndedItems, LogMessage
 
-admin.site.register(Account)
+admin.site.register(Accounts)
+admin.site.register(Items)
+admin.site.register(EndedItems)
+admin.site.register(LogMessage)

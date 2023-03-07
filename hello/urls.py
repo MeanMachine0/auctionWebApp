@@ -1,10 +1,10 @@
 from django.urls import path
 from hello import views
-from .models import LogItem
+from .models import EndedItems
 from hello.models import LogMessage
 
 homeListView = views.HomeListView.as_view(
-    queryset=LogItem.objects.order_by("-soldDateTime")[:100],
+    queryset=EndedItems.objects.order_by("-endDateTime")[:100],
     context_object_name="itemList",
     template_name="hello/home.html",
 )
@@ -17,6 +17,7 @@ messageListView = views.MessageListView.as_view(
 
 urlpatterns = [
     path("", homeListView, name="home"),
+    path("<int:pk>/", views.endedItemDetail, name="endedItemDetail"),
     path("login/", views.loginView, name="login"),
     path("logout/", views.logoutView, name="logout"),
     path("hello/<name>", views.helloThere, name="helloThere"),

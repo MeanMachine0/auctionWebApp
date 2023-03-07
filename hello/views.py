@@ -5,19 +5,20 @@ from django.utils.timezone import datetime
 from django.shortcuts import redirect
 from django.views.generic import ListView
 from django.db.models import Q
-from .models import LogMessage, LogItem, ListItem, Account
-from .forms import LogMessageForm, ListItemForm, BrowseForm, BidForm
+from .models import LogMessage, EndedItems, Items, Accounts
+from .forms import LogMessageForm, ItemsForm, BrowseForm, BidForm
 
 def getUsernameBalance(request):
     username = None
     balance = None
     if request.user.is_authenticated:
         username = request.user.username
-        balance = Account.objects.all().get(user__username=username).balance
+        pK = request.user.pk
+        balance = Accounts.objects.all().get(user__pk=pK).balance
     return (username, balance)
 
 class HomeListView(ListView):
-    model = LogItem
+    model = EndedItems
     def get_context_data(self, **kwargs):
         context = super(HomeListView, self).get_context_data(**kwargs)
         context["username"]  = getUsernameBalance(self.request)[0]
@@ -45,7 +46,6 @@ def loginView(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                print("Logged in as " + username + ".")
                 return redirect("/")
             else:
                 username = None
@@ -59,16 +59,32 @@ def logoutView(request):
     return redirect("/")
 
 def itemDetail(request, pk):
+    balance = getUsernameBalance(request)[1]
     if request.method == "POST":
         bidForm = BidForm(request.POST)
-        if bidForm.is_valid():
-            item = ListItem.objects.all().get(pk=pk)
-
-            context={"bidForm": bidForm, "item": item, "username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])}
+        item = Items.objects.all().get(pk=pk)
+        records = Accounts.objects.all()
+        if request.user.is_authenticated:
+            if bidForm.is_valid():
+                bid = bidForm.cleaned_data["bid"]
+                minPrice = item.price + item.bidIncrement
+                if bid >= minPrice and balance >= bid:
+                    item.price = bid
+                    item.numBids += 1
+                    item.buyerId = Accounts.objects.all().get(user__pk=request.user.pk)
+                    item.save()
+                    message = "Bid Submitted."
+                elif bid < minPrice:
+                    message = "Could not submit bid: bid < £" + str(minPrice) + "."
+                elif bid > balance:
+                    message = "Could not submit bid: balance < bid."
+                context={"bidForm": bidForm, "item": item, "username": getUsernameBalance(request)[0], "balance": str(balance), "message": message}
+        else:
+            return redirect("/login/")
     else:
-        item = get_object_or_404(ListItem, pk=pk)
+        item = get_object_or_404(Items, pk=pk)
         bidForm = BidForm()
-        context={"bidForm": bidForm, "item": item, "username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])}
+        context={"bidForm": bidForm, "item": item, "username": getUsernameBalance(request)[0], "balance": str(balance)}
 
     return render(request, "hello/itemDetail.html", context)
     
@@ -83,7 +99,7 @@ def browse(request):
     if request.method == "POST":
         browseForm = BrowseForm(request.POST)
         if browseForm.is_valid():
-            items = ListItem.objects.all()
+            items = Items.objects.all()
             itemsToDelete = items.filter(name="test")
             for item in itemsToDelete:
                 item.delete()
@@ -114,7 +130,7 @@ def browse(request):
         
     else:
         browseForm = BrowseForm()
-        items = ListItem.objects.all()
+        items = Items.objects.all()
         context = {
             "items": items.order_by("id"), 
             "browseForm": browseForm,
@@ -125,22 +141,26 @@ def browse(request):
 
 def listAnItem(request):
     if request.method == "POST":
-        form = ListItemForm(request.POST)
-        if form.is_valid():
-            item_data = form.cleaned_data
-            item = ListItem.objects.create(
-                name=item_data["name"],
-                price=item_data["price"],
-                postageCost=item_data["postageCost"],
-                bidIncrement=item_data["bidIncrement"],
-                condition=item_data["condition"],
-                endDateTime=item_data["endDateTime"],
-                acceptReturns=item_data["acceptReturns"],
-                description=item_data["description"]
-            )
-            return redirect("itemListed/" + str(item.pk) + "/")
+        form = ItemsForm(request.POST)
+        if request.user.is_authenticated:
+            if form.is_valid():
+                item_data = form.cleaned_data
+                item = Items.objects.create(
+                    name=item_data["name"],
+                    price=item_data["price"],
+                    postageCost=item_data["postageCost"],
+                    bidIncrement=item_data["bidIncrement"],
+                    condition=item_data["condition"],
+                    endDateTime=item_data["endDateTime"],
+                    acceptReturns=item_data["acceptReturns"],
+                    description=item_data["description"],
+                    sellerId=Accounts.objects.all().get(user__pk=request.user.pk),
+                )
+                return redirect("itemListed/" + str(item.pk) + "/")
+        else:
+            return redirect("/login/")
     else:
-        form = ListItemForm()
+        form = ItemsForm()
     return render(request, "hello/listAnItem.html", {"form": form, "username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})
 
 def helloThere(request, name):
@@ -167,5 +187,9 @@ def logMessage(request):
         return render(request, "hello/logMessage.html", {"form": form})
     
 def itemListed(request, pk):
-    item = get_object_or_404(ListItem, pk=pk)
+    item = get_object_or_404(Items, pk=pk)
     return render(request, "hello/itemListed.html", {"item": item, "username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})
+
+def endedItemDetail(request, pk):
+    item = get_object_or_404(EndedItems, pk=pk)
+    return render(request, "hello/endedItemDetail.html", {"item": item, "username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})
