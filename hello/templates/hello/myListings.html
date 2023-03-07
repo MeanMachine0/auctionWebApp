@@ -1,0 +1,101 @@
+{% extends "hello/layout.html" %}
+{% block title %}
+    Auction - My Listings
+{% endblock %}
+
+{% block loggedInAs %}
+    {% if username %}
+    <p style="color: rgb(224, 224, 224)">
+        Logged in as {{ username }}. 
+        <br>
+        Balance: £{{balance}}
+        <br>
+        <a href="{% url 'logout' %}">Logout</a>
+    </p>
+    {% else %}
+    <p style="color: rgb(224, 224, 224)">
+        You are not logged in. 
+        <br>
+        <a href="{% url 'login' %}">Login</a>
+    </p>
+    {% endif %}
+{% endblock %}
+
+{% block subheader %}
+<h2 style="margin-top: -40px;">Active Listings</h2>
+{% endblock %}
+
+{% block content %}
+    <table>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>P&P</th>
+            <th>Bid Inc.</th>
+            <th>Condition</th>
+            <th>End</th>
+            <th>Returns?</th>
+            <th>Bids</th>
+            <th>Sold?</th>
+            <th>Buyer Id</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for item in myCurrentItems %}
+                <tr>
+                    <td>{{item.name}}</td>
+                    <td>{{item.price}}</td>
+                    <td>{{item.postageCost}}</td>
+                    <td>{{item.bidIncrement}}</td>
+                    <td>{{item.condition}}</td>
+                    <td>{{item.endDateTime}}</td>
+                    <td>{{item.acceptReturns}}</td>
+                    <td>{{item.numBids}}</td>
+                    <td>{{item.sold}}</td>
+                    <td>{{item.buyerId}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block additionalContent %}
+<div class="centralContainer">
+    <h2>Inactive Listings</h2>
+</div>
+<div class="centralContainer">
+    <table>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>P&P</th>
+            <th>Bid Inc.</th>
+            <th>Condition</th>
+            <th>End</th>
+            <th>Returns?</th>
+            <th>Bids</th>
+            <th>Sold?</th>
+            <th>Buyer Id</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for item in myOldItems %}
+                <tr>
+                    <td>{{item.name}}</td>
+                    <td>{{item.salePrice}}</td>
+                    <td>{{item.postageCost}}</td>
+                    <td>{{item.bidIncrement}}</td>
+                    <td>{{item.condition}}</td>
+                    <td>{{item.endDateTime}}</td>
+                    <td>{{item.acceptReturns}}</td>
+                    <td>{{item.numBids}}</td>
+                    <td>{{item.sold}}</td>
+                    <td>{{item.buyerId}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

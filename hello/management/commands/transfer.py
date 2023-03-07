@@ -6,7 +6,6 @@ from django.core.management.base import BaseCommand
 import schedule
 from django.utils import timezone
 from hello.models import Accounts, Items, EndedItems
-from django.db.models import Q
 
 def transferItems():
     endedItems = Items.objects.filter(endDateTime__lte=timezone.now())

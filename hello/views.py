@@ -91,8 +91,12 @@ def itemDetail(request, pk):
 def about(request):
     return render(request, "hello/about.html", {"username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})
 
-def contact(request):
-    return render(request, "hello/contact.html", {"username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})
+def myListings(request):
+    pK = request.user.pk
+    username = getUsernameBalance(request)[0]
+    myCurrentItems = Items.objects.filter(sellerId=pK) 
+    myOldItems = EndedItems.objects.filter(sellerId=username)
+    return render(request, "hello/myListings.html", {"username": username, "balance": str(getUsernameBalance(request)[1]), "myCurrentItems": myCurrentItems, "myOldItems": myOldItems})
 
 def browse(request):
     if request.method == "POST":
