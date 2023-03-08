@@ -96,7 +96,16 @@ def myListings(request):
     username = getUsernameBalance(request)[0]
     myCurrentItems = Items.objects.filter(sellerId=pK) 
     myOldItems = EndedItems.objects.filter(sellerId=username)
-    return render(request, "hello/myListings.html", {"username": username, "balance": str(getUsernameBalance(request)[1]), "myCurrentItems": myCurrentItems, "myOldItems": myOldItems})
+
+    return render(
+        request, "hello/myListings.html", 
+        {
+        "username": username,
+        "balance": str(getUsernameBalance(request)[1]),
+        "myCurrentItems": myCurrentItems, 
+        "myOldItems": myOldItems,
+        }
+        )
 
 def browse(request):
     if request.method == "POST":

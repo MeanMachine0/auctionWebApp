@@ -38,18 +38,18 @@
             <th>Returns?</th>
             <th>Bids</th>
             <th>Sold?</th>
-            <th>Buyer Id</th>
+            <th>Buyer</th>
         </tr>
         </thead>
         <tbody>
             {% for item in myCurrentItems %}
                 <tr>
-                    <td>{{item.name}}</td>
+                    <td class="limitedRow"><a href="{% url 'itemDetail' pk=item.pk %}">{{item.name}}</a></td>
                     <td>{{item.price}}</td>
                     <td>{{item.postageCost}}</td>
                     <td>{{item.bidIncrement}}</td>
                     <td>{{item.condition}}</td>
-                    <td>{{item.endDateTime}}</td>
+                    <td>{{item.endDateTime|date:"M d Y, H:i"}}</td>
                     <td>{{item.acceptReturns}}</td>
                     <td>{{item.numBids}}</td>
                     <td>{{item.sold}}</td>
@@ -77,24 +77,24 @@
             <th>Returns?</th>
             <th>Bids</th>
             <th>Sold?</th>
-            <th>Buyer Id</th>
+            <th>Buyer</th>
         </tr>
         </thead>
         <tbody>
-            {% for item in myOldItems %}
-                <tr>
-                    <td>{{item.name}}</td>
-                    <td>{{item.salePrice}}</td>
-                    <td>{{item.postageCost}}</td>
-                    <td>{{item.bidIncrement}}</td>
-                    <td>{{item.condition}}</td>
-                    <td>{{item.endDateTime}}</td>
-                    <td>{{item.acceptReturns}}</td>
-                    <td>{{item.numBids}}</td>
-                    <td>{{item.sold}}</td>
-                    <td>{{item.buyerId}}</td>
-                </tr>
-            {% endfor %}
+        {% for item in myOldItems %}
+            <tr>
+                <td class="limitedRow"><a href="{% url 'endedItemDetail' pk=item.pk %}">{{item.name}}</a></td>
+                <td>{{item.salePrice}}</td>
+                <td>{{item.postageCost}}</td>
+                <td>{{item.bidIncrement}}</td>
+                <td>{{item.condition}}</td>
+                <td>{{item.endDateTime|date:"M d Y, H:i"}}</td>
+                <td>{{item.acceptReturns}}</td>
+                <td>{{item.numBids}}</td>
+                <td>{{item.sold}}</td>
+                <td>{{item.buyerId}}</td>
+            </tr>
+        {% endfor %}
         </tbody>
     </table>
 </div>

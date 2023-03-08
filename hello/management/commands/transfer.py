@@ -44,7 +44,7 @@ def transferItems():
 
             if transaction is True: 
                 address=buyer.address
-                bId=buyer.pk
+                bId=item.buyerId
                 isSold=True
                         
             EndedItems.objects.create(name=item.name, salePrice=price, postageCost=item.postageCost, bidIncrement=item.bidIncrement, 
