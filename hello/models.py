@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.db.models import CheckConstraint, Q
+import json
 
 class Accounts(models.Model): 
     user=models.OneToOneField(User, null=True, on_delete=models.CASCADE)
@@ -17,10 +18,10 @@ class Accounts(models.Model):
             )
 
     def __str__(self):
-        return str(self.user)
+        return str(self.id)
     
 class Items(models.Model): 
-    name = models.CharField(max_length=40)
+    name = models.CharField(max_length=50)
     price = models.DecimalField(decimal_places=2, max_digits=10)
     postageCost = models.DecimalField(decimal_places=2, max_digits=10)
     bidIncrement = models.DecimalField(decimal_places=2, max_digits=10)
@@ -37,15 +38,24 @@ class Items(models.Model):
     acceptReturns = models.BooleanField(default=False)
     description = models.TextField(max_length=1000)
     numBids = models.IntegerField(default=0)
+    bidders = models.CharField(max_length=999999999, default='[]')
     sold = models.BooleanField(default=False)
-    buyerId = models.ForeignKey(Accounts, on_delete=models.DO_NOTHING, related_name="bId", blank=True, null=True)
-    sellerId = models.ForeignKey(Accounts, on_delete=models.DO_NOTHING, related_name="sId", blank=True, null=True)
+    buyerId = models.ForeignKey(Accounts, to_field="id", on_delete=models.DO_NOTHING, related_name="bId", blank=True, null=True)
+    sellerId = models.ForeignKey(Accounts, to_field="id", on_delete=models.DO_NOTHING, related_name="sId", blank=True, null=True)
+
+    def getBidders(self):
+        return json.loads(self.bidders)
+    
+    def setBidders(self, value):
+        self.bidders = json.dumps(value)
+
+    biddersProperty = property(getBidders, setBidders)
 
     def __str__(self):
         return self.name
     
 class EndedItems(models.Model):
-    name = models.CharField(max_length=40)
+    name = models.CharField(max_length=50)
     salePrice = models.DecimalField(decimal_places=2, max_digits=10)
     postageCost = models.DecimalField(decimal_places=2, max_digits=10)
     bidIncrement = models.DecimalField(decimal_places=2, max_digits=10)
@@ -62,14 +72,23 @@ class EndedItems(models.Model):
     acceptReturns = models.BooleanField()
     description = models.TextField(max_length=1000)
     numBids = models.IntegerField()
+    bidders = models.CharField(max_length=999999999, default='[]')
     sold = models.BooleanField()
-    buyerId = models.CharField(max_length=40, blank=True, null=True)
-    sellerId = models.CharField(max_length=40)
+    buyerId = models.IntegerField(blank=True, null=True)
+    sellerId = models.IntegerField()
     destinationAddress = models.CharField(max_length=40, blank=True, null=True)
+
+    def getBidders(self):
+        return json.loads(self.bidders)
+    
+    def setBidders(self, value):
+        self.bidders = json.dumps(value)
+
+    biddersProperty = property(getBidders, setBidders)
 
     def __str__(self):
         date = timezone.localtime(self.endDateTime)
-        return f"'{self.name}' sold at {date.strftime('%A, %d %B, %Y at %X')}"
+        return f"'{self.name}' ended at {date.strftime('%A, %d %B, %Y at %X')}"
 
 class LogMessage(models.Model):
     message = models.CharField(max_length=300)

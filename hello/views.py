@@ -59,6 +59,7 @@ def logoutView(request):
     return redirect("/")
 
 def itemDetail(request, pk):
+    username = getUsernameBalance(request)[0]
     balance = getUsernameBalance(request)[1]
     if request.method == "POST":
         bidForm = BidForm(request.POST)
@@ -71,13 +72,16 @@ def itemDetail(request, pk):
                     item.price = bid
                     item.numBids += 1
                     item.buyerId = Accounts.objects.get(user__pk=request.user.pk)
+                    bidders=item.getBidders()
+                    bidders.append(username)
+                    item.setBidders(bidders)
                     item.save()
                     message = "Bid Submitted."
                 elif bid < minPrice:
                     message = "Could not submit bid: bid < £" + str(minPrice) + "."
                 elif bid > balance:
                     message = "Could not submit bid: balance < bid."
-                context={"bidForm": bidForm, "item": item, "username": getUsernameBalance(request)[0], "balance": str(balance), "message": message}
+                context={"bidForm": bidForm, "item": item, "username": username, "balance": str(balance), "message": message}
         else:
             return redirect("/login/")
     else:
@@ -91,16 +95,45 @@ def itemDetail(request, pk):
 def about(request):
     return render(request, "hello/about.html", {"username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})
 
-def myListings(request):
-    pK = request.user.pk
+def userBids(request):
     username = getUsernameBalance(request)[0]
-    myCurrentItems = Items.objects.filter(sellerId=pK) 
-    myOldItems = EndedItems.objects.filter(sellerId=username)
+    biddersFilter = {"bidders__contains": username}
+    myCurrentItems = Items.objects.filter(**biddersFilter)
+    myOldItems = EndedItems.objects.filter(**biddersFilter)
 
     return render(
-        request, "hello/myListings.html", 
+        request, "hello/userBids.html", 
         {
         "username": username,
+        "balance": str(getUsernameBalance(request)[1]),
+        "myCurrentItems": myCurrentItems, 
+        "myOldItems": myOldItems,
+        }
+        )
+
+def userListings(request):
+    pK = request.user.pk
+    myCurrentItems = Items.objects.filter(sellerId=pK) 
+    myOldItems = EndedItems.objects.filter(sellerId=pK)
+
+    return render(
+        request, "hello/userListings.html", 
+        {
+        "username": getUsernameBalance(request)[0],
+        "balance": str(getUsernameBalance(request)[1]),
+        "myCurrentItems": myCurrentItems, 
+        "myOldItems": myOldItems,
+        }
+        )
+
+def userListingsExt(request, pk):
+    myCurrentItems = Items.objects.filter(sellerId=pk) 
+    myOldItems = EndedItems.objects.filter(sellerId=pk)
+
+    return render(
+        request, "hello/userListings.html", 
+        {
+        "username": getUsernameBalance(request)[0],
         "balance": str(getUsernameBalance(request)[1]),
         "myCurrentItems": myCurrentItems, 
         "myOldItems": myOldItems,
@@ -167,7 +200,7 @@ def listAnItem(request):
                     endDateTime=item_data["endDateTime"],
                     acceptReturns=item_data["acceptReturns"],
                     description=item_data["description"],
-                    sellerId=Accounts.objects.get(user__pk=request.user.pk),
+                    sellerId=Accounts.objects.get(pk=request.user.pk),
                 )
                 return redirect("itemListed/" + str(item.pk) + "/")
         else:

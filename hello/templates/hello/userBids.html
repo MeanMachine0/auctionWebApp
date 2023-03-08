@@ -22,7 +22,7 @@
 {% endblock %}
 
 {% block subheader %}
-<h2 style="margin-top: -40px;">Active Listings</h2>
+<h2 style="margin-top: -40px;">Active Bids</h2>
 {% endblock %}
 
 {% block content %}
@@ -37,8 +37,8 @@
             <th>End</th>
             <th>Returns?</th>
             <th>Bids</th>
-            <th>Sold?</th>
-            <th>Buyer</th>
+            <th>Top Bidder</th>
+            <th>Seller</th>
         </tr>
         </thead>
         <tbody>
@@ -52,8 +52,12 @@
                     <td>{{item.endDateTime|date:"M d Y, H:i"}}</td>
                     <td>{{item.acceptReturns}}</td>
                     <td>{{item.numBids}}</td>
-                    <td>{{item.sold}}</td>
-                    <td>{{item.buyerId}}</td>
+                    {% if item.buyerId %}
+                        <td><a href="{% url 'userListings' pk=item.buyerId %}">{{item.buyerId}}</a></td>
+                    {% else %}
+                        <td>None</td>
+                    {% endif %}
+                    <td><a href="{% url 'userListings' pk=item.sellerId %}">{{item.sellerId}}</a></td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -62,7 +66,7 @@
 
 {% block additionalContent %}
 <div class="centralContainer">
-    <h2>Inactive Listings</h2>
+    <h2>Inactive Bids</h2>
 </div>
 <div class="centralContainer">
     <table>
@@ -78,6 +82,7 @@
             <th>Bids</th>
             <th>Sold?</th>
             <th>Buyer</th>
+            <th>Seller</th>
         </tr>
         </thead>
         <tbody>
@@ -92,7 +97,12 @@
                 <td>{{item.acceptReturns}}</td>
                 <td>{{item.numBids}}</td>
                 <td>{{item.sold}}</td>
-                <td>{{item.buyerId}}</td>
+                {% if item.buyerId %}
+                        <td><a href="{% url 'userListings' pk=item.buyerId %}">{{item.buyerId}}</a></td>
+                    {% else %}
+                        <td>None</td>
+                {% endif %}
+                <td><a href="{% url 'userListings' pk=item.sellerId %}">{{item.sellerId}}</a></td>
             </tr>
         {% endfor %}
         </tbody>
