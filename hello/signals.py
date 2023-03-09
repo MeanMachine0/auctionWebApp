@@ -13,5 +13,4 @@ def randAddress():
 @receiver(post_save, sender=User)
 def onNewUser(sender, instance, created, **kwargs):
     if created:
-        newAccount = Accounts.objects.create(user=instance, address=randAddress())
-        print(newAccount)
+        Accounts.objects.create(user=instance, address=randAddress())
