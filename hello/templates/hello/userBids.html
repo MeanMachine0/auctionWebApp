@@ -1,4 +1,5 @@
 {% extends "hello/layout.html" %}
+{% load myTags %}
 {% block title %}
     Auction - My Listings
 {% endblock %}
@@ -52,17 +53,22 @@
                     <td>{{item.bidIncrement}}</td>
                     <td>{{item.condition}}</td>
                     <td>{{item.endDateTime|date:"M d Y, H:i"}}</td>
-                    <td>{{item.acceptReturns}}</td>
-                    <td>{{item.numBids}}</td>
-                    {% if item.buyerId %}
-                        <td><a href="{% url 'userListings' pk=item.buyerId %}">{{item.buyerId}}</a></td>
+                    {% if item.acceptReturns %}
+                        <td>Yes</td>
                     {% else %}
-                        <td>None</td>
+                        <td>No</td>
                     {% endif %}
-                    <td><a href="{% url 'userListings' pk=item.sellerId %}">{{item.sellerId}}</a></td>
+                    <td>{{item.numBids}}</td>
+                    {% idToUsername item.buyerId_id as buyerUsername %}
+                    {% if buyerUsername != username %}
+                        <td><a href="{% url 'userListings' pk=item.buyerId %}">{{buyerUsername}}</a></td>
+                    {% else %}
+                        <td>You</td>
+                    {% endif %}
+                    <td><a href="{% url 'userListings' pk=item.sellerId %}">{% idToUsername item.sellerId_id %}</a></td>
                 </tr>
             {% empty %}
-                <p style="color: rgb(224, 224, 224)">No Active Listings.</p>
+                <p style="color: rgb(224, 224, 224)">No Active Bids.</p>
             {% endfor %}
         </tbody>
     </table>
@@ -100,18 +106,31 @@
                 <td>{{item.bidIncrement}}</td>
                 <td>{{item.condition}}</td>
                 <td>{{item.endDateTime|date:"M d Y, H:i"}}</td>
-                <td>{{item.acceptReturns}}</td>
-                <td>{{item.numBids}}</td>
-                <td>{{item.sold}}</td>
-                {% if item.buyerId %}
-                        <td><a href="{% url 'userListings' pk=item.buyerId %}">{{item.buyerId}}</a></td>
-                    {% else %}
-                        <td>None</td>
+                {% if item.acceptReturns %}
+                    <td>Yes</td>
+                {% else %}
+                    <td>No</td>
                 {% endif %}
-                <td><a href="{% url 'userListings' pk=item.sellerId %}">{{item.sellerId}}</a></td>
+                <td>{{item.numBids}}</td>
+                {% if item.sold %}
+                    <td>Yes</td>
+                {% else %}
+                    <td>No</td>
+                {% endif %}
+                {% if item.buyerId %}
+                    {% idToUsername item.buyerId as buyerUsername %}
+                    {% if buyerUsername != username %}
+                        <td><a href="{% url 'userListings' pk=item.buyerId %}">{{buyerUsername}}</a></td>
+                    {% else %}
+                        <td>You</td>
+                    {% endif %}
+                {% else %}
+                    <td>None</td>
+                {% endif %}
+                <td><a href="{% url 'userListings' pk=item.sellerId %}">{% idToUsername item.sellerId %}</a></td>
             </tr>
         {% empty %}
-            <p style="color: rgb(224, 224, 224)">No Inactive Listings.</p>
+            <p style="color: rgb(224, 224, 224)">No Inactive Bids.</p>
         {% endfor %}
         </tbody>
     </table>

@@ -111,10 +111,10 @@ def userBids(request):
         }
         )
 
-def userListings(request):
-    pK = request.user.pk
-    myCurrentItems = Items.objects.filter(sellerId=pK) 
-    myOldItems = EndedItems.objects.filter(sellerId=pK)
+def userListings(request, pk):
+    myCurrentItems = Items.objects.filter(sellerId=pk).order_by("endDateTime")
+    myOldItems = EndedItems.objects.filter(sellerId=pk).order_by("-endDateTime")
+    you = True if request.user.pk == pk else False
 
     return render(
         request, "hello/userListings.html", 
@@ -123,20 +123,7 @@ def userListings(request):
         "balance": str(getUsernameBalance(request)[1]),
         "myCurrentItems": myCurrentItems, 
         "myOldItems": myOldItems,
-        }
-        )
-
-def userListingsExt(request, pk):
-    myCurrentItems = Items.objects.filter(sellerId=pk) 
-    myOldItems = EndedItems.objects.filter(sellerId=pk)
-
-    return render(
-        request, "hello/userListings.html", 
-        {
-        "username": getUsernameBalance(request)[0],
-        "balance": str(getUsernameBalance(request)[1]),
-        "myCurrentItems": myCurrentItems, 
-        "myOldItems": myOldItems,
+        "you": you,
         }
         )
 

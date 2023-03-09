@@ -8,7 +8,7 @@ names=["King's", "Queen's", "Rook's", "Bishop's", "Knight's", "Pawn's"]
 streetNames=["Street", "Road", "Lane", "Avenue", "Boulevard", "Drive", "Court", "Way"]
 
 def randAddress():
-    return names[randint(0, len(names)-1)] + " " + streetNames[randint(0, len(streetNames)-1)]
+    return str(randint(1, 99)) + " " + names[randint(0, len(names)-1)] + " " + streetNames[randint(0, len(streetNames)-1)]
 
 @receiver(post_save, sender=User)
 def onNewUser(sender, instance, created, **kwargs):

@@ -1,4 +1,5 @@
 {% extends "hello/layout.html" %}
+{% load myTags %}
 {% block title %}
     Auction - My Listings
 {% endblock %}
@@ -52,14 +53,27 @@
                     <td>{{item.bidIncrement}}</td>
                     <td>{{item.condition}}</td>
                     <td>{{item.endDateTime|date:"M d Y, H:i"}}</td>
-                    <td>{{item.acceptReturns}}</td>
+                    {% if item.acceptReturns %}
+                        <td>Yes</td>
+                    {% else %}
+                        <td>No</td>
+                    {% endif %}
                     <td>{{item.numBids}}</td>
                     {% if item.buyerId %}
-                        <td><a href="{% url 'userListings' pk=item.buyerId %}">{{item.buyerId}}</a></td>
+                        {% idToUsername item.buyerId_id as buyerUsername %}
+                        {% if buyerUsername != username %}
+                            <td><a href="{% url 'userListings' pk=item.buyerId %}">{{buyerUsername}}</a></td>
+                        {% else %}
+                            <td>You</td>
+                        {% endif %}
                     {% else %}
                         <td>None</td>
                     {% endif %}
-                    <td><a href="{% url 'userListings' pk=item.sellerId %}">{{item.sellerId}}</a></td>
+                    {% if you %}
+                        <td>You</td>
+                    {% else %}
+                        <td><a href="{% url 'userListings' pk=item.sellerId %}">{% idToUsername item.sellerId_id %}</a></td>
+                    {% endif %}
                 </tr>
             </tbody>
         {% empty %}
@@ -88,6 +102,9 @@
                 <th>Sold?</th>
                 <th>Buyer</th>
                 <th>Seller</th>
+                {% if you %}
+                    <th>Destination</th>
+                {% endif %}
             </tr>
             </thead>
         {% endif %}
@@ -101,15 +118,33 @@
                     <td>{{item.bidIncrement}}</td>
                     <td>{{item.condition}}</td>
                     <td>{{item.endDateTime|date:"M d Y, H:i"}}</td>
-                    <td>{{item.acceptReturns}}</td>
+                    {% if item.acceptReturns %}
+                        <td>Yes</td>
+                    {% else %}
+                        <td>No</td>
+                    {% endif %}
                     <td>{{item.numBids}}</td>
-                    <td>{{item.sold}}</td>
+                    {% if item.sold %}
+                        <td>Yes</td>
+                    {% else %}
+                        <td>No</td>
+                    {% endif %}
                     {% if item.buyerId %}
-                        <td><a href="{% url 'userListings' pk=item.buyerId %}">{{item.buyerId}}</a></td>
+                        {% idToUsername item.buyerId as buyerUsername %}
+                        {% if buyerUsername != username %}
+                            <td><a href="{% url 'userListings' pk=item.buyerId %}">{{buyerUsername}}</a></td>
+                        {% else %}
+                            <td>You</td>
+                        {% endif %}
                     {% else %}
                         <td>None</td>
                     {% endif %}
-                    <td><a href="{% url 'userListings' pk=item.sellerId %}">{{item.sellerId}}</a></td>
+                    {% if you %}
+                        <td>You</td>
+                        <td>{{item.destinationAddress}}</td>
+                    {% else %}
+                        <td><a href="{% url 'userListings' pk=item.sellerId %}">{% idToUsername item.sellerId %}</a></td>
+                    {% endif %}
                 </tr>
             </tbody>
         {% empty %}
