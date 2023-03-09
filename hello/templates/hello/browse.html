@@ -7,7 +7,7 @@ Auction - Browse Items
 {% block loggedInAs %}
     {% if username %}
     <p style="color: rgb(224, 224, 224)">
-        Logged in as {{ username }}. 
+        Logged in as {{username}}. 
         <br>
         Balance: £{{balance}}
         <br>
@@ -38,7 +38,7 @@ Auction - Browse Items
   </h2>
   {% for item in items %}
   <li class="borderli" style="max-width: 800px;">
-    <a href="{% url 'itemDetail' pk=item.pk %}">{{ item.name }}</a> - £{{ item.price }}
+    <a href="{% url 'itemDetail' pk=item.pk %}">{{item.name}}</a> - £{{item.price}}
   </li>
   {% empty %}
     <p style="color: rgb(224, 224, 224)">No items found.</p>
@@ -49,7 +49,7 @@ Auction - Browse Items
   <h3 style="margin: 35px 0px 20px 0px;">Menu</h3>
   <form method="POST" class="sortAndFilterByMenu">
     {% csrf_token %}
-    {{ browseForm.as_p }}
+    {{browseForm.as_p}}
     <hr color="black">
     <button type="submit" style="margin-bottom: 10px;">Apply</button>
   </form>

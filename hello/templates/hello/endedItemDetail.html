@@ -1,13 +1,14 @@
 {% extends "hello/layout.html" %}
+{% load myTags %}
 
 {% block title %}
-Auction - {{ item.name }}
+Auction - {{item.name}}
 {% endblock %}
 
 {% block loggedInAs %}
     {% if username %}
     <p style="color: rgb(224, 224, 224)">
-        Logged in as {{ username }}. 
+        Logged in as {{username}}. 
         <br>
         Balance: £{{balance}}
         <br>
@@ -24,7 +25,7 @@ Auction - {{ item.name }}
 
 {% block subheader %}
 <h2 style="margin-top: -40px;">
-  {{ item.name }}
+  {{item.name}}
 </h2> 
 {% endblock %}
 
@@ -32,21 +33,26 @@ Auction - {{ item.name }}
 <div class="leftContainer" style="max-width: 300px;">
   <p class="textBlock" style="max-width: 260px;">
     <strong>Summary:</strong><br>
-    Sale Price: £{{ item.salePrice }}<br>
-    Postage Cost: £{{ item.postageCost }}<br>
-    Bid Increment: £{{ item.bidIncrement }}<br>
-    Condition: {{ item.get_condition_display }}<br>
-    Ended at: {{ item.endDateTime|date:"M d Y, H:i" }}<br>
+    Sale Price: £{{item.salePrice}}<br>
+    Postage Cost: £{{item.postageCost}}<br>
+    Bid Increment: £{{item.bidIncrement}}<br>
+    Condition: {{item.get_condition_display}}<br>
+    Ended at: {{item.endDateTime|date:"M d Y, H:i"}}<br>
     Accepts Returns: {% if item.acceptReturns %}Yes{% else %}No{% endif %}<br>
     Bids: {{item.numBids}}<br>
-    Seller: {{item.sellerId}}
+    {% idToUsername item.sellerId as sellerUsername %}
+    {% if sellerUsername != username %}
+      Seller: <a href="{% url 'userListings' pk=item.sellerId %}">{{sellerUsername}}</a>   
+    {% else %}
+      Seller: You
+    {% endif %}
   </p>
 </div>
 
 <div class="rightContainer" style="max-width: 50vw;">
   <p class="textBlock">
     <strong>Description:</strong><br>
-    {{ item.description }}
+    {{item.description}}
   </p>
 </div>
 

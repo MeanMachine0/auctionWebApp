@@ -7,7 +7,7 @@
 {% block loggedInAs %}
     {% if username %}
     <p style="color: rgb(224, 224, 224)">
-        Logged in as {{ username }}. 
+        Logged in as {{username}}. 
         <br>
         Balance: £{{balance}}
         <br>
@@ -61,7 +61,7 @@
                     <td>{{item.numBids}}</td>
                     {% idToUsername item.buyerId_id as buyerUsername %}
                     {% if buyerUsername != username %}
-                        <td><a href="{% url 'userListings' pk=item.buyerId %}">{{buyerUsername}}</a></td>
+                        <td>Not You</a></td>
                     {% else %}
                         <td>You</td>
                     {% endif %}
@@ -120,7 +120,7 @@
                 {% if item.buyerId %}
                     {% idToUsername item.buyerId as buyerUsername %}
                     {% if buyerUsername != username %}
-                        <td><a href="{% url 'userListings' pk=item.buyerId %}">{{buyerUsername}}</a></td>
+                        <td>Not You</a></td>
                     {% else %}
                         <td>You</td>
                     {% endif %}

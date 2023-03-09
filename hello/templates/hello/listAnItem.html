@@ -6,7 +6,7 @@
 {% block loggedInAs %}
     {% if username %}
     <p style="color: rgb(224, 224, 224)">
-        Logged in as {{ username }}. 
+        Logged in as {{username}}. 
         <br>
         Balance: £{{balance}}
         <br>
@@ -28,7 +28,7 @@
 {% block content %}
     <form method="POST" class="listAnItem">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{form.as_p}}
         <div class="centralContainer">
             <button type="submit">List Item</button>
         </div>        

@@ -21,10 +21,10 @@
             <tbody>
             {% for message in messageList %}
                 <tr>
-                    <td>{{ message.log_date | date:"d M Y" }}</td>
-                    <td>{{ message.log_date | time:"H:i:s" }}</td>
+                    <td>{{message.log_date | date:"d M Y"}}</td>
+                    <td>{{message.log_date | time:"H:i:s"}}</td>
                     <td>
-                        {{ message.message }}
+                        {{message.message}}
                     </td>
                 </tr>
             {% endfor %}

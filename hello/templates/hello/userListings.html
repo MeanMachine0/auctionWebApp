@@ -7,7 +7,7 @@
 {% block loggedInAs %}
     {% if username %}
     <p style="color: rgb(224, 224, 224)">
-        Logged in as {{ username }}. 
+        Logged in as {{username}}. 
         <br>
         Balance: £{{balance}}
         <br>
@@ -39,7 +39,9 @@
             <th>End</th>
             <th>Returns?</th>
             <th>Bids</th>
-            <th>Top Bidder</th>
+            {% if you %}
+                <th>Top Bidder</th>
+            {% endif %}
             <th>Seller</th>
         </tr>
         </thead>
@@ -59,15 +61,12 @@
                         <td>No</td>
                     {% endif %}
                     <td>{{item.numBids}}</td>
-                    {% if item.buyerId %}
-                        {% idToUsername item.buyerId_id as buyerUsername %}
-                        {% if buyerUsername != username %}
-                            <td><a href="{% url 'userListings' pk=item.buyerId %}">{{buyerUsername}}</a></td>
+                    {% if you %}
+                        {% if item.buyerId %}
+                            <td><a href="{% url 'userListings' pk=item.buyerId %}">{% idToUsername item.buyerId_id %}</a></td>
                         {% else %}
-                            <td>You</td>
+                            <td>None</td>
                         {% endif %}
-                    {% else %}
-                        <td>None</td>
                     {% endif %}
                     {% if you %}
                         <td>You</td>
@@ -100,7 +99,9 @@
                 <th>Returns?</th>
                 <th>Bids</th>
                 <th>Sold?</th>
-                <th>Buyer</th>
+                {% if you %}
+                    <th>Buyer</th>
+                {% endif %}
                 <th>Seller</th>
                 {% if you %}
                     <th>Destination</th>
@@ -129,15 +130,12 @@
                     {% else %}
                         <td>No</td>
                     {% endif %}
-                    {% if item.buyerId %}
-                        {% idToUsername item.buyerId as buyerUsername %}
-                        {% if buyerUsername != username %}
-                            <td><a href="{% url 'userListings' pk=item.buyerId %}">{{buyerUsername}}</a></td>
+                    {% if you %}
+                        {% if item.buyerId %}
+                            <td><a href="{% url 'userListings' pk=item.buyerId %}">{% idToUsername item.buyerId %}</a></td>
                         {% else %}
-                            <td>You</td>
+                            <td>None</td>
                         {% endif %}
-                    {% else %}
-                        <td>None</td>
                     {% endif %}
                     {% if you %}
                         <td>You</td>

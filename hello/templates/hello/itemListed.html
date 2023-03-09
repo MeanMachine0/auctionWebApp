@@ -6,7 +6,7 @@
 {% block loggedInAs %}
     {% if username %}
     <p style="color: rgb(224, 224, 224)">
-        Logged in as {{ username }}. 
+        Logged in as {{username}}. 
         <br>
         Balance: £{{balance}}
         <br>
@@ -22,8 +22,9 @@
 {% endblock %}
 
 {% block content %}
-    <p style="margin-top: -40px;">Your item: "{{ item.name }}" has been listed.</p>
-    <p>
+    <p style="margin-top: -40px; color:rgb(224, 224, 224); text-align: center;">
+        Your item: "{{item.name}}" has been listed.
+        <br>
         <a href="{% url 'itemDetail' pk=item.pk %}">[Go to item listing]</a>
     </p>
 {% endblock %}
