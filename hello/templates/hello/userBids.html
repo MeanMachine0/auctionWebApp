@@ -27,6 +27,7 @@
 
 {% block content %}
     <table>
+    {% if myCurrentItems %}
         <thead>
         <tr>
             <th>Name</th>
@@ -41,6 +42,7 @@
             <th>Seller</th>
         </tr>
         </thead>
+    {% endif %}
         <tbody>
             {% for item in myCurrentItems %}
                 <tr>
@@ -59,6 +61,8 @@
                     {% endif %}
                     <td><a href="{% url 'userListings' pk=item.sellerId %}">{{item.sellerId}}</a></td>
                 </tr>
+            {% empty %}
+                <p style="color: rgb(224, 224, 224)">No Active Listings.</p>
             {% endfor %}
         </tbody>
     </table>
@@ -70,6 +74,7 @@
 </div>
 <div class="centralContainer">
     <table>
+    {% if myOldItems %}
         <thead>
         <tr>
             <th>Name</th>
@@ -85,6 +90,7 @@
             <th>Seller</th>
         </tr>
         </thead>
+    {% endif %}
         <tbody>
         {% for item in myOldItems %}
             <tr>
@@ -104,6 +110,8 @@
                 {% endif %}
                 <td><a href="{% url 'userListings' pk=item.sellerId %}">{{item.sellerId}}</a></td>
             </tr>
+        {% empty %}
+            <p style="color: rgb(224, 224, 224)">No Inactive Listings.</p>
         {% endfor %}
         </tbody>
     </table>

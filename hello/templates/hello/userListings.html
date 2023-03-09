@@ -27,6 +27,7 @@
 
 {% block content %}
     <table>
+    {% if myCurrentItems %}
         <thead>
         <tr>
             <th>Name</th>
@@ -41,8 +42,9 @@
             <th>Seller</th>
         </tr>
         </thead>
-        <tbody>
-            {% for item in myCurrentItems %}
+    {% endif %}
+        {% for item in myCurrentItems %}
+            <tbody>
                 <tr>
                     <td class="limitedRow"><a href="{% url 'itemDetail' pk=item.pk %}">{{item.name}}</a></td>
                     <td>{{item.price}}</td>
@@ -59,8 +61,10 @@
                     {% endif %}
                     <td><a href="{% url 'userListings' pk=item.sellerId %}">{{item.sellerId}}</a></td>
                 </tr>
-            {% endfor %}
-        </tbody>
+            </tbody>
+        {% empty %}
+            <p style="color: rgb(224, 224, 224)">No Active Listings.</p>
+        {% endfor %}
     </table>
 {% endblock %}
 
@@ -70,42 +74,47 @@
 </div>
 <div class="centralContainer">
     <table>
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Price</th>
-            <th>P&P</th>
-            <th>Bid Inc.</th>
-            <th>Condition</th>
-            <th>End</th>
-            <th>Returns?</th>
-            <th>Bids</th>
-            <th>Sold?</th>
-            <th>Buyer</th>
-            <th>Seller</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for item in myOldItems %}
+        {% if myOldItems %}
+            <thead>
             <tr>
-                <td class="limitedRow"><a href="{% url 'endedItemDetail' pk=item.pk %}">{{item.name}}</a></td>
-                <td>{{item.salePrice}}</td>
-                <td>{{item.postageCost}}</td>
-                <td>{{item.bidIncrement}}</td>
-                <td>{{item.condition}}</td>
-                <td>{{item.endDateTime|date:"M d Y, H:i"}}</td>
-                <td>{{item.acceptReturns}}</td>
-                <td>{{item.numBids}}</td>
-                <td>{{item.sold}}</td>
-                {% if item.buyerId %}
-                    <td><a href="{% url 'userListings' pk=item.buyerId %}">{{item.buyerId}}</a></td>
-                {% else %}
-                    <td>None</td>
-                {% endif %}
-                <td><a href="{% url 'userListings' pk=item.sellerId %}">{{item.sellerId}}</a></td>
+                <th>Name</th>
+                <th>Price</th>
+                <th>P&P</th>
+                <th>Bid Inc.</th>
+                <th>Condition</th>
+                <th>End</th>
+                <th>Returns?</th>
+                <th>Bids</th>
+                <th>Sold?</th>
+                <th>Buyer</th>
+                <th>Seller</th>
             </tr>
+            </thead>
+        {% endif %}
+    
+        {% for item in myOldItems %}
+            <tbody>
+                <tr>
+                    <td class="limitedRow"><a href="{% url 'endedItemDetail' pk=item.pk %}">{{item.name}}</a></td>
+                    <td>{{item.salePrice}}</td>
+                    <td>{{item.postageCost}}</td>
+                    <td>{{item.bidIncrement}}</td>
+                    <td>{{item.condition}}</td>
+                    <td>{{item.endDateTime|date:"M d Y, H:i"}}</td>
+                    <td>{{item.acceptReturns}}</td>
+                    <td>{{item.numBids}}</td>
+                    <td>{{item.sold}}</td>
+                    {% if item.buyerId %}
+                        <td><a href="{% url 'userListings' pk=item.buyerId %}">{{item.buyerId}}</a></td>
+                    {% else %}
+                        <td>None</td>
+                    {% endif %}
+                    <td><a href="{% url 'userListings' pk=item.sellerId %}">{{item.sellerId}}</a></td>
+                </tr>
+            </tbody>
+        {% empty %}
+            <p style="color: rgb(224, 224, 224)">No Inactive Listings.</p>
         {% endfor %}
-        </tbody>
     </table>
 </div>
 {% endblock %}
