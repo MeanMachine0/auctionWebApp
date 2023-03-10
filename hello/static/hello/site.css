@@ -186,6 +186,10 @@ th, td {
     color:rgb(224, 224, 224);
 }
 
+.listAnItem {
+    max-width: 200px;
+}
+
 .listAnItem label {
     color:rgb(224, 224, 224);
 }
