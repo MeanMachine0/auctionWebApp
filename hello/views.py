@@ -73,7 +73,7 @@ def itemDetail(request, pk):
                     item.numBids += 1
                     item.buyerId = Accounts.objects.get(user__pk=request.user.pk)
                     bidders=item.getBidders()
-                    bidders.append(username)
+                    bidders.append(item.buyerId_id)
                     item.setBidders(bidders)
                     item.save()
                     message = "Bid Submitted."
@@ -96,15 +96,21 @@ def about(request):
     return render(request, "hello/about.html", {"username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})
 
 def userBids(request):
-    username = getUsernameBalance(request)[0]
-    biddersFilter = {"bidders__contains": username}
-    myCurrentItems = Items.objects.filter(**biddersFilter).order_by("endDateTime")
-    myOldItems = EndedItems.objects.filter(**biddersFilter).order_by("-endDateTime")
+    items = Items.objects.all().order_by("endDateTime")
+    myCurrentItems = []
+    for item in items:
+        if request.user.pk in item.getBidders():
+            myCurrentItems.append(item)
+    eItems = EndedItems.objects.all().order_by("-endDateTime")
+    myOldItems = []
+    for item in eItems:
+        if request.user.pk in item.getBidders():
+            myOldItems.append(item)
 
     return render(
         request, "hello/userBids.html", 
         {
-        "username": username,
+        "username": getUsernameBalance(request)[0],
         "balance": str(getUsernameBalance(request)[1]),
         "myCurrentItems": myCurrentItems, 
         "myOldItems": myOldItems,
