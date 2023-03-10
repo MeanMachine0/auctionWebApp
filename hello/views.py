@@ -98,8 +98,8 @@ def about(request):
 def userBids(request):
     username = getUsernameBalance(request)[0]
     biddersFilter = {"bidders__contains": username}
-    myCurrentItems = Items.objects.filter(**biddersFilter)
-    myOldItems = EndedItems.objects.filter(**biddersFilter)
+    myCurrentItems = Items.objects.filter(**biddersFilter).order_by("endDateTime")
+    myOldItems = EndedItems.objects.filter(**biddersFilter).order_by("-endDateTime")
 
     return render(
         request, "hello/userBids.html", 
