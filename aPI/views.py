@@ -52,3 +52,31 @@ def getEndedItem(request, pk):
     item = get_object_or_404(EndedItems, pk=pk)
     serializer = EndedItemsSerializer(item)
     return Response(serializer.data)
+
+@api_view(["POST"])
+def createUser(request):
+    serializer = UserSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+@api_view(["POST"])
+def createItem(request):
+    serializer = ItemsSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+@api_view(["DELETE"])
+def delUser(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    serializer = UserSerializer(user)
+    user.delete()
+    return Response(serializer.data)
+
+@api_view(["DELETE"])
+def delItem(request, pk):
+    item = get_object_or_404(Items, pk=pk)
+    serializer = ItemsSerializer(item)
+    item.delete()
+    return Response(serializer.data)

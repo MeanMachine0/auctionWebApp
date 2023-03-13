@@ -6,7 +6,7 @@ from django.db.models import CheckConstraint, Q
 import json
 
 class Accounts(models.Model): 
-    user=models.OneToOneField(User, null=True, on_delete=models.CASCADE)
+    user=models.OneToOneField(User, on_delete=models.CASCADE)
     address=models.CharField(max_length=40)
     balance=models.DecimalField(decimal_places=2, max_digits=10, default=0, validators=[MinValueValidator(0)])
 
