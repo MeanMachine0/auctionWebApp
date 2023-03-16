@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from hello.models import Accounts, Items, EndedItems
+from base.models import Accounts, Items, EndedItems
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

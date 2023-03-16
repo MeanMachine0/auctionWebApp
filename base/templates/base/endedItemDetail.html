@@ -1,0 +1,60 @@
+{% extends "base/layout.html" %}
+{% load myTags %}
+
+{% block title %}
+Auction - {{item.name}}
+{% endblock %}
+
+{% block loggedInAs %}
+    {% if username %}
+    <p style="color: rgb(224, 224, 224)">
+        Logged in as {{username}}. 
+        <br>
+        Balance: £{{balance}}
+        <br>
+        <a href="{% url 'logout' %}">Logout</a>
+    </p>
+    {% else %}
+    <p style="color: rgb(224, 224, 224)">
+        You are not logged in. 
+        <br>
+        <a href="{% url 'login' %}">Login</a>
+    </p>
+    {% endif %}
+{% endblock %}
+
+{% block subheader %}
+<h2 style="margin-top: -40px;">
+  {{item.name}}
+</h2> 
+{% endblock %}
+
+{% block content %}
+<div class="leftContainer" style="max-width: 300px;">
+  <p class="textBlock" style="max-width: 260px;">
+    <strong>Summary:</strong><br>
+    Sale Price: £{{item.salePrice}}<br>
+    Postage Cost: £{{item.postageCost}}<br>
+    Bid Increment: £{{item.bidIncrement}}<br>
+    Condition: {{item.get_condition_display}}<br>
+    Ended at: {{item.endDateTime|date:"M d Y, H:i"}}<br>
+    Accepts Returns: {% if item.acceptReturns %}Yes{% else %}No{% endif %}<br>
+    Bids: {{item.numBids}}<br>
+    {% idToUsername item.sellerId as sellerUsername %}
+    {% if sellerUsername != username %}
+      Seller: <a href="{% url 'userListings' pk=item.sellerId %}">{{sellerUsername}}</a>   
+    {% else %}
+      Seller: You
+    {% endif %}
+  </p>
+</div>
+
+<div class="rightContainer" style="max-width: 50vw;">
+  <p class="textBlock">
+    <strong>Description:</strong><br>
+    {{item.description}}
+  </p>
+</div>
+
+<div style="clear: both;"></div>
+{% endblock %}

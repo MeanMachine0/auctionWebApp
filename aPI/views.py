@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.contrib.auth.models import User
-from hello.models import Accounts, Items, EndedItems
+from base.models import Accounts, Items, EndedItems
 from .serializers import AccountsSerializer, UserSerializer, ItemsSerializer, EndedItemsSerializer
 from django.shortcuts import get_object_or_404 
 

@@ -1,0 +1,59 @@
+{% extends "base/layout.html" %}
+
+{% block title %}
+Auction - Browse Items
+{% endblock %}
+
+{% block loggedInAs %}
+    {% if username %}
+    <p style="color: rgb(224, 224, 224)">
+        Logged in as {{username}}. 
+        <br>
+        Balance: £{{balance}}
+        <br>
+        <a href="{% url 'logout' %}">Logout</a>
+    </p>
+    {% else %}
+    <p style="color: rgb(224, 224, 224)">
+        You are not logged in. 
+        <br>
+        <a href="{% url 'login' %}">Login</a>
+    </p>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#collapse').click(function() {
+      $('#sortAndFilterByMenu').slideToggle();
+    });
+  });
+</script>
+
+<div style="max-width: 800px; margin-top: -60px;">
+  <h2>
+    Browse Items <button id="collapse" style="color: rgb(224, 224, 224); background-color: dimgray; font-size: 18px; border: 0px;">Toggle →</button>
+  </h2>
+  {% for item in items %}
+  <li class="borderli" style="max-width: 800px;">
+    <a href="{% url 'itemDetail' pk=item.pk %}">{{item.name}}</a> - £{{item.price}}
+  </li>
+  {% empty %}
+    <p style="color: rgb(224, 224, 224)">No items found.</p>
+  {% endfor %}
+</div>
+
+<div id="sortAndFilterByMenu" class="rightContainer" style="width: 280px; margin-top: -60px;">
+  <h3 style="margin: 35px 0px 20px 0px;">Menu</h3>
+  <form method="POST" class="sortAndFilterByMenu">
+    {% csrf_token %}
+    {{browseForm.as_p}}
+    <hr color="black">
+    <button type="submit" style="margin-bottom: 10px;">Apply</button>
+  </form>
+</div>
+
+<div style="clear: both;"></div>
+{% endblock %}
