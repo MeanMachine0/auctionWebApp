@@ -8,6 +8,11 @@ class UserSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class AccountsSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username',
+    )
+
     class Meta:
         model = Accounts
         fields = "__all__"
