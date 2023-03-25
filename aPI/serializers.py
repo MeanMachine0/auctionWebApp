@@ -26,3 +26,7 @@ class EndedItemsSerializer(serializers.ModelSerializer):
     class Meta:
         model = EndedItems
         fields = "__all__"
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()

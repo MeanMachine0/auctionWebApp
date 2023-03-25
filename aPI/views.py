@@ -6,40 +6,29 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from django.contrib.auth.models import User
 from base.models import Accounts, Items, EndedItems
-from .serializers import AccountsSerializer, UserSerializer, ItemsSerializer, EndedItemsSerializer
+from .serializers import AccountsSerializer, UserSerializer, ItemsSerializer, EndedItemsSerializer, LoginSerializer
 from django.shortcuts import get_object_or_404 
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
-def loginView(request):
-    serializer = UserSerializer(data=request.data)
-    if serializer.is_valid():
-        user = authenticate(request, username=request.data['username'], password=request.data['password'])
-        if user is not None:
-            login(request, user)
-    return Response(serializer.data)
-
-class GetIdToken(ObtainAuthToken):
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data,
-                                           context={"request": request})
+def login(request):
+        serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
-            user = authenticate(request, username=request.data['username'], password=request.data['password'])
+            user = authenticate(username=serializer.validated_data['username'], password=serializer.validated_data['password'])
             if user is not None:
-                login(request, user)
-                user = serializer.validated_data["user"]
-                token, created = Token.objects.get_or_create(user=user)
-        return Response({
-            "userId": user.pk,
-            "token": token.key,
-        })
+                token, _ = Token.objects.get_or_create(user=user)
+                return Response({
+                "userId": user.pk,
+                "token": token.key,
+                })
+        return Response({'error': 'Invalid credentials'})
 
-@api_view(["GET"])
-def logoutView(request):
-    logout(request)
-    return Response(None)
+@api_view(["POST"])
+def logout(request):
+    token = request.META.get("HTTP_AUTHORIZATION").split(' ')[1]
+    Token.objects.filter(key=token).delete()
+    return Response({"message": "Logged out successfully."})
 
 @api_view(["GET"])
 def getUsers(request):

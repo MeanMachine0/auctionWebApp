@@ -15,7 +15,6 @@ urlpatterns = [
     path("api/items/create/", views.createItem, name="createItem"),
     path("api/users/<int:pk>/del/", views.delUser, name="delUser"),
     path("api/items/<int:pk>/del/", views.delItem, name="delItem"),
-    path("api/authToken/", views.GetIdToken.as_view(), name="authToken"),
-    path("api/login/", views.loginView, name="loginAPI"),
-    path("api/logout/", views.logoutView, name="logoutAPI"),
+    path("api/login/", views.login, name="tokenLogin"),
+    path("api/logout/", views.logout, name="tokenLogout"),
 ]
