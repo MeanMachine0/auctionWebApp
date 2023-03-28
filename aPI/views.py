@@ -96,6 +96,7 @@ def createItem(request):
     return Response(serializer.data)
 
 @api_view(["DELETE"])
+@permission_classes([IsAdminUser])
 def delUser(request, pk):
     user = get_object_or_404(User, pk=pk)
     serializer = UserSerializer(user)
@@ -103,6 +104,7 @@ def delUser(request, pk):
     return Response(serializer.data)
 
 @api_view(["DELETE"])
+@permission_classes([IsAdminUser])
 def delItem(request, pk):
     item = get_object_or_404(Items, pk=pk)
     serializer = ItemsSerializer(item)
