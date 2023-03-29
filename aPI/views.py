@@ -95,6 +95,20 @@ def createItem(request):
         serializer.save()
     return Response(serializer.data)
 
+@api_view(["POST"])
+def submitBid(request, pk):
+    accountId = request.data['accountId']
+    item = get_object_or_404(Items, pk=pk)
+    item.price = request.data['price']
+    item.numBids += 1
+    item.buyerId = Accounts.objects.get(user__pk=request.user.pk)
+    bidders = item.getBidders()
+    bidders.append(accountId)
+    item.setBidders(bidders)
+    item.save()
+    serializer = ItemsSerializer(item)
+    return Response(serializer.data)
+
 @api_view(["DELETE"])
 @permission_classes([IsAdminUser])
 def delUser(request, pk):

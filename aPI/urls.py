@@ -13,6 +13,7 @@ urlpatterns = [
     path("api/endedItems/<int:pk>/", views.getEndedItem, name="getEndedItem"),
     path("api/users/create/", views.createUser, name="createUser"),
     path("api/items/create/", views.createItem, name="createItem"),
+    path("api/items/<int:pk>/bid/", views.submitBid, name="submitBid"),
     path("api/users/<int:pk>/del/", views.delUser, name="delUser"),
     path("api/items/<int:pk>/del/", views.delItem, name="delItem"),
     path("api/login/", views.login, name="tokenLogin"),

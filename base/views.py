@@ -75,6 +75,10 @@ def itemDetail(request, pk):
                 elif bid > balance:
                     message = "Could not submit bid: balance < bid."
                 context={"bidForm": bidForm, "item": item, "username": username, "balance": str(balance), "message": message}
+            else: 
+                item = get_object_or_404(Items, pk=pk)
+                bidForm = BidForm()
+                context={"bidForm": bidForm, "item": item, "username": getUsernameBalance(request)[0], "balance": str(balance)}
         else:
             return redirect("/login/")
     else:
