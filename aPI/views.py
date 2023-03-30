@@ -98,14 +98,18 @@ def createItem(request):
 @api_view(["POST"])
 def submitBid(request, pk):
     accountId = request.data['accountId']
+    bid = float(request.data['bid'])
     item = get_object_or_404(Items, pk=pk)
-    item.price = request.data['price']
-    item.numBids += 1
-    item.buyerId = Accounts.objects.get(user__pk=request.user.pk)
-    bidders = item.getBidders()
-    bidders.append(accountId)
-    item.setBidders(bidders)
-    item.save()
+    minBid = float(item.price) + float(item.bidIncrement)
+    if bid >= minBid:
+        item.price = bid
+        item.numBids += 1
+        item.buyerId = Accounts.objects.get(user__pk=request.user.pk)
+        bidders = item.getBidders()
+        bidders.append(accountId)
+        item.setBidders(bidders)
+        item.save()
+    item = get_object_or_404(Items, pk=pk)
     serializer = ItemsSerializer(item)
     return Response(serializer.data)
 
