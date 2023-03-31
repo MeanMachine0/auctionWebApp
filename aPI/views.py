@@ -80,6 +80,19 @@ def getEndedItem(request, pk):
     serializer = EndedItemsSerializer(item)
     return Response(serializer.data)
 
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def getAccountListings(request, pk):
+    items = Items.objects.filter(sellerId=pk)
+    if len(items) == 0:
+        return Response('No items listed under this account.')
+    elif len(items) == 1:
+        item = items.get()
+        serializer = ItemsSerializer(item)
+    else: 
+        serializer = ItemsSerializer(items, many=True)
+    return Response(serializer.data)
+
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def createUser(request):

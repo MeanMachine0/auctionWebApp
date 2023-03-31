@@ -28,10 +28,10 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '127.0.0.1',
     '10.0.2.2',
-    'e223-90-251-175-128.eu.ngrok.io',
+    '2000-90-251-175-128.eu.ngrok.io',
     ]
 
-CSRF_TRUSTED_ORIGINS = ['https://e223-90-251-175-128.eu.ngrok.io']
+CSRF_TRUSTED_ORIGINS = ['https://2000-90-251-175-128.eu.ngrok.io']
 
 # Application definition
 
