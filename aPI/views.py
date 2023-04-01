@@ -1,3 +1,4 @@
+import json
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
@@ -82,12 +83,10 @@ def getEndedItem(request, pk):
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
-def getAccountListings(request, pk):
+def getAccountItems(request, pk):
     items = Items.objects.filter(sellerId=pk)
-    if len(items) == 0:
-        return Response('No items listed under this account.')
-    elif len(items) == 1:
-        item = items.get()
+    if len(items) < 2:
+        item = get_object_or_404(items, sellerId=pk)
         serializer = ItemsSerializer(item)
     else: 
         serializer = ItemsSerializer(items, many=True)
@@ -113,8 +112,12 @@ def submitBid(request, pk):
     accountId = request.data['accountId']
     bid = float(request.data['bid'])
     item = get_object_or_404(Items, pk=pk)
-    minBid = float(item.price) + float(item.bidIncrement)
-    if bid >= minBid:
+    bidIncrement = float(item.bidIncrement)
+    minBid = float(item.price) + bidIncrement
+    postageCost = float(item.postageCost)
+    totalCost = bid + bidIncrement + postageCost
+    balance = float(Accounts.objects.get(pk=accountId).balance)
+    if bid >= minBid and balance >= totalCost and accountId != item.sellerId_id:
         item.price = bid
         item.numBids += 1
         item.buyerId = Accounts.objects.get(user__pk=request.user.pk)
