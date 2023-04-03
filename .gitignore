@@ -1,5 +1,4 @@
 .venv/
 staticCollected/
-db.sqlite3/
-base.sqlite3/
-backup/
+*sqlite3/
+backup.json/
