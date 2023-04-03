@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
-from django.utils.timezone import datetime
+from django.utils import timezone
 from django.shortcuts import redirect
 from django.views.generic import ListView
 from django.db.models import Q
@@ -61,7 +61,9 @@ def itemDetail(request, pk):
             if bidForm.is_valid():
                 bid = bidForm.cleaned_data["bid"]
                 minPrice = item.price + item.bidIncrement
-                if bid >= minPrice and balance >= bid:
+                buyerId = Accounts.objects.get(user__pk=request.user.pk).pk
+                sellerId = item.sellerId_id
+                if bid >= minPrice and balance >= bid and buyerId != sellerId and timezone.now() < item.endDateTime:
                     item.price = bid
                     item.numBids += 1
                     item.buyerId = Accounts.objects.get(user__pk=request.user.pk)
@@ -70,6 +72,10 @@ def itemDetail(request, pk):
                     item.setBidders(bidders)
                     item.save()
                     message = "Bid Submitted."
+                elif buyerId == sellerId:
+                    message = "Could not submit bid: you listed this item."
+                elif timezone.now() >= item.endDateTime:
+                    message = "Could not submit bid: listing has ended."
                 elif bid < minPrice:
                     message = "Could not submit bid: bid < £" + str(minPrice) + "."
                 elif bid > balance:

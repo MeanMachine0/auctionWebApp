@@ -1,3 +1,4 @@
+from django.utils import timezone
 import json
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
@@ -120,7 +121,7 @@ def submitBid(request, pk):
     postageCost = float(item.postageCost)
     totalCost = bid + bidIncrement + postageCost
     balance = float(Accounts.objects.get(pk=accountId).balance)
-    if bid >= minBid and balance >= totalCost and accountId != item.sellerId_id:
+    if bid >= minBid and balance >= totalCost and accountId != item.sellerId_id and timezone.now() < item.endDateTime:
         item.price = bid
         item.numBids += 1
         item.buyerId = Accounts.objects.get(user__pk=request.user.pk)
