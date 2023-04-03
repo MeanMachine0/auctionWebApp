@@ -1,2 +1,4 @@
 .venv/
 staticCollected/
+db.sqlite3/
+base.sqlite3/
