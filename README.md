@@ -14,8 +14,8 @@ A Django web app with a REST API that is used to communicate with a Flutter mobi
 - View all the active and inactive items you have previously bidded on.
 
 ### REST API
-Allows users to interact with the web app's database on their mobile device.
-This grants the mobile app the same functionality as the website for users.
+- Allows users to interact with the web app's database on their mobile device, granting the mobile app the same functionality as the website for users.
+- Securely authenticate users via token authentication.
 
 ## Aims
 - To broaden my knowledge of web development.
