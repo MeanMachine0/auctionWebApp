@@ -70,7 +70,10 @@ def getItem(request, pk):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def getEndedItems(request):
-    items = EndedItems.objects.all()
+    if request.headers["sold"] == "yes":
+        items = EndedItems.objects.filter(sold=True)
+    else: 
+        items = EndedItems.objects.all()
     serializer = EndedItemsSerializer(items, many=True)
     return Response(serializer.data)
 
