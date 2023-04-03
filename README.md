@@ -1,5 +1,5 @@
 # auctionWebApp
-A Django web app with a REST API that is used to communicate to a Flutter mobile app.
+A Django web app with a REST API that is used to communicate with a Flutter mobile app in JSON.
 
 ## Functions
 ### When not logged in
