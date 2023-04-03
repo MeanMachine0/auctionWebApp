@@ -2,3 +2,4 @@
 staticCollected/
 db.sqlite3/
 base.sqlite3/
+backup/
