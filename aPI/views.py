@@ -10,6 +10,11 @@ from .serializers import AccountsSerializer, UserSerializer, ItemsSerializer, En
 from django.shortcuts import get_object_or_404 
 from django.contrib.auth import authenticate
 
+toBool = {
+    'true': True,
+    'false': False,
+}
+
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def login(request):
@@ -58,6 +63,9 @@ def getAccount(request, pk):
 @permission_classes([AllowAny])
 def getItems(request):
     items = Items.objects.all()
+    for item in items:
+        item.bidders = '[]'
+        item.buyerId = None
     serializer = ItemsSerializer(items, many=True)
     return Response(serializer.data)
 
@@ -65,16 +73,22 @@ def getItems(request):
 @permission_classes([AllowAny])
 def getItem(request, pk):
     item = get_object_or_404(Items, pk=pk)
+    seller = int(request.headers['accountId']) == item.sellerId_id
+    if not seller:
+        item.bidders = '[]'
+        item.buyerId = None
     serializer = ItemsSerializer(item)
     return Response(serializer.data)
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def getEndedItems(request):
-    if request.headers["sold"] == "yes":
-        items = EndedItems.objects.filter(sold=True)
-    else: 
-        items = EndedItems.objects.all()
+    sold = toBool[request.headers["sold"].lower()] == True
+    items = EndedItems.objects.filter(sold=True) if sold else EndedItems.objects.all()
+    for item in items:
+        item.bidders = '[]'
+        item.buyerId = None
+        item.destinationAddress = None
     serializer = EndedItemsSerializer(items, many=True)
     return Response(serializer.data)
 
@@ -82,18 +96,41 @@ def getEndedItems(request):
 @permission_classes([AllowAny])
 def getEndedItem(request, pk):
     item = get_object_or_404(EndedItems, pk=pk)
+    seller = int(request.headers['accountId']) == item.sellerId
+    if not seller:
+        item.bidders = '[]'
+        item.buyerId = None
+        item.destinationAddress = None
     serializer = EndedItemsSerializer(item)
     return Response(serializer.data)
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def getAccountItems(request, pk):
-    items = Items.objects.filter(sellerId=pk)
-    if len(items) < 2:
-        item = get_object_or_404(items, sellerId=pk)
-        serializer = ItemsSerializer(item)
+    seller = int(request.headers['accountId']) == pk
+    ended = toBool[request.headers['ended'].lower()] == True
+    items = EndedItems.objects.filter(sellerId=pk) if ended else Items.objects.filter(sellerId=pk)
+    if seller:
+        if len(items) < 2:
+            item = get_object_or_404(items, sellerId=pk)
+            serializer = EndedItemsSerializer(item) if ended else ItemsSerializer(item)
+        else: 
+            serializer = EndedItemsSerializer(items, many=True) if ended else ItemsSerializer(items, many=True)
     else: 
-        serializer = ItemsSerializer(items, many=True)
+        if len(items) < 2:
+            item = get_object_or_404(items, sellerId=pk)
+            item.bidders = '[]'
+            item.buyerId = None
+            if ended:
+                item.destinationAddress = None
+            serializer = EndedItemsSerializer(item) if ended else ItemsSerializer(item)
+        else: 
+            for item in items:
+                item.bidders = '[]'
+                item.buyerId = None
+                if ended:
+                    item.destinationAddress = None
+            serializer = EndedItemsSerializer(items, many=True) if ended else ItemsSerializer(items, many=True)
     return Response(serializer.data)
 
 @api_view(["POST"])
