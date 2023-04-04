@@ -101,7 +101,7 @@
         {% for item in myOldItems %}
             <tr>
                 <td class="limitedRow"><a href="{% url 'endedItemDetail' pk=item.pk %}">{{item.name}}</a></td>
-                <td>{{item.salePrice}}</td>
+                <td>{{item.price}}</td>
                 <td>{{item.postageCost}}</td>
                 <td>{{item.bidIncrement}}</td>
                 <td>{{item.condition}}</td>

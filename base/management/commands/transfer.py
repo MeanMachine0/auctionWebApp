@@ -47,14 +47,14 @@ def transferItems():
                 bId=item.buyerId.pk
                 isSold=True
                         
-            EndedItems.objects.create(name=item.name, salePrice=price, postageCost=item.postageCost, bidIncrement=item.bidIncrement, 
+            EndedItems.objects.create(name=item.name, price=price, postageCost=item.postageCost, bidIncrement=item.bidIncrement, 
                                     condition=item.condition, endDateTime=item.endDateTime, acceptReturns=item.acceptReturns,
                                     description=item.description, numBids=item.numBids, bidders=item.bidders, sold=isSold, buyerId=bId, 
                                     sellerId=item.sellerId.pk, destinationAddress=address)
                     
         for item in endedItems:
             if item not in soldItems:
-                EndedItems.objects.create(name=item.name, salePrice=item.price, postageCost=item.postageCost, bidIncrement=item.bidIncrement, 
+                EndedItems.objects.create(name=item.name, price=item.price, postageCost=item.postageCost, bidIncrement=item.bidIncrement, 
                                         condition=item.condition, endDateTime=item.endDateTime, acceptReturns=item.acceptReturns,
                                         description=item.description, numBids=item.numBids, bidders=item.bidders, sold=False, buyerId=None, 
                                         sellerId=item.sellerId.pk, destinationAddress=None)    
