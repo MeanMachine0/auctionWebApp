@@ -19,4 +19,5 @@ urlpatterns = [
     path("api/items/<int:pk>/del/", views.delItem, name="delItem"),
     path("api/login/", views.login, name="tokenLogin"),
     path("api/logout/", views.logout, name="tokenLogout"),
+    path("api/amITheBuyer/<int:pk>/", views.amITheBuyer, name="amITheBuyer"),
 ]

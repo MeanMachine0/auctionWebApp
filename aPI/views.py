@@ -3,7 +3,7 @@ import json
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny, IsAdminUser
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from django.contrib.auth.models import User
 from base.models import Accounts, Items, EndedItems
 from .serializers import AccountsSerializer, UserSerializer, ItemsSerializer, EndedItemsSerializer, LoginSerializer
@@ -73,7 +73,7 @@ def getItems(request):
 @permission_classes([AllowAny])
 def getItem(request, pk):
     item = get_object_or_404(Items, pk=pk)
-    seller = int(request.headers['accountId']) == item.sellerId_id
+    seller = request.user.pk == item.sellerId_id
     if not seller:
         item.bidders = '[]'
         item.buyerId = None
@@ -96,7 +96,7 @@ def getEndedItems(request):
 @permission_classes([AllowAny])
 def getEndedItem(request, pk):
     item = get_object_or_404(EndedItems, pk=pk)
-    seller = int(request.headers['accountId']) == item.sellerId
+    seller = request.user.pk == item.sellerId
     if not seller:
         item.bidders = '[]'
         item.buyerId = None
@@ -107,7 +107,7 @@ def getEndedItem(request, pk):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def getAccountItems(request, pk):
-    seller = int(request.headers['accountId']) == pk
+    seller = request.user.pk == pk
     ended = toBool[request.headers['ended'].lower()] == True
     items = EndedItems.objects.filter(sellerId=pk) if ended else Items.objects.filter(sellerId=pk)
     if seller:
@@ -132,6 +132,17 @@ def getAccountItems(request, pk):
                     item.destinationAddress = None
             serializer = EndedItemsSerializer(items, many=True) if ended else ItemsSerializer(items, many=True)
     return Response(serializer.data)
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def amITheBuyer(request, pk):
+    accountId = request.user.pk
+    if accountId is None:
+        return Response({'IAmTheBuyer': False})
+    ended = toBool[request.headers['ended'].lower()] == True
+    item = EndedItems.objects.get(pk=pk) if ended else Items.objects.get(pk=pk)
+    IAmTheBuyer = item.buyerId == accountId if ended else item.buyerId_id == accountId
+    return Response({'IAmTheBuyer': IAmTheBuyer})
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
