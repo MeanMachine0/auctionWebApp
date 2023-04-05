@@ -157,7 +157,7 @@ def createItem(request):
     serializer = ItemsSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-    return Response(serializer.data)
+    return Response({'itemId': serializer.data['id']})
 
 @api_view(["POST"])
 def submitBid(request, pk):
