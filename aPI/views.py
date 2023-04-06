@@ -144,6 +144,34 @@ def amITheBuyer(request, pk):
     IAmTheBuyer = item.buyerId == accountId if ended else item.buyerId_id == accountId
     return Response({'IAmTheBuyer': IAmTheBuyer})
 
+@api_view(["GET"])
+def getItemsBidOnByMe(request, pk):
+    accountId = request.user.pk
+    if accountId != pk:
+        return Response(None)
+    ended = toBool[request.headers['ended'].lower()] == True
+    items = EndedItems.objects.exclude(bidders="[]") if ended else Items.objects.all()
+    itemsBidOnByMe = []
+    for item in items:
+        bidders = item.getBidders()
+        if accountId in bidders:
+            itemBuyerId = item.buyerId if ended else item.buyerId_id
+            if itemBuyerId != accountId:
+                item.bidders = '[]'
+                item.buyerId = None
+                if ended:
+                    item.destinationAddress = None
+            itemsBidOnByMe.append(item)
+            if len(itemsBidOnByMe) == 1:
+                firstItemBidOnByMeId = item.pk
+    if len(itemsBidOnByMe) < 2:
+            itemBidOnByMe = get_object_or_404(pk=firstItemBidOnByMeId)
+            serializer = EndedItemsSerializer(itemBidOnByMe) if ended else ItemsSerializer(itemBidOnByMe)
+    else: 
+        serializer = EndedItemsSerializer(itemsBidOnByMe, many=True) if ended else ItemsSerializer(itemsBidOnByMe, many=True)
+    return Response(serializer.data)
+
+
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def createUser(request):
