@@ -152,6 +152,7 @@ def getItemsBidOnByMe(request, pk):
     ended = toBool[request.headers['ended'].lower()] == True
     items = EndedItems.objects.exclude(bidders="[]") if ended else Items.objects.all()
     itemsBidOnByMe = []
+    firstItemBidOnByMeId = 0
     for item in items:
         bidders = item.getBidders()
         if accountId in bidders:
@@ -165,7 +166,7 @@ def getItemsBidOnByMe(request, pk):
             if len(itemsBidOnByMe) == 1:
                 firstItemBidOnByMeId = item.pk
     if len(itemsBidOnByMe) < 2:
-            itemBidOnByMe = get_object_or_404(pk=firstItemBidOnByMeId)
+            itemBidOnByMe = get_object_or_404(EndedItems if ended else Items, pk=firstItemBidOnByMeId)
             serializer = EndedItemsSerializer(itemBidOnByMe) if ended else ItemsSerializer(itemBidOnByMe)
     else: 
         serializer = EndedItemsSerializer(itemsBidOnByMe, many=True) if ended else ItemsSerializer(itemsBidOnByMe, many=True)
