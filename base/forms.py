@@ -18,6 +18,19 @@ class ItemsForm(forms.Form):
     endDateTime = forms.DateTimeField(label="End date and time", validators=[validators.future])
     acceptReturns = forms.BooleanField(label="Accept returns", required=False)
     description = forms.CharField(widget=forms.Textarea, label="Description", max_length=1000)
+    categories = [
+        ("bOIS", "Business, Office & Industrial Supplies"),
+        ("hB", "Health & Beauty"),
+        ("f", "Fashion"),
+        ("e", "Electronics"),
+        ("hG", "Home Garden"),
+        ("sHL", "Sports, Hobbies & Leisure"),
+        ("mt", "Motors"),
+        ("cA", "Collectables & Art"),
+        ("mda", "Media"),
+        ("o", "Other"),
+    ]
+    category = forms.ChoiceField(choices=categories, label="Category", widget=forms.Select(attrs={"style": "background-color: lightblue"}))
 
 class BrowseForm(forms.Form):
     sortByChoices = [
@@ -27,7 +40,7 @@ class BrowseForm(forms.Form):
         ("endDateTime", "Time Remaining"),
     ]
     conditions = ("new", "excellent", "good", "used", "refurbished", "partsOnly")
-    
+    categories = ()
     search = forms.CharField(label="Search", required=False, widget=forms.TextInput(attrs={"style": "width: 155px;"}))
     sortBy = forms.ChoiceField(choices=sortByChoices, label="Sort By", widget=forms.Select(attrs={"style": "background-color: lightblue;" "font-size: 20px;" "border: 2px solid black;"}))
     ascending = forms.BooleanField(label="Ascending", required=False, initial=True)

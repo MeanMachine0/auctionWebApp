@@ -62,7 +62,7 @@
                     {% endif %}
                     <td>{{item.numBids}}</td>
                     {% if you %}
-                        {% if item.buyerId %}
+                        {% if item.buyer %}
                             <td><a href="{% url 'userListings' pk=item.buyer %}">{% idToUsername item.buyer_id %}</a></td>
                         {% else %}
                             <td>None</td>
@@ -131,7 +131,7 @@
                         <td>No</td>
                     {% endif %}
                     {% if you %}
-                        {% if item.buyerId %}
+                        {% if item.buyer %}
                             <td><a href="{% url 'userListings' pk=item.buyer %}">{% idToUsername item.buyer_id %}</a></td>
                         {% else %}
                             <td>None</td>

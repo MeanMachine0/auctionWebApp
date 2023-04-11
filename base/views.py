@@ -186,17 +186,18 @@ def listAnItem(request):
         form = ItemsForm(request.POST)
         if request.user.is_authenticated:
             if form.is_valid():
-                item_data = form.cleaned_data
+                itemData = form.cleaned_data
                 item = Items.objects.create(
-                    name=item_data["name"],
-                    price=item_data["price"],
-                    postageCost=item_data["postageCost"],
-                    bidIncrement=item_data["bidIncrement"],
-                    condition=item_data["condition"],
-                    endDateTime=item_data["endDateTime"],
-                    acceptReturns=item_data["acceptReturns"],
-                    description=item_data["description"],
-                    sellerId=Accounts.objects.get(pk=request.user.pk),
+                    name=itemData["name"],
+                    price=itemData["price"],
+                    postageCost=itemData["postageCost"],
+                    bidIncrement=itemData["bidIncrement"],
+                    condition=itemData["condition"],
+                    endDateTime=itemData["endDateTime"],
+                    acceptReturns=itemData["acceptReturns"],
+                    description=itemData["description"],
+                    seller=Accounts.objects.get(pk=request.user.pk),
+                    category=itemData["category"],
                 )
                 return redirect("itemListed/" + str(item.pk) + "/")
         else:

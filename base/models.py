@@ -45,7 +45,19 @@ class Items(models.Model):
     seller = models.ForeignKey(Accounts, to_field="id", on_delete=models.DO_NOTHING, related_name="sId", blank=True, null=True)
     destinationAddress = models.CharField(max_length=200, blank=True, null=True)
     transactionSuccess = models.BooleanField(blank=True, null=True)
-
+    categories = [
+        ("bOIS", "Business, Office & Industrial Supplies"),
+        ("hB", "Health & Beauty"),
+        ("f", "Fashion"),
+        ("e", "Electronics"),
+        ("hG", "Home Garden"),
+        ("sHL", "Sports, Hobbies & Leisure"),
+        ("mt", "Motors"),
+        ("cA", "Collectables & Art"),
+        ("mda", "Media"),
+        ("o", "Other"),
+    ]
+    category = models.CharField(max_length=50, choices=categories, default="e")
     def getBidders(self):
         return json.loads(self.bidders)
     

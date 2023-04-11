@@ -164,7 +164,12 @@ def createUser(request):
 def createItem(request):
     serializer = ItemsSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
+        if serializer.validated_data['seller'].id == request.user.pk:
+            serializer.save()
+        else:
+            return Response({'error': 'Invalid credentials.'})
+    else:
+        return Response({'error': 'Invalid item.'})
     return Response({'itemId': serializer.data['id']})
 
 @api_view(["POST"])
