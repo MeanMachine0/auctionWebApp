@@ -63,7 +63,7 @@
                     <td>{{item.numBids}}</td>
                     {% if you %}
                         {% if item.buyerId %}
-                            <td><a href="{% url 'userListings' pk=item.buyer %}">{% idToUsername item.buyer.id %}</a></td>
+                            <td><a href="{% url 'userListings' pk=item.buyer %}">{% idToUsername item.buyer_id %}</a></td>
                         {% else %}
                             <td>None</td>
                         {% endif %}
@@ -71,7 +71,7 @@
                     {% if you %}
                         <td>You</td>
                     {% else %}
-                        <td><a href="{% url 'userListings' pk=item.seller %}">{% idToUsername item.seller.id %}</a></td>
+                        <td><a href="{% url 'userListings' pk=item.seller %}">{% idToUsername item.seller_id %}</a></td>
                     {% endif %}
                 </tr>
             </tbody>
@@ -132,7 +132,7 @@
                     {% endif %}
                     {% if you %}
                         {% if item.buyerId %}
-                            <td><a href="{% url 'userListings' pk=item.buyer %}">{% idToUsername item.buyer.id %}</a></td>
+                            <td><a href="{% url 'userListings' pk=item.buyer %}">{% idToUsername item.buyer_id %}</a></td>
                         {% else %}
                             <td>None</td>
                         {% endif %}
@@ -141,7 +141,7 @@
                         <td>You</td>
                         <td>{{item.destinationAddress}}</td>
                     {% else %}
-                        <td><a href="{% url 'userListings' pk=item.seller %}">{% idToUsername item.seller.id %}</a></td>
+                        <td><a href="{% url 'userListings' pk=item.seller %}">{% idToUsername item.seller_id %}</a></td>
                     {% endif %}
                 </tr>
             </tbody>

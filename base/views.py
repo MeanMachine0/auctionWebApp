@@ -62,13 +62,13 @@ def itemDetail(request, pk):
                 bid = bidForm.cleaned_data["bid"]
                 minPrice = item.price + item.bidIncrement
                 buyerId = Accounts.objects.get(user__pk=request.user.pk).pk
-                sellerId = item.seller.id
+                sellerId = item.seller_id
                 if bid >= minPrice and balance >= bid and buyerId != sellerId and timezone.now() < item.endDateTime:
                     item.price = bid
                     item.numBids += 1
                     item.buyer = Accounts.objects.get(user__pk=request.user.pk)
                     bidders=item.getBidders()
-                    bidders.append(item.buyer.id)
+                    bidders.append(item.buyer_id)
                     item.setBidders(bidders)
                     item.save()
                     message = "Bid Submitted."

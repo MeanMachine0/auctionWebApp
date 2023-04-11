@@ -19,8 +19,8 @@ def updateItems():
             transaction = True
             while transaction is True:
                 price = item.price
-                buyer = Accounts.objects.get(pk=item.buyer.id)
-                seller = Accounts.objects.get(pk=item.seller.id)
+                buyer = Accounts.objects.get(pk=item.buyer_id)
+                seller = Accounts.objects.get(pk=item.seller_id)
                 #Attempting buyer side of transaction:
                 try:
                     buyer.balance -= price

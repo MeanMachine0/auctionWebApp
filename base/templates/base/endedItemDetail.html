@@ -40,7 +40,7 @@ Auction - {{item.name}}
     Ended at: {{item.endDateTime|date:"M d Y, H:i"}}<br>
     Accepts Returns: {% if item.acceptReturns %}Yes{% else %}No{% endif %}<br>
     Bids: {{item.numBids}}<br>
-    {% idToUsername item.seller.id as sellerUsername %}
+    {% idToUsername item.seller_id as sellerUsername %}
     {% if sellerUsername != username %}
       Seller: <a href="{% url 'userListings' pk=item.seller %}">{{sellerUsername}}</a>   
     {% else %}

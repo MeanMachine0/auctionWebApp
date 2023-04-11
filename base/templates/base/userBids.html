@@ -59,13 +59,13 @@
                         <td>No</td>
                     {% endif %}
                     <td>{{item.numBids}}</td>
-                    {% idToUsername item.buyer.id as buyerUsername %}
+                    {% idToUsername item.buyer_id as buyerUsername %}
                     {% if buyerUsername != username %}
                         <td>Not You</a></td>
                     {% else %}
                         <td>You</td>
                     {% endif %}
-                    <td><a href="{% url 'userListings' pk=item.seller %}">{% idToUsername item.seller.id %}</a></td>
+                    <td><a href="{% url 'userListings' pk=item.seller %}">{% idToUsername item.seller_id %}</a></td>
                 </tr>
             {% empty %}
                 <p style="color: rgb(224, 224, 224)">No Active Bids.</p>
@@ -117,8 +117,8 @@
                 {% else %}
                     <td>No</td>
                 {% endif %}
-                {% if item.buyer.id %}
-                    {% idToUsername item.buyer.id as buyerUsername %}
+                {% if item.buyer_id %}
+                    {% idToUsername item.buyer_id as buyerUsername %}
                     {% if buyerUsername != username %}
                         <td>Not You</a></td>
                     {% else %}
@@ -127,7 +127,7 @@
                 {% else %}
                     <td>None</td>
                 {% endif %}
-                <td><a href="{% url 'userListings' pk=item.seller %}">{% idToUsername item.seller.id %}</a></td>
+                <td><a href="{% url 'userListings' pk=item.seller %}">{% idToUsername item.seller_id %}</a></td>
             </tr>
         {% empty %}
             <p style="color: rgb(224, 224, 224)">No Inactive Bids.</p>
