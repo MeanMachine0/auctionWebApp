@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.shortcuts import redirect
 from django.views.generic import ListView
 from django.db.models import Q
-from .models import EndedItems, Items, Accounts
+from .models import Items, Accounts
 from .forms import ItemsForm, BrowseForm, BidForm
 
 def getUsernameBalance(request):
@@ -18,7 +18,7 @@ def getUsernameBalance(request):
     return (username, balance)
 
 class HomeListView(ListView):
-    model = EndedItems
+    model = Items
     def get_context_data(self, **kwargs):
         context = super(HomeListView, self).get_context_data(**kwargs)
         context["username"]  = getUsernameBalance(self.request)[0]
@@ -56,19 +56,19 @@ def itemDetail(request, pk):
     balance = getUsernameBalance(request)[1]
     if request.method == "POST":
         bidForm = BidForm(request.POST)
-        item = Items.objects.get(pk=pk)
+        item = get_object_or_404(Items.objects.filter(ended=False), pk=pk)
         if request.user.is_authenticated:
             if bidForm.is_valid():
                 bid = bidForm.cleaned_data["bid"]
                 minPrice = item.price + item.bidIncrement
                 buyerId = Accounts.objects.get(user__pk=request.user.pk).pk
-                sellerId = item.sellerId_id
+                sellerId = item.seller.id
                 if bid >= minPrice and balance >= bid and buyerId != sellerId and timezone.now() < item.endDateTime:
                     item.price = bid
                     item.numBids += 1
-                    item.buyerId = Accounts.objects.get(user__pk=request.user.pk)
+                    item.buyer = Accounts.objects.get(user__pk=request.user.pk)
                     bidders=item.getBidders()
-                    bidders.append(item.buyerId_id)
+                    bidders.append(item.buyer.id)
                     item.setBidders(bidders)
                     item.save()
                     message = "Bid Submitted."
@@ -82,13 +82,13 @@ def itemDetail(request, pk):
                     message = "Could not submit bid: balance < bid."
                 context={"bidForm": bidForm, "item": item, "username": username, "balance": str(balance), "message": message}
             else: 
-                item = get_object_or_404(Items, pk=pk)
+                item = get_object_or_404(Items.objects.filter(ended=False), pk=pk)
                 bidForm = BidForm()
                 context={"bidForm": bidForm, "item": item, "username": getUsernameBalance(request)[0], "balance": str(balance)}
         else:
             return redirect("/login/")
     else:
-        item = get_object_or_404(Items, pk=pk)
+        item = get_object_or_404(Items.objects.filter(ended=False), pk=pk)
         bidForm = BidForm()
         context={"bidForm": bidForm, "item": item, "username": getUsernameBalance(request)[0], "balance": str(balance)}
 
@@ -99,12 +99,12 @@ def about(request):
     return render(request, "base/about.html", {"username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})
 
 def userBids(request):
-    items = Items.objects.all().order_by("endDateTime")
+    items = Items.objects.filter(ended=False).order_by("endDateTime")
     myCurrentItems = []
     for item in items:
         if request.user.pk in item.getBidders():
             myCurrentItems.append(item)
-    eItems = EndedItems.objects.all().order_by("-endDateTime")
+    eItems = Items.objects.filter(ended=True).order_by("-endDateTime")
     myOldItems = []
     for item in eItems:
         if request.user.pk in item.getBidders():
@@ -121,8 +121,8 @@ def userBids(request):
         )
 
 def userListings(request, pk):
-    myCurrentItems = Items.objects.filter(sellerId=pk).order_by("endDateTime")
-    myOldItems = EndedItems.objects.filter(sellerId=pk).order_by("-endDateTime")
+    myCurrentItems = Items.objects.filter(Q(ended=False) & Q(seller=pk)).order_by("endDateTime")
+    myOldItems = Items.objects.filter(Q(ended=True) & Q(seller=pk)).order_by("-endDateTime")
     you = True if request.user.pk == pk else False
 
     return render(
@@ -140,7 +140,7 @@ def browse(request):
     if request.method == "POST":
         browseForm = BrowseForm(request.POST)
         if browseForm.is_valid():
-            items = Items.objects.all()
+            items = Items.objects.filter(ended=False)
             itemsToDelete = items.filter(name="test")
             for item in itemsToDelete:
                 item.delete()
@@ -172,7 +172,7 @@ def browse(request):
         
     else:
         browseForm = BrowseForm()
-        items = Items.objects.all()
+        items = Items.objects.filter(ended=False)
         context = {
             "items": items.order_by("id"), 
             "browseForm": browseForm,
@@ -210,5 +210,5 @@ def itemListed(request, pk):
     return render(request, "base/itemListed.html", {"item": item, "username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})
 
 def endedItemDetail(request, pk):
-    item = get_object_or_404(EndedItems, pk=pk)
+    item = get_object_or_404(Items.objects.filter(ended=True), pk=pk)
     return render(request, "base/endedItemDetail.html", {"item": item, "username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})

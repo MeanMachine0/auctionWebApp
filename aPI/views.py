@@ -1,12 +1,12 @@
 from django.utils import timezone
-import json
+from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
+from rest_framework.permissions import AllowAny, IsAdminUser
 from django.contrib.auth.models import User
-from base.models import Accounts, Items, EndedItems
-from .serializers import AccountsSerializer, UserSerializer, ItemsSerializer, EndedItemsSerializer, LoginSerializer
+from base.models import Accounts, Items
+from .serializers import AccountsSerializer, UserSerializer, ItemsSerializer, LoginSerializer
 from django.shortcuts import get_object_or_404 
 from django.contrib.auth import authenticate
 
@@ -62,21 +62,21 @@ def getAccount(request, pk):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def getItems(request):
-    items = Items.objects.all()
+    items = Items.objects.filter(ended=False)
     for item in items:
         item.bidders = '[]'
-        item.buyerId = None
+        item.buyer = None
     serializer = ItemsSerializer(items, many=True)
     return Response(serializer.data)
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def getItem(request, pk):
-    item = get_object_or_404(Items, pk=pk)
-    seller = request.user.pk == item.sellerId_id
+    item = get_object_or_404(Items.objects.filter(ended=False), pk=pk)
+    seller = request.user.pk == item.seller.id
     if not seller:
         item.bidders = '[]'
-        item.buyerId = None
+        item.buyer = None
     serializer = ItemsSerializer(item)
     return Response(serializer.data)
 
@@ -84,24 +84,24 @@ def getItem(request, pk):
 @permission_classes([AllowAny])
 def getEndedItems(request):
     sold = toBool[request.headers["sold"].lower()] == True
-    items = EndedItems.objects.filter(sold=True) if sold else EndedItems.objects.all()
-    for item in items:
+    endedItems = Items.objects.filter(sold=True) if sold else Items.objects.filter(ended=True)
+    for item in endedItems:
         item.bidders = '[]'
-        item.buyerId = None
+        item.buyer = None
         item.destinationAddress = None
-    serializer = EndedItemsSerializer(items, many=True)
+    serializer = ItemsSerializer(endedItems, many=True)
     return Response(serializer.data)
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def getEndedItem(request, pk):
-    item = get_object_or_404(EndedItems, pk=pk)
-    seller = request.user.pk == item.sellerId
+    endedItem = get_object_or_404(Items.objects.filter(ended=True), pk=pk)
+    seller = request.user.pk == endedItem.seller
     if not seller:
-        item.bidders = '[]'
-        item.buyerId = None
-        item.destinationAddress = None
-    serializer = EndedItemsSerializer(item)
+        endedItem.bidders = '[]'
+        endedItem.buyer = None
+        endedItem.destinationAddress = None
+    serializer = ItemsSerializer(endedItem)
     return Response(serializer.data)
 
 @api_view(["GET"])
@@ -109,28 +109,28 @@ def getEndedItem(request, pk):
 def getAccountItems(request, pk):
     seller = request.user.pk == pk
     ended = toBool[request.headers['ended'].lower()] == True
-    items = EndedItems.objects.filter(sellerId=pk) if ended else Items.objects.filter(sellerId=pk)
+    items = Items.objects.filter(Q(seller=pk) & Q(ended=ended))
     if seller:
         if len(items) < 2:
             item = get_object_or_404(items, sellerId=pk)
-            serializer = EndedItemsSerializer(item) if ended else ItemsSerializer(item)
+            serializer = ItemsSerializer(item)
         else: 
-            serializer = EndedItemsSerializer(items, many=True) if ended else ItemsSerializer(items, many=True)
+            serializer = ItemsSerializer(items, many=True)
     else: 
         if len(items) < 2:
             item = get_object_or_404(items, sellerId=pk)
             item.bidders = '[]'
-            item.buyerId = None
+            item.buyer = None
             if ended:
                 item.destinationAddress = None
-            serializer = EndedItemsSerializer(item) if ended else ItemsSerializer(item)
+            serializer = ItemsSerializer(item)
         else: 
             for item in items:
                 item.bidders = '[]'
-                item.buyerId = None
+                item.buyer = None
                 if ended:
                     item.destinationAddress = None
-            serializer = EndedItemsSerializer(items, many=True) if ended else ItemsSerializer(items, many=True)
+            serializer = ItemsSerializer(items, many=True)
     return Response(serializer.data)
 
 @api_view(["GET"])
@@ -139,9 +139,8 @@ def amITheBuyer(request, pk):
     accountId = request.user.pk
     if accountId is None:
         return Response({'IAmTheBuyer': False})
-    ended = toBool[request.headers['ended'].lower()] == True
-    item = EndedItems.objects.get(pk=pk) if ended else Items.objects.get(pk=pk)
-    IAmTheBuyer = item.buyerId == accountId if ended else item.buyerId_id == accountId
+    item = Items.objects.get(pk=pk)
+    IAmTheBuyer = item.buyer.id == accountId
     return Response({'IAmTheBuyer': IAmTheBuyer})
 
 @api_view(["GET"])
@@ -150,26 +149,27 @@ def getItemsBidOnByMe(request, pk):
     if accountId != pk:
         return Response(None)
     ended = toBool[request.headers['ended'].lower()] == True
-    items = EndedItems.objects.exclude(bidders="[]") if ended else Items.objects.all()
+    items = Items.objects.filter(ended=ended)
+    items = items.exclude(bidders="[]")
     itemsBidOnByMe = []
     firstItemBidOnByMeId = 0
     for item in items:
         bidders = item.getBidders()
         if accountId in bidders:
-            itemBuyerId = item.buyerId if ended else item.buyerId_id
+            itemBuyerId = item.buyer.id
             if itemBuyerId != accountId:
                 item.bidders = '[]'
-                item.buyerId = None
+                item.buyer = None
                 if ended:
                     item.destinationAddress = None
             itemsBidOnByMe.append(item)
             if len(itemsBidOnByMe) == 1:
                 firstItemBidOnByMeId = item.pk
     if len(itemsBidOnByMe) < 2:
-            itemBidOnByMe = get_object_or_404(EndedItems if ended else Items, pk=firstItemBidOnByMeId)
-            serializer = EndedItemsSerializer(itemBidOnByMe) if ended else ItemsSerializer(itemBidOnByMe)
+            itemBidOnByMe = get_object_or_404(Items, pk=firstItemBidOnByMeId)
+            serializer = ItemsSerializer(itemBidOnByMe)
     else: 
-        serializer = EndedItemsSerializer(itemsBidOnByMe, many=True) if ended else ItemsSerializer(itemsBidOnByMe, many=True)
+        serializer = ItemsSerializer(itemsBidOnByMe, many=True)
     return Response(serializer.data)
 
 
@@ -198,10 +198,10 @@ def submitBid(request, pk):
     postageCost = float(item.postageCost)
     totalCost = bid + bidIncrement + postageCost
     balance = float(Accounts.objects.get(pk=accountId).balance)
-    if bid >= minBid and balance >= totalCost and accountId != item.sellerId_id and timezone.now() < item.endDateTime:
+    if bid >= minBid and balance >= totalCost and accountId != item.seller.id and timezone.now() < item.endDateTime:
         item.price = bid
         item.numBids += 1
-        item.buyerId = Accounts.objects.get(user__pk=request.user.pk)
+        item.buyer = Accounts.objects.get(user__pk=request.user.pk)
         bidders = item.getBidders()
         bidders.append(accountId)
         item.setBidders(bidders)

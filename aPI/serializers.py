@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from base.models import Accounts, Items, EndedItems
+from base.models import Accounts, Items
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,11 +20,6 @@ class AccountsSerializer(serializers.ModelSerializer):
 class ItemsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Items
-        fields = "__all__"
-
-class EndedItemsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = EndedItems
         fields = "__all__"
 
 class LoginSerializer(serializers.Serializer):

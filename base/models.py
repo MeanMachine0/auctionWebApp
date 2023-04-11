@@ -7,7 +7,7 @@ import json
 
 class Accounts(models.Model): 
     user=models.OneToOneField(User, on_delete=models.CASCADE)
-    address=models.CharField(max_length=40)
+    address=models.CharField(max_length=200)
     balance=models.DecimalField(decimal_places=2, max_digits=10, default=0, validators=[MinValueValidator(0)])
 
     class Meta:
@@ -39,9 +39,12 @@ class Items(models.Model):
     description = models.TextField(max_length=1000)
     numBids = models.IntegerField(default=0)
     bidders = models.CharField(max_length=999999999, default='[]')
+    ended = models.BooleanField(default=False)
     sold = models.BooleanField(default=False)
-    buyerId = models.ForeignKey(Accounts, to_field="id", on_delete=models.DO_NOTHING, related_name="bId", blank=True, null=True)
-    sellerId = models.ForeignKey(Accounts, to_field="id", on_delete=models.DO_NOTHING, related_name="sId", blank=True, null=True)
+    buyer = models.ForeignKey(Accounts, to_field="id", on_delete=models.DO_NOTHING, related_name="bId", blank=True, null=True)
+    seller = models.ForeignKey(Accounts, to_field="id", on_delete=models.DO_NOTHING, related_name="sId", blank=True, null=True)
+    destinationAddress = models.CharField(max_length=200, blank=True, null=True)
+    transactionSuccess = models.BooleanField(blank=True, null=True)
 
     def getBidders(self):
         return json.loads(self.bidders)
@@ -53,39 +56,3 @@ class Items(models.Model):
 
     def __str__(self):
         return self.name
-    
-class EndedItems(models.Model):
-    name = models.CharField(max_length=50)
-    price = models.DecimalField(decimal_places=2, max_digits=10)
-    postageCost = models.DecimalField(decimal_places=2, max_digits=10)
-    bidIncrement = models.DecimalField(decimal_places=2, max_digits=10)
-    conditionChoices = [
-        ("new", "New"),
-        ("excellent", "Excellent"),
-        ("good", "Good"),
-        ("used", "Used"),
-        ("refurbished", "Refurbished"),
-        ("partsOnly", "Parts Only"),
-    ]
-    condition = models.CharField(max_length=20, choices=conditionChoices)
-    endDateTime = models.DateTimeField("Date/Time Logged")
-    acceptReturns = models.BooleanField()
-    description = models.TextField(max_length=1000)
-    numBids = models.IntegerField()
-    bidders = models.CharField(max_length=999999999, default='[]')
-    sold = models.BooleanField()
-    buyerId = models.IntegerField(blank=True, null=True)
-    sellerId = models.IntegerField()
-    destinationAddress = models.CharField(max_length=40, blank=True, null=True)
-
-    def getBidders(self):
-        return json.loads(self.bidders)
-    
-    def setBidders(self, value):
-        self.bidders = json.dumps(value)
-
-    biddersProperty = property(getBidders, setBidders)
-
-    def __str__(self):
-        date = timezone.localtime(self.endDateTime)
-        return f"'{self.name}' ended at {date.strftime('%A, %d %B, %Y at %X')}"
