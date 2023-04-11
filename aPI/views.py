@@ -1,4 +1,5 @@
 from django.utils import timezone
+from datetime import timedelta
 from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
@@ -164,10 +165,14 @@ def createUser(request):
 def createItem(request):
     serializer = ItemsSerializer(data=request.data)
     if serializer.is_valid():
-        if serializer.validated_data['seller'].id == request.user.pk:
+        if (serializer.validated_data['seller'].id == request.user.pk and 
+        serializer.validated_data['endDateTime'] > timezone.now() and 
+        serializer.validated_data['endDateTime'] <= timezone.now() + timedelta(days=30)):
             serializer.save()
-        else:
+        elif serializer.validated_data['seller'].id != request.user.pk:
             return Response({'error': 'Invalid credentials.'})
+        else:
+            return Response({'error': 'End Date/Time must be within 30 days from now.'})
     else:
         return Response({'error': 'Invalid item.'})
     return Response({'itemId': serializer.data['id']})
