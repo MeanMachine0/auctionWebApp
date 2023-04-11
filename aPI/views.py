@@ -62,7 +62,9 @@ def getAccount(request, pk):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def getItems(request):
-    items = Items.objects.filter(ended=False)
+    sold = toBool[request.headers["sold"].lower()]
+    ended = toBool[request.headers["ended"].lower()]
+    items = Items.objects.filter(sold=True) if sold else Items.objects.filter(ended=ended)
     for item in items:
         item.bidders = '[]'
         item.buyer = None
@@ -72,53 +74,30 @@ def getItems(request):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def getItem(request, pk):
-    item = get_object_or_404(Items.objects.filter(ended=False), pk=pk)
-    seller = request.user.pk == item.seller.id
+    item = get_object_or_404(Items, pk=pk)
+    seller = request.user.pk == item.seller_id
     if not seller:
-        item.bidders = '[]'
-        item.buyer = None
-    serializer = ItemsSerializer(item)
-    return Response(serializer.data)
-
-@api_view(["GET"])
-@permission_classes([AllowAny])
-def getEndedItems(request):
-    sold = toBool[request.headers["sold"].lower()] == True
-    endedItems = Items.objects.filter(sold=True) if sold else Items.objects.filter(ended=True)
-    for item in endedItems:
         item.bidders = '[]'
         item.buyer = None
         item.destinationAddress = None
-    serializer = ItemsSerializer(endedItems, many=True)
-    return Response(serializer.data)
-
-@api_view(["GET"])
-@permission_classes([AllowAny])
-def getEndedItem(request, pk):
-    endedItem = get_object_or_404(Items.objects.filter(ended=True), pk=pk)
-    seller = request.user.pk == endedItem.seller
-    if not seller:
-        endedItem.bidders = '[]'
-        endedItem.buyer = None
-        endedItem.destinationAddress = None
-    serializer = ItemsSerializer(endedItem)
+    serializer = ItemsSerializer(item)
     return Response(serializer.data)
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def getAccountItems(request, pk):
     seller = request.user.pk == pk
-    ended = toBool[request.headers['ended'].lower()] == True
+    ended = toBool[request.headers['ended'].lower()]
     items = Items.objects.filter(Q(seller=pk) & Q(ended=ended))
     if seller:
         if len(items) < 2:
-            item = get_object_or_404(items, sellerId=pk)
+            item = get_object_or_404(items, seller=pk)
             serializer = ItemsSerializer(item)
         else: 
             serializer = ItemsSerializer(items, many=True)
     else: 
         if len(items) < 2:
-            item = get_object_or_404(items, sellerId=pk)
+            item = get_object_or_404(items, seller=pk)
             item.bidders = '[]'
             item.buyer = None
             if ended:
@@ -140,7 +119,7 @@ def amITheBuyer(request, pk):
     if accountId is None:
         return Response({'IAmTheBuyer': False})
     item = Items.objects.get(pk=pk)
-    IAmTheBuyer = item.buyer.id == accountId
+    IAmTheBuyer = item.buyer_id == accountId
     return Response({'IAmTheBuyer': IAmTheBuyer})
 
 @api_view(["GET"])
@@ -148,7 +127,7 @@ def getItemsBidOnByMe(request, pk):
     accountId = request.user.pk
     if accountId != pk:
         return Response(None)
-    ended = toBool[request.headers['ended'].lower()] == True
+    ended = toBool[request.headers['ended'].lower()]
     items = Items.objects.filter(ended=ended)
     items = items.exclude(bidders="[]")
     itemsBidOnByMe = []
@@ -156,7 +135,7 @@ def getItemsBidOnByMe(request, pk):
     for item in items:
         bidders = item.getBidders()
         if accountId in bidders:
-            itemBuyerId = item.buyer.id
+            itemBuyerId = item.buyer_id
             if itemBuyerId != accountId:
                 item.bidders = '[]'
                 item.buyer = None
@@ -198,7 +177,7 @@ def submitBid(request, pk):
     postageCost = float(item.postageCost)
     totalCost = bid + bidIncrement + postageCost
     balance = float(Accounts.objects.get(pk=accountId).balance)
-    if bid >= minBid and balance >= totalCost and accountId != item.seller.id and timezone.now() < item.endDateTime:
+    if bid >= minBid and balance >= totalCost and accountId != item.seller_id and timezone.now() < item.endDateTime:
         item.price = bid
         item.numBids += 1
         item.buyer = Accounts.objects.get(user__pk=request.user.pk)
