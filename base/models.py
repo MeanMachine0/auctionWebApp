@@ -57,7 +57,7 @@ class Items(models.Model):
         ("mda", "Media"),
         ("o", "Other"),
     ]
-    category = models.CharField(max_length=50, choices=categories, default="e")
+    category = models.CharField(max_length=50, choices=categories)
     def getBidders(self):
         return json.loads(self.bidders)
     
