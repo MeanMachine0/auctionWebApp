@@ -16,6 +16,34 @@ toBool = {
     'false': False,
 }
 
+categories = [
+    'bOIS',
+    'hB',
+    'f',
+    'e',
+    'hG',
+    'sHL',
+    'mt',
+    'cA',
+    'mda',
+    'o',
+]
+
+conditions = [
+    'new',
+    'excellent',
+    'good',
+    'used',
+    'refurbished',
+    'partsOnly',
+]
+
+sorters = [
+    'price',
+    'name',
+    'endDateTime',
+]
+
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def login(request):
@@ -65,7 +93,16 @@ def getAccount(request, pk):
 def getItems(request):
     sold = toBool[request.headers["sold"].lower()]
     ended = toBool[request.headers["ended"].lower()]
+    category = request.headers["category"]
+    condition = request.headers["condition"]
+    sortBy = request.headers["sortBy"]
     items = Items.objects.filter(sold=True) if sold else Items.objects.filter(ended=ended)
+    if category in categories:
+        items = items.filter(category=category)
+    if condition in conditions:
+        items = items.filter(condition=condition)
+    if sortBy in sorters:
+        items = items.order_by(sortBy)
     for item in items:
         item.bidders = '[]'
         item.buyer = None
