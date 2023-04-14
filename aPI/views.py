@@ -10,6 +10,7 @@ from base.models import Accounts, Items
 from .serializers import AccountsSerializer, UserSerializer, ItemsSerializer, LoginSerializer
 from django.shortcuts import get_object_or_404 
 from django.contrib.auth import authenticate
+from django.db.models.functions import Lower
 
 toBool = {
     'true': True,
@@ -107,7 +108,10 @@ def getItems(request):
     if condition in conditions:
         items = items.filter(condition=condition)
     if sortBy in sorters:
-        items = items.order_by(sortBy) if ascending else items.order_by(f'-{sortBy}')
+        if sortBy == 'name':
+            items = items.order_by(Lower(sortBy)) if ascending else items.order_by("-" + Lower(sortBy))
+        else: 
+            items = items.order_by(sortBy) if ascending else items.order_by("-" + sortBy)
     for item in items:
         item.bidders = '[]'
         item.buyer = None
