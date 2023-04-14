@@ -98,6 +98,7 @@ def getItems(request):
     category = request.headers["category"]
     condition = request.headers["condition"]
     sortBy = request.headers["sortBy"]
+    ascending = toBool[request.headers["ascending"].lower()]
     items = Items.objects.filter(sold=True) if sold else Items.objects.filter(ended=ended)
     if searchBool:
         items = items.filter(name__icontains=search)
@@ -106,7 +107,7 @@ def getItems(request):
     if condition in conditions:
         items = items.filter(condition=condition)
     if sortBy in sorters:
-        items = items.order_by(sortBy)
+        items = items.order_by(sortBy) if ascending else items.order_by(f'-{sortBy}')
     for item in items:
         item.bidders = '[]'
         item.buyer = None
