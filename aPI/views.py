@@ -93,10 +93,14 @@ def getAccount(request, pk):
 def getItems(request):
     sold = toBool[request.headers["sold"].lower()]
     ended = toBool[request.headers["ended"].lower()]
+    searchBool = toBool[request.headers["searchBool"].lower()]
+    search = request.headers["search"]
     category = request.headers["category"]
     condition = request.headers["condition"]
     sortBy = request.headers["sortBy"]
     items = Items.objects.filter(sold=True) if sold else Items.objects.filter(ended=ended)
+    if searchBool:
+        items = items.filter(name__icontains=search)
     if category in categories:
         items = items.filter(category=category)
     if condition in conditions:
