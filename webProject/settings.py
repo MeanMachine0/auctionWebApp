@@ -30,10 +30,10 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '127.0.0.1',
     '10.0.2.2',
-    'd7f0-90-240-130-51.ngrok-free.app',
+    '6066-90-240-130-51.ngrok-free.app',
     ]
 
-CSRF_TRUSTED_ORIGINS = ['https://d7f0-90-240-130-51.ngrok-free.app/']
+CSRF_TRUSTED_ORIGINS = ['https://6066-90-240-130-51.ngrok-free.app']
 
 # Application definition
 

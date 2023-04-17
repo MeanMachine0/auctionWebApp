@@ -58,6 +58,8 @@ class Items(models.Model):
         ("o", "Other"),
     ]
     category = models.CharField(max_length=50, choices=categories)
+    imageName = models.CharField(max_length=100)
+    
     def getBidders(self):
         return json.loads(self.bidders)
     
