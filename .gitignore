@@ -2,3 +2,7 @@
 staticCollected/
 *sqlite3
 backup.json
+posters/
+createMovieItems.py
+downloadPosters.py
+getMovies.py

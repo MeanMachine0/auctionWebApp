@@ -69,3 +69,16 @@ class Items(models.Model):
 
     def __str__(self):
         return self.name
+
+    
+class Movie(models.Model):
+    title = models.CharField(max_length=300)
+    yearOfRelease = models.CharField(max_length=4)
+    runtime = models.CharField(max_length=5)
+    rating = models.CharField(max_length=5)
+    votes = models.CharField(max_length=300)
+    gross = models.CharField(max_length=300)
+    posterURL = models.CharField(max_length=300)
+
+    def __str__(self):
+        return self.title
