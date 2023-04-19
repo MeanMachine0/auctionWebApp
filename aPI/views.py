@@ -113,8 +113,10 @@ def getItems(request):
         else: 
             items = items.order_by(sortBy) if ascending else items.order_by("-" + sortBy)
     for item in items:
-        item.bidders = '[]'
+        item.bidders = item.seller.user.username
         item.buyer = None
+        if ended:
+            item.destinationAddress = None
     serializer = ItemsSerializer(items, many=True)
     return Response(serializer.data)
 
@@ -124,7 +126,7 @@ def getItem(request, pk):
     item = get_object_or_404(Items, pk=pk)
     seller = request.user.pk == item.seller_id
     if not seller:
-        item.bidders = '[]'
+        item.bidders = item.seller.user.username
         item.buyer = None
         item.destinationAddress = None
     serializer = ItemsSerializer(item)
@@ -145,14 +147,14 @@ def getAccountItems(request, pk):
     else: 
         if len(items) < 2:
             item = get_object_or_404(items, seller=pk)
-            item.bidders = '[]'
+            item.bidders = item.seller.user.username
             item.buyer = None
             if ended:
                 item.destinationAddress = None
             serializer = ItemsSerializer(item)
         else: 
             for item in items:
-                item.bidders = '[]'
+                item.bidders = item.seller.user.username
                 item.buyer = None
                 if ended:
                     item.destinationAddress = None
@@ -173,7 +175,7 @@ def amITheBuyer(request, pk):
 def getItemsBidOnByMe(request, pk):
     accountId = request.user.pk
     if accountId != pk:
-        return Response(None)
+        return Response({'message': 'forbidden'})
     ended = toBool[request.headers['ended'].lower()]
     items = Items.objects.filter(ended=ended)
     items = items.exclude(bidders="[]")
@@ -184,15 +186,21 @@ def getItemsBidOnByMe(request, pk):
         if accountId in bidders:
             itemBuyerId = item.buyer_id
             if itemBuyerId != accountId:
-                item.bidders = '[]'
                 item.buyer = None
                 if ended:
                     item.destinationAddress = None
+            item.bidders = item.seller.user.username
             itemsBidOnByMe.append(item)
             if len(itemsBidOnByMe) == 1:
                 firstItemBidOnByMeId = item.pk
     if len(itemsBidOnByMe) < 2:
             itemBidOnByMe = get_object_or_404(Items, pk=firstItemBidOnByMeId)
+            itemBuyerId = itemBidOnByMe.buyer_id
+            if itemBuyerId != accountId:
+                itemBidOnByMe.buyer = None
+                if ended:
+                    itemBidOnByMe.destinationAddress = None
+            itemBidOnByMe.bidders = itemBidOnByMe.seller.user.username
             serializer = ItemsSerializer(itemBidOnByMe)
     else: 
         serializer = ItemsSerializer(itemsBidOnByMe, many=True)
