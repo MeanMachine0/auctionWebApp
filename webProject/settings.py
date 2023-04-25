@@ -28,12 +28,14 @@ SECRET_KEY = 'django-insecure-lb@1-k*_2%uf1hahni63q^20a_5g9+cadb%(cp89xut)u)q_%k
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    'meanmachine0.pythonanywhere.com',
     '127.0.0.1',
     '10.0.2.2',
-    '6066-90-240-130-51.ngrok-free.app',
     ]
 
-CSRF_TRUSTED_ORIGINS = ['https://6066-90-240-130-51.ngrok-free.app']
+CSRF_TRUSTED_ORIGINS = [
+    'https://meanmachine0.pythonanywhere.com',
+]
 
 # Application definition
 
@@ -44,7 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     'base',
     'rest_framework',
     'rest_framework.authtoken',
