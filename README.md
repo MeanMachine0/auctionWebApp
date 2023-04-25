@@ -4,7 +4,7 @@ A Django web app with a REST API that is used to communicate with a Flutter mobi
 ## Functions
 ### When not logged in
 - View recently sold items and their corresponding details.
-- Filter and sort through active items and view their corresponding details.
+- Search, filter and sort through active items and view their corresponding details.
 - View others' listings in tables.
 
 ### When logged in (in addition to when not logged in)
