@@ -1,25 +1,25 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from base.models import Accounts, Items
+from base.models import Account, Item
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = "__all__"
 
-class AccountsSerializer(serializers.ModelSerializer):
+class AccountSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(
         read_only=True,
         slug_field="username",
     )
 
     class Meta:
-        model = Accounts
+        model = Account
         fields = "__all__"
 
-class ItemsSerializer(serializers.ModelSerializer):
+class ItemSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Items
+        model = Item
         fields = "__all__"
 
 class LoginSerializer(serializers.Serializer):

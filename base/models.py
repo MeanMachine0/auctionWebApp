@@ -5,7 +5,7 @@ from django.core.validators import MinValueValidator
 from django.db.models import CheckConstraint, Q
 import json
 
-class Accounts(models.Model): 
+class Account(models.Model): 
     user=models.OneToOneField(User, on_delete=models.CASCADE)
     address=models.CharField(max_length=200)
     balance=models.DecimalField(decimal_places=2, max_digits=10, default=0, validators=[MinValueValidator(0)])
@@ -20,7 +20,7 @@ class Accounts(models.Model):
     def __str__(self):
         return str(self.id)
     
-class Items(models.Model): 
+class Item(models.Model): 
     name = models.CharField(max_length=50)
     price = models.DecimalField(decimal_places=2, max_digits=10)
     postageCost = models.DecimalField(decimal_places=2, max_digits=10)
@@ -41,8 +41,8 @@ class Items(models.Model):
     bidders = models.CharField(max_length=999999999, default='[]')
     ended = models.BooleanField(default=False)
     sold = models.BooleanField(default=False)
-    buyer = models.ForeignKey(Accounts, to_field="id", on_delete=models.DO_NOTHING, related_name="bId", blank=True, null=True)
-    seller = models.ForeignKey(Accounts, to_field="id", on_delete=models.DO_NOTHING, related_name="sId", blank=True, null=True)
+    buyer = models.ForeignKey(Account, to_field="id", on_delete=models.DO_NOTHING, related_name="bId", blank=True, null=True)
+    seller = models.ForeignKey(Account, to_field="id", on_delete=models.DO_NOTHING, related_name="sId", blank=True, null=True)
     destinationAddress = models.CharField(max_length=200, blank=True, null=True)
     transactionSuccess = models.BooleanField(blank=True, null=True)
     categories = [

@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
-from base.models import Accounts
+from base.models import Account
 from random import randint
 
 names=["King's", "Queen's", "Rook's", "Bishop's", "Knight's", "Pawn's"]
@@ -13,4 +13,4 @@ def randAddress():
 @receiver(post_save, sender=User)
 def onNewUser(sender, instance, created, **kwargs):
     if created:
-        Accounts.objects.create(user=instance, address=randAddress())
+        Account.objects.create(user=instance, address=randAddress())

@@ -1,9 +1,9 @@
 from django.urls import path
 from base import views
-from .models import Items
+from .models import Account, Item
 
 homeListView = views.HomeListView.as_view(
-    queryset=Items.objects.filter(sold=True).order_by("-endDateTime")[:100],
+    queryset=Item.objects.filter(sold=True).order_by("-endDateTime")[:100],
     context_object_name="itemList",
     template_name="base/home.html",
 )

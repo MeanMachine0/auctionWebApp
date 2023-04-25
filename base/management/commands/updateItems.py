@@ -5,11 +5,11 @@ django.setup()
 from django.core.management.base import BaseCommand
 import schedule
 from django.utils import timezone
-from base.models import Accounts, Items
+from base.models import Account, Item
 from django.db.models import Q
 
 def updateItems():
-    notUpdatedEndedItems = Items.objects.filter(Q(endDateTime__lte=timezone.now()) & Q(ended=False))
+    notUpdatedEndedItems = Item.objects.filter(Q(endDateTime__lte=timezone.now()) & Q(ended=False))
     notUpdatedSoldItems = notUpdatedEndedItems.filter(numBids__gte=1)
     numNotUpdatedEndedItems = notUpdatedEndedItems.count()
     if numNotUpdatedEndedItems > 0:
@@ -19,8 +19,8 @@ def updateItems():
             transaction = True
             while transaction is True:
                 price = item.price
-                buyer = Accounts.objects.get(pk=item.buyer_id)
-                seller = Accounts.objects.get(pk=item.seller_id)
+                buyer = Account.objects.get(pk=item.buyer_id)
+                seller = Account.objects.get(pk=item.seller_id)
                 #Attempting buyer side of transaction:
                 try:
                     buyer.balance -= price
