@@ -1,5 +1,5 @@
-# auctionWebApp
 https://meanmachine0.pythonanywhere.com/
+# auctionWebApp
 A Django web app with a REST API that is used to communicate with a Flutter mobile app in JSON.
 
 ## Functions
