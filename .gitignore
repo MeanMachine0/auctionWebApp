@@ -1,6 +1,6 @@
 .venv/
 staticCollected/
-__pycache__/
+*__pycache__/
 *sqlite3
 backup.json
 posters/
