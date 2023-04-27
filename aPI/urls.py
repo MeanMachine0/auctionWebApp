@@ -19,5 +19,4 @@ urlpatterns = [
     path("api/logout/", views.logout, name="tokenLogout"),
     path("api/amITheBuyer/<int:pk>/", views.amITheBuyer, name="amITheBuyer"),
     path("api/accountBids/<int:pk>/", views.getItemsBidOnByMe, name="getItemsBidOnByMe"),
-    path("api/setFcmToken/", views.setFcmToken, name="setFcmToken"),
 ]

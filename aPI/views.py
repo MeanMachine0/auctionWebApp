@@ -48,21 +48,27 @@ sorters = [
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def login(request):
-        serializer = LoginSerializer(data=request.data)
-        if serializer.is_valid():
-            user = authenticate(username=serializer.validated_data['username'], password=serializer.validated_data['password'])
-            if user is not None:
-                token, _ = Token.objects.get_or_create(user=user)
-                return Response({
-                "userId": user.pk,
-                "token": token.key,
-                })
+        user = authenticate(username=request.data['username'], password=request.data['password'])
+        if user is not None:
+            token, _ = Token.objects.get_or_create(user=user)
+            fcmToken = request.data['fcmToken']
+            if fcmToken is not None:
+                account = Account.objects.get(pk=user.pk)
+                account.fcmToken = fcmToken
+                account.save()
+            return Response({
+            "userId": user.pk,
+            "token": token.key,
+            })
         return Response({'error': 'Invalid credentials'})
 
 @api_view(["POST"])
 def logout(request):
     token = request.META.get("HTTP_AUTHORIZATION").split(' ')[1]
     Token.objects.filter(key=token).delete()
+    account = Account.objects.get(pk=request.user.pk)
+    account.fcmToken = None
+    account.save()
     return Response({"message": "Logged out successfully."})
 
 @api_view(["GET"])
@@ -268,11 +274,3 @@ def delItem(request, pk):
     serializer = ItemSerializer(item)
     item.delete()
     return Response(serializer.data)
-
-@api_view(["POST"])
-def setFcmToken(request):
-    fcmToken = request.body.decode("utf-8")
-    account = Account.objects.get(pk=request.user.pk)
-    account.fcmToken = fcmToken
-    account.save()
-    return Response({'fcmToken': fcmToken})

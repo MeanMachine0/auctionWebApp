@@ -30,8 +30,9 @@ def onItemSaved(sender, instance, **kwargs):
         message = messaging.Message(
             notification=messaging.Notification(
             title="Outbidded!",
-            body=f"On item {instance.name} {instance.id}.",
+            body=f"On: {instance.name}.",
             ),
-            token=previousInstance.buyer.fcmToken
+            data={'itemId': f'{instance.id}'},
+            token=previousInstance.buyer.fcmToken,
         )
         messaging.send(message)
