@@ -9,6 +9,7 @@ class Account(models.Model):
     user=models.OneToOneField(User, on_delete=models.CASCADE)
     address=models.CharField(max_length=200)
     balance=models.DecimalField(decimal_places=2, max_digits=10, default=0, validators=[MinValueValidator(0)])
+    fcmToken=models.CharField(max_length=200, blank=True, null=True)
 
     class Meta:
         constraints = (

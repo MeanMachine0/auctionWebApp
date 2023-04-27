@@ -268,3 +268,11 @@ def delItem(request, pk):
     serializer = ItemSerializer(item)
     item.delete()
     return Response(serializer.data)
+
+@api_view(["POST"])
+def setFcmToken(request):
+    fcmToken = request.body.decode("utf-8")
+    account = Account.objects.get(pk=request.user.pk)
+    account.fcmToken = fcmToken
+    account.save()
+    return Response({'fcmToken': fcmToken})
