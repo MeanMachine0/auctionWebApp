@@ -7,3 +7,4 @@ posters/
 createMovieItems.py
 downloadPosters.py
 getMovies.py
+firebaseCert.json
