@@ -42,7 +42,7 @@ Auction - {{item.name}}
     Bids: {{item.numBids}}<br>
     {% idToUsername item.seller_id as sellerUsername %}
     {% if sellerUsername != username %}
-      Seller: <a href="{% url 'userListings' pk=item.seller %}">{{sellerUsername}}</a>   
+      Seller: <a href="{% url 'userListings' pk=item.seller_id %}">{{sellerUsername}}</a>   
     {% else %}
       Seller: You
     {% endif %}
