@@ -144,14 +144,15 @@ def getAccountItems(request, pk):
     seller = request.user.pk == pk
     ended = toBool[request.headers['ended'].lower()]
     items = Item.objects.filter(Q(seller=pk) & Q(ended=ended))
+    lt2 = len(items) < 2
     if seller:
-        if len(items) < 2:
+        if lt2:
             item = get_object_or_404(items, seller=pk)
             serializer = ItemSerializer(item)
         else: 
             serializer = ItemSerializer(items, many=True)
     else: 
-        if len(items) < 2:
+        if lt2:
             item = get_object_or_404(items, seller=pk)
             item.bidders = item.seller.user.username
             item.buyer = None
