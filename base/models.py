@@ -19,7 +19,7 @@ class Account(models.Model):
             )
 
     def __str__(self):
-        return str(self.id)
+        return f'{self.id}: {self.user.username}'
     
 class Item(models.Model): 
     name = models.CharField(max_length=50)
@@ -69,7 +69,7 @@ class Item(models.Model):
     biddersProperty = property(getBidders, setBidders)
 
     def __str__(self):
-        return self.name
+        return f'{self.id}: {self.name}'
 
     
 class Movie(models.Model):
@@ -82,4 +82,4 @@ class Movie(models.Model):
     posterURL = models.CharField(max_length=300)
 
     def __str__(self):
-        return self.title
+        return f'{self.id}: {self.title}'
