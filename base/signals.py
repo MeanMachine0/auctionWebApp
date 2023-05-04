@@ -26,13 +26,14 @@ def onItemSaved(sender, instance, **kwargs):
         previousInstance = sender.objects.get(pk=instance.pk)
     except sender.DoesNotExist:
         return
-    if previousInstance.buyer != instance.buyer and previousInstance.buyer.fcmToken != None:
-        message = messaging.Message(
-            notification=messaging.Notification(
-            title="Outbidded!",
-            body=f"On: {instance.name}.",
-            ),
-            data={'itemId': f'{instance.id}'},
-            token=previousInstance.buyer.fcmToken,
-        )
-        messaging.send(message)
+    if previousInstance.buyer != None:
+        if previousInstance.buyer != instance.buyer and previousInstance.buyer.fcmToken != None:
+            message = messaging.Message(
+                notification=messaging.Notification(
+                title="Outbidded!",
+                body=f"On: {instance.name}.",
+                ),
+                data={'itemId': f'{instance.id}'},
+                token=previousInstance.buyer.fcmToken,
+            )
+            messaging.send(message)
