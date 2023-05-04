@@ -82,12 +82,12 @@ class IMDb(models.Model):
     rank = models.IntegerField()
     genres = models.CharField(max_length=300)
     summary = models.CharField(max_length=1000)
-    writers = models.CharField(max_length=50)
-    directors = models.CharField(max_length=50)
+    writers = models.CharField(max_length=500)
+    directors = models.CharField(max_length=500)
     stars = models.CharField(max_length=300)
     runtime = models.IntegerField()
     type = models.CharField(max_length=50)
-    aspectRatio = models.DecimalField(decimal_places=2,max_digits=4)
+    aspectRatio = models.DecimalField(decimal_places=2, max_digits=4)
     posterURL = models.CharField(max_length=300)
 
     def getField(self, field):
