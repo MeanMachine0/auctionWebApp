@@ -5,11 +5,12 @@ from base.models import Account, Item
 from random import randint
 import firebase_admin
 from firebase_admin import credentials, messaging
+import os
 
 names=["King's", "Queen's", "Rook's", "Bishop's", "Knight's", "Pawn's"]
 streetNames=["Street", "Road", "Lane", "Avenue", "Boulevard", "Drive", "Court", "Way"]
 
-creds = credentials.Certificate("firebaseCert.json")
+creds = credentials.Certificate(os.path.dirname(os.path.realpath(__file__)) + "/firebaseCert.json")
 firebase_admin.initialize_app(creds)
 
 def randAddress():
