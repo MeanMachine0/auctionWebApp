@@ -59,6 +59,7 @@ class Item(models.Model):
         ("o", "Other"),
     ]
     category = models.CharField(max_length=50, choices=categories)
+    subCategory = models.CharField(max_length=50, blank=True, null=True)
  
     def getBidders(self):
         return json.loads(self.bidders)
@@ -71,15 +72,35 @@ class Item(models.Model):
     def __str__(self):
         return f'{self.id}: {self.name}'
 
-    
-class Movie(models.Model):
+class IMDb(models.Model):
+    id = models.CharField(max_length=20, primary_key=True)
     title = models.CharField(max_length=300)
-    yearOfRelease = models.CharField(max_length=4)
-    runtime = models.CharField(max_length=5)
-    rating = models.CharField(max_length=5)
-    votes = models.CharField(max_length=300)
-    gross = models.CharField(max_length=300)
+    year = models.IntegerField()
+    certificate = models.CharField(max_length=10)
+    rating = models.DecimalField(decimal_places=1, max_digits=5)
+    votes = models.IntegerField()
+    rank = models.IntegerField()
+    genres = models.CharField(max_length=300)
+    summary = models.CharField(max_length=1000)
+    writers = models.CharField(max_length=50)
+    directors = models.CharField(max_length=50)
+    stars = models.CharField(max_length=300)
+    runtime = models.IntegerField()
+    type = models.CharField(max_length=50)
+    aspectRatio = models.DecimalField(decimal_places=2,max_digits=4)
     posterURL = models.CharField(max_length=300)
 
+    def getField(self, field):
+        if field == 'genres':
+            toLoad = self.genres
+        elif field == 'writers':
+            toLoad = self.writers
+        elif field == 'directors':
+            toLoad = self.directors
+        elif field == 'stars':
+            toLoad = self.stars
+        
+        return json.loads(toLoad)
+
     def __str__(self):
-        return f'{self.id}: {self.title}'
+        return f'{self.id}: {self.title} ({self.year})'
