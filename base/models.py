@@ -22,7 +22,7 @@ class Account(models.Model):
         return f'{self.id}: {self.user.username}'
     
 class Item(models.Model): 
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=60)
     price = models.DecimalField(decimal_places=2, max_digits=10)
     postageCost = models.DecimalField(decimal_places=2, max_digits=10)
     bidIncrement = models.DecimalField(decimal_places=2, max_digits=10)
