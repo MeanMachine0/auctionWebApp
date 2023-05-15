@@ -41,6 +41,7 @@ conditions = [
 
 sorters = [
     'price',
+    'numBids',
     'name',
     'endDateTime',
 ]
