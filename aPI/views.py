@@ -81,6 +81,8 @@ def getUsers(request):
 @api_view(["GET"])
 def getUser(request, pk):
     user = get_object_or_404(User, pk=pk)
+    if toBool[request.data['username']] == True:
+        return Response({"username": user.username})
     serializer = UserSerializer(user)
     return Response(serializer.data)
 
