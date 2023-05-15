@@ -7,7 +7,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAdminUser
 from django.contrib.auth.models import User
 from base.models import Account, Item
-from .serializers import AccountSerializer, UserSerializer, ItemSerializer, LoginSerializer
+from .serializers import AccountSerializer, UserSerializer, ItemSerializer
 from django.shortcuts import get_object_or_404 
 from django.contrib.auth import authenticate
 from django.db.models.functions import Lower
@@ -115,7 +115,7 @@ def getItems(request):
         items = items.filter(condition=condition)
     if sortBy in sorters:
         if sortBy == 'name':
-            items = items.order_by(Lower(sortBy)) if ascending else items.order_by("-" + Lower(sortBy))
+            items = items.order_by(Lower('name')) if ascending else items.order_by(Lower('name').desc())
         else: 
             items = items.order_by(sortBy) if ascending else items.order_by("-" + sortBy)
     for item in items:
