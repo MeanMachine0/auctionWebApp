@@ -38,7 +38,7 @@ $(document).ready(function() {
     <a href="{% url 'login' %}" id="myBids" class="navbarItem">My Bids</a>
     <a href="{% url 'login' %}" id="myListings" class="navbarItem">My Listings</a>
     {% endif %}
-    <a href="{% url 'browse' %}" id="browse" class="navbarItem">Browse Items</a>
+    <a href="{% url 'browse' page=1 %}" id="browse" class="navbarItem">Browse Items</a>
     {% if request.user.pk %}
     <a href="{% url 'listAnItem' %}" id="listAnItem" class="navbarItem">List an Item</a>
     {% else %}

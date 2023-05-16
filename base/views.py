@@ -139,7 +139,9 @@ def userListings(request, pk):
         }
         )
 
-def browse(request):
+def browse(request, page):
+    minItem = page * 100 - 100
+    maxItem = page * 100
     if request.method == "POST":
         browseForm = BrowseForm(request.POST)
         if browseForm.is_valid():
@@ -160,18 +162,20 @@ def browse(request):
                                           (Q(acceptReturns = (browseForm.cleaned_data["areReturnsAccepted"] == True)) | 
                                            Q(acceptReturns = (browseForm.cleaned_data["areReturnsNotAccepted"] == False))))
             ascending = browseForm.cleaned_data["ascending"]
+           
             if browseForm.cleaned_data["sortBy"] == "name":
-                sortedAndFilteredItems = filteredItems.order_by(Lower('name')) if ascending else items.order_by(Lower('name').desc())
+                sortedAndFilteredItems = filteredItems.order_by(Lower('name'))[minItem:maxItem] if ascending else items.order_by(Lower('name').desc())[minItem:maxItem]
             elif ascending:
-                sortedAndFilteredItems = filteredItems.order_by(browseForm.cleaned_data["sortBy"])  
+                sortedAndFilteredItems = filteredItems.order_by(browseForm.cleaned_data["sortBy"])[minItem:maxItem]
             else:
-                sortedAndFilteredItems = filteredItems.order_by(f"-{browseForm.cleaned_data['sortBy']}")
+                sortedAndFilteredItems = filteredItems.order_by(f"-{browseForm.cleaned_data['sortBy']}")[minItem:maxItem]
             
             context = {
-                "items": sortedAndFilteredItems, 
+                "items": sortedAndFilteredItems,
                 "browseForm": browseForm,
                 "username": getUsernameBalance(request)[0],
                 "balance": str(getUsernameBalance(request)[1]),
+                "page": page,
                 }
             return render(request, "base/browse.html", context)
         
@@ -179,7 +183,7 @@ def browse(request):
         browseForm = BrowseForm()
         items = Item.objects.filter(ended=False)
         context = {
-            "items": items.order_by("id"), 
+            "items": items.order_by("price")[minItem:maxItem], 
             "browseForm": browseForm,
             "username": getUsernameBalance(request)[0],
             "balance": str(getUsernameBalance(request)[1]),
