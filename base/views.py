@@ -178,7 +178,7 @@ def browse(request, page):
                 sortedAndFilteredItems = filteredItems.order_by(browseForm.cleaned_data["sortBy"])[minItem:maxItem]
             else:
                 sortedAndFilteredItems = filteredItems.order_by(f"-{browseForm.cleaned_data['sortBy']}")[minItem:maxItem]
-            
+
             context = {
                 "items": sortedAndFilteredItems,
                 "browseForm": browseForm,
@@ -192,11 +192,13 @@ def browse(request, page):
             return render(request, "base/browse.html", context)
         
     else:
-        browseForm = BrowseForm()
         items = Item.objects.filter(ended=False)
-        results = Item.objects.filter(ended=False).__len__()
+        results = items.__len__()
+        if minItem > results:
+            return redirect("/404/")
         if results < maxItem:
                 maxItem = results
+        browseForm = BrowseForm()
         context = {
             "items": items.order_by("price")[minItem:maxItem], 
             "browseForm": browseForm,
