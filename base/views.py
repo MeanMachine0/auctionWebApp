@@ -7,7 +7,7 @@ from django.shortcuts import redirect
 from django.views.generic import ListView
 from django.db.models import Q
 from .models import Item, Account
-from .forms import ItemsForm, BrowseForm, BidForm
+from .forms import ItemForm, BrowseForm, BidForm
 from django.db.models.functions import Lower
 from firebase_admin import storage
 
@@ -157,16 +157,26 @@ def browse(request, page):
                 item.delete()
 
             conditionsFilter = ["", "", "", "", "", ""]
+            
             for i in range(6):
-                if browseForm.cleaned_data[browseForm.conditions[i]] is True:
+                if browseForm.cleaned_data[browseForm.conditions[i]]:
                     conditionsFilter[i] = browseForm.conditions[i]
-
-            filteredItems = items.filter(Q(name__icontains=browseForm.cleaned_data["search"]) & 
-                                         Q(price__range=(browseForm.cleaned_data["lThan"], browseForm.cleaned_data["gThan"])) & 
-                                         (Q(condition = conditionsFilter[0]) | Q(condition = conditionsFilter[1]) | Q(condition = conditionsFilter[2]) | 
-                                          Q(condition = conditionsFilter[3]) | Q(condition = conditionsFilter[4]) | Q(condition = conditionsFilter[5])) & 
-                                          (Q(acceptReturns = (browseForm.cleaned_data["areReturnsAccepted"] == True)) | 
-                                           Q(acceptReturns = (browseForm.cleaned_data["areReturnsNotAccepted"] == False))))
+            if browseForm.cleaned_data["category"] == "all":
+                filteredItems = items.filter(Q(name__icontains=browseForm.cleaned_data["search"]) &
+                                            Q(price__range=(browseForm.cleaned_data["lThan"], browseForm.cleaned_data["gThan"])) & 
+                                            (Q(condition = conditionsFilter[0]) | Q(condition = conditionsFilter[1]) | Q(condition = conditionsFilter[2]) | 
+                                            Q(condition = conditionsFilter[3]) | Q(condition = conditionsFilter[4]) | Q(condition = conditionsFilter[5])) & 
+                                            (Q(acceptReturns = (browseForm.cleaned_data["areReturnsAccepted"] == True)) | 
+                                            Q(acceptReturns = (browseForm.cleaned_data["areReturnsNotAccepted"] == False))))
+            else:
+                filteredItems = items.filter(Q(name__icontains=browseForm.cleaned_data["search"]) &
+                                             Q(category=browseForm.cleaned_data["category"]) &
+                                            Q(price__range=(browseForm.cleaned_data["lThan"], browseForm.cleaned_data["gThan"])) & 
+                                            (Q(condition = conditionsFilter[0]) | Q(condition = conditionsFilter[1]) | Q(condition = conditionsFilter[2]) | 
+                                            Q(condition = conditionsFilter[3]) | Q(condition = conditionsFilter[4]) | Q(condition = conditionsFilter[5])) & 
+                                            (Q(acceptReturns = (browseForm.cleaned_data["areReturnsAccepted"] == True)) | 
+                                            Q(acceptReturns = (browseForm.cleaned_data["areReturnsNotAccepted"] == False))))
+                
             results = filteredItems.__len__()
             if results < maxItem:
                 maxItem = results
@@ -179,12 +189,19 @@ def browse(request, page):
             else:
                 sortedAndFilteredItems = filteredItems.order_by(f"-{browseForm.cleaned_data['sortBy']}")[minItem:maxItem]
 
+            numPages = int(results/100 + 1)
+            pages = []
+            if numPages > 1:
+                for pageNum in range(numPages):
+                    pages.append(pageNum + 1)
+
             context = {
                 "items": sortedAndFilteredItems,
                 "browseForm": browseForm,
                 "username": getUsernameBalance(request)[0],
                 "balance": str(getUsernameBalance(request)[1]),
-                "page": page,
+                "currentPage": page,
+                "pages": pages,
                 "minItem": minItem + 1,
                 "maxItem": maxItem,
                 "results": results,
@@ -200,8 +217,9 @@ def browse(request, page):
                 maxItem = results
         numPages = int(results/100 + 1)
         pages = []
-        for pageNum in range(numPages):
-            pages.append(pageNum + 1)
+        if numPages > 1:
+            for pageNum in range(numPages):
+                pages.append(pageNum + 1)
         browseForm = BrowseForm()
         context = {
             "items": items.order_by("price")[minItem:maxItem], 
@@ -220,7 +238,7 @@ def listAnItem(request):
     if not request.user.is_authenticated:
         return redirect("/login/")
     elif request.method == "POST":
-        form = ItemsForm(request.POST)
+        form = ItemForm(request.POST)
         if form.is_valid():
             itemData = form.cleaned_data
             item = Item.objects.create(
@@ -237,7 +255,7 @@ def listAnItem(request):
             )
             return redirect("itemListed/" + str(item.pk) + "/")
     else:
-        form = ItemsForm()
+        form = ItemForm()
     return render(request, "base/listAnItem.html", {"form": form, "username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})
     
 def itemListed(request, pk):
