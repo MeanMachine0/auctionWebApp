@@ -63,3 +63,19 @@ Auction - Browse Items
 
 <div style="clear: both;"></div>
 {% endblock %}
+
+{% block additionalContent %}
+<div class="centralContainer">
+  {% for page in pages %}
+  {% if page == currentPage %}
+  <li class="borderli" style="border-radius: 0; margin-right: 5px; font-weight: bold";>
+    <a href="{% url 'browse' page=page %}">{{page}}</a>
+  </li>
+  {% else %}
+  <li class="borderli" style="border-radius: 0; margin-right: 5px;">
+    <a href="{% url 'browse' page=page %}">{{page}}</a>
+  </li>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endblock %}

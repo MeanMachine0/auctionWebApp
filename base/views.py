@@ -198,13 +198,18 @@ def browse(request, page):
             return redirect("/404/")
         if results < maxItem:
                 maxItem = results
+        numPages = int(results/100 + 1)
+        pages = []
+        for pageNum in range(numPages):
+            pages.append(pageNum + 1)
         browseForm = BrowseForm()
         context = {
             "items": items.order_by("price")[minItem:maxItem], 
             "browseForm": browseForm,
             "username": getUsernameBalance(request)[0],
             "balance": str(getUsernameBalance(request)[1]),
-            "page": page,
+            "currentPage": page,
+            "pages": pages,
             "minItem": minItem + 1,
             "maxItem": maxItem,
             "results": results,
