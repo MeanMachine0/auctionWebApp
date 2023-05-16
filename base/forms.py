@@ -1,7 +1,7 @@
 from django import forms
 import base.validators as validators
 
-class ItemsForm(forms.Form):
+class ItemForm(forms.Form):
     name = forms.CharField(label="Item name", max_length=40)
     price = forms.DecimalField(label="Starting price (£)", decimal_places=2)
     postageCost = forms.DecimalField(label="Postage cost (£)", decimal_places=2)
@@ -39,9 +39,11 @@ class BrowseForm(forms.Form):
         ("name", "Name"),
         ("endDateTime", "End"),
     ]
+    categoriesWithAll = ItemForm.categories
+    categoriesWithAll.insert(0, ("all", "All"))
     conditions = ("new", "excellent", "good", "used", "refurbished", "partsOnly")
-    categories = ()
     search = forms.CharField(label="Search", required=False, widget=forms.TextInput(attrs={"style": "width: 155px;"}))
+    category = forms.ChoiceField(choices=categoriesWithAll, label="Category", widget=forms.Select(attrs={"style": "background-color: lightblue;" "font-size: 20px;" "border: 2px solid black;" "max-width: 160px;"}))
     sortBy = forms.ChoiceField(choices=sortByChoices, label="Sort By", widget=forms.Select(attrs={"style": "background-color: lightblue;" "font-size: 20px;" "border: 2px solid black;"}))
     ascending = forms.BooleanField(label="Ascending", required=False, initial=True)
     lThan = forms.DecimalField(label="Price (£) ≥", decimal_places=2, initial=0, widget=forms.TextInput(attrs={"style": "width: 120px;"}))
