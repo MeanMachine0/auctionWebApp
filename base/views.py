@@ -168,6 +168,8 @@ def browse(request, page):
                                           (Q(acceptReturns = (browseForm.cleaned_data["areReturnsAccepted"] == True)) | 
                                            Q(acceptReturns = (browseForm.cleaned_data["areReturnsNotAccepted"] == False))))
             results = filteredItems.__len__()
+            if results < maxItem:
+                maxItem = results
             ascending = browseForm.cleaned_data["ascending"]
            
             if browseForm.cleaned_data["sortBy"] == "name":
@@ -192,6 +194,9 @@ def browse(request, page):
     else:
         browseForm = BrowseForm()
         items = Item.objects.filter(ended=False)
+        results = Item.objects.filter(ended=False).__len__()
+        if results < maxItem:
+                maxItem = results
         context = {
             "items": items.order_by("price")[minItem:maxItem], 
             "browseForm": browseForm,
@@ -200,7 +205,7 @@ def browse(request, page):
             "page": page,
             "minItem": minItem + 1,
             "maxItem": maxItem,
-            "results": Item.objects.filter(ended=False).__len__(),
+            "results": results,
             }
         return render(request, "base/browse.html", context)
 
