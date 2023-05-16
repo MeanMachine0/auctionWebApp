@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
@@ -8,6 +9,9 @@ from django.db.models import Q
 from .models import Item, Account
 from .forms import ItemsForm, BrowseForm, BidForm
 from django.db.models.functions import Lower
+from firebase_admin import storage
+
+bucket = storage.bucket()
 
 def getUsernameBalance(request):
     username = None
@@ -55,6 +59,8 @@ def logoutView(request):
 def itemDetail(request, pk):
     username = getUsernameBalance(request)[0]
     balance = getUsernameBalance(request)[1]
+    blob = bucket.blob(f'uploads/images/{pk}/smallerImage')
+    url = blob.generate_signed_url(datetime.utcnow() + timedelta(seconds=30))
     if request.method == "POST":
         bidForm = BidForm(request.POST)
         item = get_object_or_404(Item.objects.filter(ended=False), pk=pk)
@@ -85,13 +91,13 @@ def itemDetail(request, pk):
             else: 
                 item = get_object_or_404(Item.objects.filter(ended=False), pk=pk)
                 bidForm = BidForm()
-                context={"bidForm": bidForm, "item": item, "username": getUsernameBalance(request)[0], "balance": str(balance)}
+                context={"bidForm": bidForm, "item": item, "username": getUsernameBalance(request)[0], "balance": str(balance), "imgURL": url,}
         else:
             return redirect("/login/")
     else:
         item = get_object_or_404(Item.objects.filter(ended=False), pk=pk)
         bidForm = BidForm()
-        context={"bidForm": bidForm, "item": item, "username": getUsernameBalance(request)[0], "balance": str(balance)}
+        context={"bidForm": bidForm, "item": item, "username": getUsernameBalance(request)[0], "balance": str(balance), "imgURL": url,}
 
     return render(request, "base/itemDetail.html", context)
     
@@ -161,6 +167,7 @@ def browse(request, page):
                                           Q(condition = conditionsFilter[3]) | Q(condition = conditionsFilter[4]) | Q(condition = conditionsFilter[5])) & 
                                           (Q(acceptReturns = (browseForm.cleaned_data["areReturnsAccepted"] == True)) | 
                                            Q(acceptReturns = (browseForm.cleaned_data["areReturnsNotAccepted"] == False))))
+            results = filteredItems.__len__()
             ascending = browseForm.cleaned_data["ascending"]
            
             if browseForm.cleaned_data["sortBy"] == "name":
@@ -176,6 +183,9 @@ def browse(request, page):
                 "username": getUsernameBalance(request)[0],
                 "balance": str(getUsernameBalance(request)[1]),
                 "page": page,
+                "minItem": minItem + 1,
+                "maxItem": maxItem,
+                "results": results,
                 }
             return render(request, "base/browse.html", context)
         
@@ -187,6 +197,10 @@ def browse(request, page):
             "browseForm": browseForm,
             "username": getUsernameBalance(request)[0],
             "balance": str(getUsernameBalance(request)[1]),
+            "page": page,
+            "minItem": minItem + 1,
+            "maxItem": maxItem,
+            "results": Item.objects.filter(ended=False).__len__(),
             }
         return render(request, "base/browse.html", context)
 

@@ -15,7 +15,9 @@ from pathlib import Path
 import firebase_admin
 from firebase_admin import credentials
 firebaseCreds = credentials.Certificate(os.path.dirname(os.path.realpath(__file__)) + "/firebaseCert.json")
-firebase_admin.initialize_app(firebaseCreds)
+firebase_admin.initialize_app(firebaseCreds, {
+    "storageBucket": "auction-mobile-app.appspot.com"
+})
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
