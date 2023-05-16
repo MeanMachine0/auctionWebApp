@@ -183,19 +183,13 @@ def browse(request, page):
             else:
                 sortedAndFilteredItems = filteredItems.order_by(f"-{browseForm.cleaned_data['sortBy']}")[minItem:maxItem]
 
-            numPages = int(results/100 + 1)
-            pages = []
-            if numPages > 1:
-                for pageNum in range(numPages):
-                    pages.append(pageNum + 1)
-
             context = {
                 "items": sortedAndFilteredItems,
                 "browseForm": browseForm,
                 "username": getUsernameBalance(request)[0],
                 "balance": str(getUsernameBalance(request)[1]),
                 "currentPage": page,
-                "pages": pages,
+                "pages": createPages(results),
                 "minItem": minItem + 1,
                 "maxItem": maxItem,
                 "results": results,
@@ -209,11 +203,6 @@ def browse(request, page):
             return redirect("/404/")
         if results < maxItem:
                 maxItem = results
-        numPages = int(results/100 + 1)
-        pages = []
-        if numPages > 1:
-            for pageNum in range(numPages):
-                pages.append(pageNum + 1)
         browseForm = BrowseForm()
         context = {
             "items": items.order_by("price")[minItem:maxItem], 
@@ -221,12 +210,20 @@ def browse(request, page):
             "username": getUsernameBalance(request)[0],
             "balance": str(getUsernameBalance(request)[1]),
             "currentPage": page,
-            "pages": pages,
+            "pages": createPages(results),
             "minItem": minItem + 1,
             "maxItem": maxItem,
             "results": results,
             }
         return render(request, "base/browse.html", context)
+
+def createPages(results):
+    numPages = int(results/100 + 1)
+    pages = []
+    if numPages > 1:
+        for pageNum in range(numPages):
+            pages.append(pageNum + 1)
+    return pages
 
 def listAnItem(request):
     if not request.user.is_authenticated:
