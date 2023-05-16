@@ -33,9 +33,15 @@ Auction - Browse Items
 </script>
 
 <div style="max-width: 800px; margin-top: -60px;">
+  {% if results > 100 %}
   <h2>
-    Browse Items ({{items.count}})<button id="collapse" style="color: rgb(224, 224, 224); background-color: dimgray; font-size: 18px; border: 0px;">Toggle →</button>
+    Showing {{minItem}}-{{maxItem}} of {{results}} Results <button id="collapse" style="color: rgb(224, 224, 224); background-color: dimgray; font-size: 18px; border: 0px;">Toggle →</button>
   </h2>
+  {% else %}
+  <h2>
+    {{results}} Results <button id="collapse" style="color: rgb(224, 224, 224); background-color: dimgray; font-size: 18px; border: 0px;">Toggle →</button>
+  </h2>
+  {% endif %}
   {% for item in items %}
   <li class="borderli" style="max-width: 800px;">
     <a href="{% url 'itemDetail' pk=item.pk %}">{{item.name}}</a> - £{{item.price}}
