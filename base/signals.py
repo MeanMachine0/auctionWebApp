@@ -10,9 +10,6 @@ import os
 names=["King's", "Queen's", "Rook's", "Bishop's", "Knight's", "Pawn's"]
 streetNames=["Street", "Road", "Lane", "Avenue", "Boulevard", "Drive", "Court", "Way"]
 
-creds = credentials.Certificate(os.path.dirname(os.path.realpath(__file__)) + "/firebaseCert.json")
-firebase_admin.initialize_app(creds)
-
 def randAddress():
     return str(randint(1, 99)) + " " + names[randint(0, len(names)-1)] + " " + streetNames[randint(0, len(streetNames)-1)]
 
