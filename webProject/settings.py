@@ -10,11 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 import firebase_admin
 from firebase_admin import credentials
-
-firebaseCreds = credentials.Certificate('webProject/firebaseCert.json')
+firebaseCreds = credentials.Certificate(os.path.dirname(os.path.realpath(__file__)) + "/firebaseCert.json")
 firebase_admin.initialize_app(firebaseCreds)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
