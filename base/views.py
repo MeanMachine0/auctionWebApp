@@ -161,21 +161,15 @@ def browse(request, page):
             for i in range(6):
                 if browseForm.cleaned_data[browseForm.conditions[i]]:
                     conditionsFilter[i] = browseForm.conditions[i]
-            if browseForm.cleaned_data["category"] == "all":
-                filteredItems = items.filter(Q(name__icontains=browseForm.cleaned_data["search"]) &
-                                            Q(price__range=(browseForm.cleaned_data["lThan"], browseForm.cleaned_data["gThan"])) & 
-                                            (Q(condition = conditionsFilter[0]) | Q(condition = conditionsFilter[1]) | Q(condition = conditionsFilter[2]) | 
-                                            Q(condition = conditionsFilter[3]) | Q(condition = conditionsFilter[4]) | Q(condition = conditionsFilter[5])) & 
-                                            (Q(acceptReturns = (browseForm.cleaned_data["areReturnsAccepted"] == True)) | 
-                                            Q(acceptReturns = (browseForm.cleaned_data["areReturnsNotAccepted"] == False))))
-            else:
-                filteredItems = items.filter(Q(name__icontains=browseForm.cleaned_data["search"]) &
-                                             Q(category=browseForm.cleaned_data["category"]) &
-                                            Q(price__range=(browseForm.cleaned_data["lThan"], browseForm.cleaned_data["gThan"])) & 
-                                            (Q(condition = conditionsFilter[0]) | Q(condition = conditionsFilter[1]) | Q(condition = conditionsFilter[2]) | 
-                                            Q(condition = conditionsFilter[3]) | Q(condition = conditionsFilter[4]) | Q(condition = conditionsFilter[5])) & 
-                                            (Q(acceptReturns = (browseForm.cleaned_data["areReturnsAccepted"] == True)) | 
-                                            Q(acceptReturns = (browseForm.cleaned_data["areReturnsNotAccepted"] == False))))
+            
+            filteredItems = items.filter(Q(name__icontains=browseForm.cleaned_data["search"]) &
+                                        Q(price__range=(browseForm.cleaned_data["lThan"], browseForm.cleaned_data["gThan"])) & 
+                                        (Q(condition = conditionsFilter[0]) | Q(condition = conditionsFilter[1]) | Q(condition = conditionsFilter[2]) | 
+                                        Q(condition = conditionsFilter[3]) | Q(condition = conditionsFilter[4]) | Q(condition = conditionsFilter[5])) & 
+                                        (Q(acceptReturns = (browseForm.cleaned_data["areReturnsAccepted"] == True)) | 
+                                        Q(acceptReturns = (browseForm.cleaned_data["areReturnsNotAccepted"] == False))))
+            if browseForm.cleaned_data["category"] != "all":
+                filteredItems = filteredItems.filter(category = browseForm.cleaned_data["category"])
                 
             results = filteredItems.__len__()
             if results < maxItem:
