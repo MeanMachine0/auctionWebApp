@@ -7,6 +7,7 @@ from django.views.generic import ListView
 from django.db.models import Q
 from .models import Item, Account
 from .forms import ItemsForm, BrowseForm, BidForm
+from django.db.models.functions import Lower
 
 def getUsernameBalance(request):
     username = None
@@ -156,12 +157,14 @@ def browse(request):
                                           Q(condition = conditionsFilter[3]) | Q(condition = conditionsFilter[4]) | Q(condition = conditionsFilter[5])) & 
                                           (Q(acceptReturns = (browseForm.cleaned_data["areReturnsAccepted"] == True)) | 
                                            Q(acceptReturns = (browseForm.cleaned_data["areReturnsNotAccepted"] == False))))
-
-            if browseForm.cleaned_data["ascending"] is True:
+            ascending = browseForm.cleaned_data["ascending"]
+            if browseForm.cleaned_data["sortBy"] == "name":
+                sortedAndFilteredItems = filteredItems.order_by(Lower('name')) if ascending else items.order_by(Lower('name').desc())
+            elif ascending:
                 sortedAndFilteredItems = filteredItems.order_by(browseForm.cleaned_data["sortBy"])  
             else:
                 sortedAndFilteredItems = filteredItems.order_by(f"-{browseForm.cleaned_data['sortBy']}")
-
+            
             context = {
                 "items": sortedAndFilteredItems, 
                 "browseForm": browseForm,

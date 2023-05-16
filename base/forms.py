@@ -34,10 +34,10 @@ class ItemsForm(forms.Form):
 
 class BrowseForm(forms.Form):
     sortByChoices = [
-        ("id", "Id"),
-        ("name", "Name"),
         ("price", "Price"),
-        ("endDateTime", "Time Remaining"),
+        ("numBids", "Bids"),
+        ("name", "Name"),
+        ("endDateTime", "End"),
     ]
     conditions = ("new", "excellent", "good", "used", "refurbished", "partsOnly")
     categories = ()
