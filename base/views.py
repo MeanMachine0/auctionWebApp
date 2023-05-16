@@ -100,6 +100,8 @@ def about(request):
     return render(request, "base/about.html", {"username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})
 
 def userBids(request):
+    if not request.user.is_authenticated:
+        return redirect("/login/")
     items = Item.objects.filter(ended=False).order_by("endDateTime")
     myCurrentItems = []
     for item in items:
@@ -185,26 +187,25 @@ def browse(request):
         return render(request, "base/browse.html", context)
 
 def listAnItem(request):
-    if request.method == "POST":
+    if not request.user.is_authenticated:
+        return redirect("/login/")
+    elif request.method == "POST":
         form = ItemsForm(request.POST)
-        if request.user.is_authenticated:
-            if form.is_valid():
-                itemData = form.cleaned_data
-                item = Item.objects.create(
-                    name=itemData["name"],
-                    price=itemData["price"],
-                    postageCost=itemData["postageCost"],
-                    bidIncrement=itemData["bidIncrement"],
-                    condition=itemData["condition"],
-                    endDateTime=itemData["endDateTime"],
-                    acceptReturns=itemData["acceptReturns"],
-                    description=itemData["description"],
-                    seller=Account.objects.get(pk=request.user.pk),
-                    category=itemData["category"],
-                )
-                return redirect("itemListed/" + str(item.pk) + "/")
-        else:
-            return redirect("/login/")
+        if form.is_valid():
+            itemData = form.cleaned_data
+            item = Item.objects.create(
+                name=itemData["name"],
+                price=itemData["price"],
+                postageCost=itemData["postageCost"],
+                bidIncrement=itemData["bidIncrement"],
+                condition=itemData["condition"],
+                endDateTime=itemData["endDateTime"],
+                acceptReturns=itemData["acceptReturns"],
+                description=itemData["description"],
+                seller=Account.objects.get(pk=request.user.pk),
+                category=itemData["category"],
+            )
+            return redirect("itemListed/" + str(item.pk) + "/")
     else:
         form = ItemsForm()
     return render(request, "base/listAnItem.html", {"form": form, "username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})
