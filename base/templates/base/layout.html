@@ -3,17 +3,13 @@
 <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
 <script>
 $(document).ready(function() {
-    // Get the current URL path
     var url = window.location.pathname;
-    
-    // Loop through each navbar item
+    if (url.includes('browse/page')) {
+        $('#browse').addClass('navbarCurrent')
+    }
     $('.navbarItem').each(function() {
-        // Get the link's URL path
         var link = $(this).attr('href');
-        
-        // Check if the link's URL matches the current URL
         if (link === url) {
-            // Add the navbarCurrent class to the link
             $(this).addClass('navbarCurrent');
         }
     });
