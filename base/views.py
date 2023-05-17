@@ -92,7 +92,7 @@ def itemDetail(request, pk):
                     message = "Could not submit bid: bid < £" + str(minPrice) + "."
                 elif bid > balance:
                     message = "Could not submit bid: balance < bid."
-                context={"bidForm": bidForm, "item": item, "username": username, "balance": str(balance), "message": message}
+                context={"bidForm": bidForm, "item": item, "username": username, "balance": str(balance), "message": message, "imgURL": url,}
             else: 
                 item = get_object_or_404(Item.objects.filter(ended=False), pk=pk)
                 bidForm = BidForm()
