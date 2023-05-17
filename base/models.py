@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils import timezone
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.db.models import CheckConstraint, Q
@@ -88,7 +87,7 @@ class IMDb(models.Model):
     runtime = models.IntegerField()
     type = models.CharField(max_length=50)
     aspectRatio = models.DecimalField(decimal_places=2, max_digits=4)
-    posterURL = models.CharField(max_length=300)
+    posterUrl = models.CharField(max_length=300)
 
     def getField(self, field):
         if field == 'genres':
