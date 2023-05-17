@@ -1,3 +1,4 @@
+import ast
 from datetime import datetime, timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
@@ -12,6 +13,10 @@ from django.db.models.functions import Lower
 from firebase_admin import storage
 
 bucket = storage.bucket()
+toBool = {
+    'true': True,
+    'false': False,
+}
 
 def getUsernameBalance(request):
     username = None
@@ -146,43 +151,36 @@ def userListings(request, pk):
         )
 
 def browse(request, page):
+    if request.method == "POST":
+        page = 1
     minItem = page * 100 - 100
     maxItem = page * 100
+    searchParams = request.GET.copy()
     if request.method == "POST":
         browseForm = BrowseForm(request.POST)
         if browseForm.is_valid():
-            items = Item.objects.filter(ended=False)
-            itemsToDelete = items.filter(name="test")
-            for item in itemsToDelete:
-                item.delete()
-
             conditionsFilter = ["", "", "", "", "", ""]
-            
             for i in range(6):
                 if browseForm.cleaned_data[browseForm.conditions[i]]:
                     conditionsFilter[i] = browseForm.conditions[i]
-            
-            filteredItems = items.filter(Q(name__icontains=browseForm.cleaned_data["search"]) &
-                                        Q(price__range=(browseForm.cleaned_data["lThan"], browseForm.cleaned_data["gThan"])) & 
-                                        (Q(condition = conditionsFilter[0]) | Q(condition = conditionsFilter[1]) | Q(condition = conditionsFilter[2]) | 
-                                        Q(condition = conditionsFilter[3]) | Q(condition = conditionsFilter[4]) | Q(condition = conditionsFilter[5])) & 
-                                        (Q(acceptReturns = (browseForm.cleaned_data["areReturnsAccepted"] == True)) | 
-                                        Q(acceptReturns = (browseForm.cleaned_data["areReturnsNotAccepted"] == False))))
-            if browseForm.cleaned_data["category"] != "all":
-                filteredItems = filteredItems.filter(category = browseForm.cleaned_data["category"])
-                
-            results = filteredItems.__len__()
-            if results < maxItem:
-                maxItem = results
-            ascending = browseForm.cleaned_data["ascending"]
-           
-            if browseForm.cleaned_data["sortBy"] == "name":
-                sortedAndFilteredItems = filteredItems.order_by(Lower('name'))[minItem:maxItem] if ascending else items.order_by(Lower('name').desc())[minItem:maxItem]
-            elif ascending:
-                sortedAndFilteredItems = filteredItems.order_by(browseForm.cleaned_data["sortBy"])[minItem:maxItem]
-            else:
-                sortedAndFilteredItems = filteredItems.order_by(f"-{browseForm.cleaned_data['sortBy']}")[minItem:maxItem]
-
+            searchParams.update({
+                "search": browseForm.cleaned_data["search"],
+                "category": browseForm.cleaned_data["category"],
+                "sortBy": browseForm.cleaned_data["sortBy"],
+                "asc": browseForm.cleaned_data["ascending"],
+                "lT": browseForm.cleaned_data["lThan"],
+                "gT": browseForm.cleaned_data["gThan"],
+                "new": browseForm.cleaned_data["new"],
+                "excellent": browseForm.cleaned_data["excellent"],
+                "good": browseForm.cleaned_data["good"],
+                "used": browseForm.cleaned_data["used"],
+                "refurbished": browseForm.cleaned_data["refurbished"],
+                "partsOnly": browseForm.cleaned_data["partsOnly"],
+                "rA": browseForm.cleaned_data["areReturnsAccepted"],
+                "rNA": browseForm.cleaned_data["areReturnsNotAccepted"],
+                "conditionsFilter": conditionsFilter,
+            })
+            maxItem, results, sortedAndFilteredItems = sortAndFilter(minItem, maxItem, browseForm.cleaned_data, conditionsFilter)
             context = {
                 "items": sortedAndFilteredItems,
                 "browseForm": browseForm,
@@ -193,19 +191,60 @@ def browse(request, page):
                 "minItem": minItem + 1,
                 "maxItem": maxItem,
                 "results": results,
+                "searchParams": searchParams.urlencode(),
                 }
             return render(request, "base/browse.html", context)
         
     else:
-        items = Item.objects.filter(ended=False)
-        results = items.__len__()
-        if minItem > results:
-            return redirect("/404/")
-        if results < maxItem:
-                maxItem = results
-        browseForm = BrowseForm()
+        if len(searchParams) > 0:
+            search = searchParams.get("search")
+            category = searchParams.get("category")
+            sortBy = searchParams.get("sortBy")
+            ascending = toBool[searchParams.get("asc").lower()]
+            lThan = float(searchParams.get("lT"))
+            gThan = float(searchParams.get("gT"))
+            conditionsFilter = ast.literal_eval(searchParams.get("conditionsFilter"))
+            areReturnsAccepted = toBool[searchParams.get("rA").lower()]
+            areReturnsNotAccepted = toBool[searchParams.get("rNA").lower()]
+            browseDict = {
+                "search": search,
+                "category": category,
+                "sortBy": sortBy,
+                "ascending": ascending,
+                "lThan": lThan,
+                "gThan": gThan,
+                "areReturnsAccepted": areReturnsAccepted,
+                "areReturnsNotAccepted": areReturnsNotAccepted,
+            }
+            maxItem, results, items = sortAndFilter(minItem, maxItem, browseDict, conditionsFilter)
+            browseForm = BrowseForm(initial={
+                "search": search,
+                "category": category,
+                "sortBy": sortBy,
+                "ascending": ascending,
+                "lThan": lThan,
+                "gThan": gThan,
+                "new": toBool[searchParams.get("new").lower()],
+                "excellent": toBool[searchParams.get("excellent").lower()],
+                "good": toBool[searchParams.get("good").lower()],
+                "used": toBool[searchParams.get("used").lower()],
+                "refurbished": toBool[searchParams.get("refurbished").lower()],
+                "partsOnly": toBool[searchParams.get("partsOnly").lower()],
+                "areReturnsAccepted": areReturnsAccepted,
+                "areReturnsNotAccepted": areReturnsNotAccepted,
+            })
+        else:
+            browseForm = BrowseForm()
+            items = Item.objects.filter(ended=False).order_by("price")
+            results = items.__len__()
+            if minItem > results:
+                return redirect("/404/")
+            if results < maxItem:
+                    maxItem = results
+            items = items[minItem:maxItem]
+        
         context = {
-            "items": items.order_by("price")[minItem:maxItem], 
+            "items": items, 
             "browseForm": browseForm,
             "username": getUsernameBalance(request)[0],
             "balance": str(getUsernameBalance(request)[1]),
@@ -214,8 +253,33 @@ def browse(request, page):
             "minItem": minItem + 1,
             "maxItem": maxItem,
             "results": results,
+            "searchParams": searchParams.urlencode(),
             }
         return render(request, "base/browse.html", context)
+
+def sortAndFilter(minItem, maxItem, browseDict, conditionsFilter):
+    filteredItems = Item.objects.filter(Q(ended=False) & Q(name__icontains=browseDict["search"]) &
+                                        Q(price__range=(browseDict["lThan"], browseDict["gThan"])) &
+                                        (Q(condition = conditionsFilter[0]) | Q(condition = conditionsFilter[1]) |
+                                        Q(condition = conditionsFilter[2]) | Q(condition = conditionsFilter[3]) |
+                                        Q(condition = conditionsFilter[4]) | Q(condition = conditionsFilter[5])) &
+                                        (Q(acceptReturns = (browseDict["areReturnsAccepted"] == True)) |
+                                        Q(acceptReturns = (browseDict["areReturnsNotAccepted"] == False))))
+    if browseDict["category"] != "all":
+        filteredItems = filteredItems.filter(category = browseDict["category"])
+                
+    results = filteredItems.__len__()
+    if results < maxItem:
+        maxItem = results
+    ascending = browseDict["ascending"]
+           
+    if browseDict["sortBy"] == "name":
+        sortedAndFilteredItems = filteredItems.order_by(Lower('name'))[minItem:maxItem] if ascending else filteredItems.order_by(Lower('name').desc())[minItem:maxItem]
+    elif ascending:
+        sortedAndFilteredItems = filteredItems.order_by(browseDict["sortBy"])[minItem:maxItem]
+    else:
+        sortedAndFilteredItems = filteredItems.order_by(f"-{browseDict['sortBy']}")[minItem:maxItem]
+    return maxItem, results, sortedAndFilteredItems
 
 def createPages(results):
     numPages = int(results/100 + 1)
