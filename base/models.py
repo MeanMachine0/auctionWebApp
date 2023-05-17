@@ -23,9 +23,9 @@ class Account(models.Model):
     
 class Item(models.Model): 
     name = models.CharField(max_length=60)
-    price = models.DecimalField(decimal_places=2, max_digits=10)
-    postageCost = models.DecimalField(decimal_places=2, max_digits=10)
-    bidIncrement = models.DecimalField(decimal_places=2, max_digits=10)
+    price = models.DecimalField(decimal_places=2, max_digits=7)
+    postageCost = models.DecimalField(decimal_places=2, max_digits=6)
+    bidIncrement = models.DecimalField(decimal_places=2, max_digits=6)
     conditionChoices = [
         ("new", "New"),
         ("excellent", "Excellent"),
