@@ -202,9 +202,28 @@ def browse(request, page):
                 "areReturnsAccepted": areReturnsAccepted,
                 "areReturnsNotAccepted": areReturnsNotAccepted,
             }
-            maxItem, results, items = sortAndFilter(minItem, maxItem, browseDict, conditionsFilter)
-            if items == None:
+            filteredItems = Item.objects.filter(Q(ended=False) & Q(name__icontains=browseDict["search"]) &
+                                        Q(price__range=(browseDict["lThan"], browseDict["gThan"])) &
+                                        (Q(condition = conditionsFilter[0]) | Q(condition = conditionsFilter[1]) |
+                                        Q(condition = conditionsFilter[2]) | Q(condition = conditionsFilter[3]) |
+                                        Q(condition = conditionsFilter[4]) | Q(condition = conditionsFilter[5])) &
+                                        (Q(acceptReturns = (browseDict["areReturnsAccepted"] == True)) |
+                                        Q(acceptReturns = (browseDict["areReturnsNotAccepted"] == False))))
+            if browseDict["category"] != "all":
+                filteredItems = filteredItems.filter(category = browseDict["category"])
+
+            results = filteredItems.__len__()
+            if minItem > results:
                 return redirect("/404/")
+            if results < maxItem:
+                maxItem = results
+            
+            ascending = browseDict["ascending"]
+            if browseDict["sortBy"] == "name":
+                sortedAndFilteredItems = filteredItems.order_by(Lower('name'))[minItem:maxItem] if ascending else filteredItems.order_by(Lower('name').desc())[minItem:maxItem]
+            else:
+                sortedAndFilteredItems = filteredItems.order_by(browseDict["sortBy"])[minItem:maxItem] if ascending else filteredItems.order_by(f"-{browseDict['sortBy']}")[minItem:maxItem]
+            items = sortedAndFilteredItems
             browseForm = BrowseForm(initial={
                 "search": search,
                 "category": category,
@@ -244,32 +263,6 @@ def browse(request, page):
             "searchParams": searchParams.urlencode(),
             }
         return render(request, "base/browse.html", context)
-
-def sortAndFilter(minItem, maxItem, browseDict, conditionsFilter):
-    filteredItems = Item.objects.filter(Q(ended=False) & Q(name__icontains=browseDict["search"]) &
-                                        Q(price__range=(browseDict["lThan"], browseDict["gThan"])) &
-                                        (Q(condition = conditionsFilter[0]) | Q(condition = conditionsFilter[1]) |
-                                        Q(condition = conditionsFilter[2]) | Q(condition = conditionsFilter[3]) |
-                                        Q(condition = conditionsFilter[4]) | Q(condition = conditionsFilter[5])) &
-                                        (Q(acceptReturns = (browseDict["areReturnsAccepted"] == True)) |
-                                        Q(acceptReturns = (browseDict["areReturnsNotAccepted"] == False))))
-    if browseDict["category"] != "all":
-        filteredItems = filteredItems.filter(category = browseDict["category"])
-                
-    results = filteredItems.__len__()
-    if minItem > results:
-        return None, None, None
-    if results < maxItem:
-        maxItem = results
-    ascending = browseDict["ascending"]
-           
-    if browseDict["sortBy"] == "name":
-        sortedAndFilteredItems = filteredItems.order_by(Lower('name'))[minItem:maxItem] if ascending else filteredItems.order_by(Lower('name').desc())[minItem:maxItem]
-    elif ascending:
-        sortedAndFilteredItems = filteredItems.order_by(browseDict["sortBy"])[minItem:maxItem]
-    else:
-        sortedAndFilteredItems = filteredItems.order_by(f"-{browseDict['sortBy']}")[minItem:maxItem]
-    return maxItem, results, sortedAndFilteredItems
 
 def createPages(results):
     numPages = int(results/100 + 1)
