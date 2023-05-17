@@ -217,6 +217,8 @@ def browse(request, page):
                 "areReturnsNotAccepted": areReturnsNotAccepted,
             }
             maxItem, results, items = sortAndFilter(minItem, maxItem, browseDict, conditionsFilter)
+            if items == None:
+                return redirect("/404/")
             browseForm = BrowseForm(initial={
                 "search": search,
                 "category": category,
@@ -234,7 +236,6 @@ def browse(request, page):
                 "areReturnsNotAccepted": areReturnsNotAccepted,
             })
         else:
-            browseForm = BrowseForm()
             items = Item.objects.filter(ended=False).order_by("price")
             results = items.__len__()
             if minItem > results:
@@ -242,6 +243,7 @@ def browse(request, page):
             if results < maxItem:
                     maxItem = results
             items = items[minItem:maxItem]
+            browseForm = BrowseForm()
         
         context = {
             "items": items, 
@@ -269,6 +271,8 @@ def sortAndFilter(minItem, maxItem, browseDict, conditionsFilter):
         filteredItems = filteredItems.filter(category = browseDict["category"])
                 
     results = filteredItems.__len__()
+    if minItem > results:
+        return None, None, None
     if results < maxItem:
         maxItem = results
     ascending = browseDict["ascending"]
