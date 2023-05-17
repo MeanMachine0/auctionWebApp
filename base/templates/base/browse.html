@@ -74,7 +74,7 @@ Auction - Browse Items
   </li>
   {% else %}
   <li class="borderli" style="border-radius: 0; margin-right: 5px;">
-    <a href="{% url 'browse' page=page %}">{{page}}</a>
+    <a href="{% url 'browse' page=page %}?{{ searchParams }}">{{page}}</a>
   </li>
   {% endif %}
   {% endfor %}
