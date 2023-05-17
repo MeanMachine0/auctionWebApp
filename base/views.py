@@ -17,6 +17,17 @@ toBool = {
     'true': True,
     'false': False,
 }
+def getBaseUrl(request):
+    baseUrl = request.scheme + "://" + request.get_host()
+    return baseUrl
+
+def getLoginPath(request):
+    loginParams = request.GET.copy()
+    loginParams.update({
+        "path": request.path,
+    })
+    loginPath = f"/login/?{loginParams.urlencode()}"
+    return loginPath
 
 def getUsernameBalance(request):
     username = None
@@ -41,6 +52,8 @@ AuthenticationForm.error_messages = {
 }
 
 def loginView(request):
+    loginParams = request.GET.copy()
+    path = loginParams.get("path")
     if request.method == "POST":
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
@@ -49,7 +62,12 @@ def loginView(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect("/")
+                if path is not None:
+                    if path == "/userListings/0/":
+                        path = f"/userListings/{user.pk}/"
+                    return redirect(path)
+                else: 
+                    return redirect("/")
             else:
                 username = None
                 return render(request, "base/login.html", {"form": form, "username": username})
@@ -92,17 +110,18 @@ def itemDetail(request, pk):
                     message = "Could not submit bid: bid < £" + str(minPrice) + "."
                 elif bid > balance:
                     message = "Could not submit bid: balance < bid."
-                context={"bidForm": bidForm, "item": item, "username": username, "balance": str(balance), "message": message, "imgURL": url,}
+                context={"bidForm": bidForm, "item": item, "username": username, "balance": str(balance), "message": message, "imgUrl": url,}
             else: 
                 item = get_object_or_404(Item.objects.filter(ended=False), pk=pk)
                 bidForm = BidForm()
-                context={"bidForm": bidForm, "item": item, "username": getUsernameBalance(request)[0], "balance": str(balance), "imgURL": url,}
+                context={"bidForm": bidForm, "item": item, "username": getUsernameBalance(request)[0], "balance": str(balance), "imgUrl": url,}
         else:
-            return redirect("/login/")
+            loginPath = getLoginPath(request)
+            return redirect(loginPath)
     else:
         item = get_object_or_404(Item.objects.filter(ended=False), pk=pk)
         bidForm = BidForm()
-        context={"bidForm": bidForm, "item": item, "username": getUsernameBalance(request)[0], "balance": str(balance), "imgURL": url,}
+        context={"bidForm": bidForm, "item": item, "username": getUsernameBalance(request)[0], "balance": str(balance), "imgUrl": url,}
 
     return render(request, "base/itemDetail.html", context)
     
@@ -112,7 +131,8 @@ def about(request):
 
 def userBids(request):
     if not request.user.is_authenticated:
-        return redirect("/login/")
+        loginPath = getLoginPath(request)
+        return redirect(loginPath)
     items = Item.objects.filter(ended=False).order_by("endDateTime")
     myCurrentItems = []
     for item in items:
@@ -135,10 +155,12 @@ def userBids(request):
         )
 
 def userListings(request, pk):
+    if not request.user.is_authenticated and pk == 0:
+        loginPath = getLoginPath(request)
+        return redirect(loginPath)
     myCurrentItems = Item.objects.filter(Q(ended=False) & Q(seller=pk)).order_by("endDateTime")
     myOldItems = Item.objects.filter(Q(ended=True) & Q(seller=pk)).order_by("-endDateTime")
     you = True if request.user.pk == pk else False
-
     return render(
         request, "base/userListings.html", 
         {
@@ -176,8 +198,8 @@ def browse(request, page):
                 "rNA": browseForm.cleaned_data["areReturnsNotAccepted"],
                 "conditionsFilter": conditionsFilter,
             })
-            newURL = request.scheme + "://" + request.get_host() + '/browse/page1/?' + searchParams.urlencode()
-            return redirect(newURL)
+            newUrl = getBaseUrl(request) + '/browse/page1/?' + searchParams.urlencode()
+            return redirect(newUrl)
         
     else:
         minItem = page * 100 - 100
@@ -274,7 +296,8 @@ def createPages(results):
 
 def listAnItem(request):
     if not request.user.is_authenticated:
-        return redirect("/login/")
+        loginPath = getLoginPath(request)
+        return redirect(loginPath)
     elif request.method == "POST":
         form = ItemForm(request.POST)
         if form.is_valid():

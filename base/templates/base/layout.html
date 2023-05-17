@@ -27,19 +27,14 @@ $(document).ready(function() {
 <body>
 <div class="navbar">
     <a href="{% url 'home' %}" id="home" class="navbarItem" style="margin-left: 0px;">Home</a>
-    {% if request.user.pk %}
     <a href="{% url 'userBids' %}" id="myBids" class="navbarItem">My Bids</a>
+    {% if request.user.pk %}
     <a href="{% url 'userListings' pk=request.user.pk %}" id="myListings" class="navbarItem">My Listings</a>
     {% else %}
-    <a href="{% url 'login' %}" id="myBids" class="navbarItem">My Bids</a>
-    <a href="{% url 'login' %}" id="myListings" class="navbarItem">My Listings</a>
+    <a href="{% url 'userListings' pk=0 %}" id="myListings" class="navbarItem">My Listings</a>
     {% endif %}
     <a href="{% url 'browse' page=1 %}" id="browse" class="navbarItem">Browse Items</a>
-    {% if request.user.pk %}
     <a href="{% url 'listAnItem' %}" id="listAnItem" class="navbarItem">List an Item</a>
-    {% else %}
-    <a href="{% url 'login' %}" id="listAnItem" class="navbarItem">List an Item</a>
-    {% endif %}
     <a href="{% url 'about' %}" id="about" class="navbarItem">About</a>
 </div>
    
