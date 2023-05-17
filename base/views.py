@@ -151,10 +151,6 @@ def userListings(request, pk):
         )
 
 def browse(request, page):
-    if request.method == "POST":
-        page = 1
-    minItem = page * 100 - 100
-    maxItem = page * 100
     searchParams = request.GET.copy()
     if request.method == "POST":
         browseForm = BrowseForm(request.POST)
@@ -180,22 +176,12 @@ def browse(request, page):
                 "rNA": browseForm.cleaned_data["areReturnsNotAccepted"],
                 "conditionsFilter": conditionsFilter,
             })
-            maxItem, results, sortedAndFilteredItems = sortAndFilter(minItem, maxItem, browseForm.cleaned_data, conditionsFilter)
-            context = {
-                "items": sortedAndFilteredItems,
-                "browseForm": browseForm,
-                "username": getUsernameBalance(request)[0],
-                "balance": str(getUsernameBalance(request)[1]),
-                "currentPage": page,
-                "pages": createPages(results),
-                "minItem": minItem + 1,
-                "maxItem": maxItem,
-                "results": results,
-                "searchParams": searchParams.urlencode(),
-                }
-            return render(request, "base/browse.html", context)
+            newURL = request.scheme + "://" + request.get_host() + '/browse/page1/?' + searchParams.urlencode()
+            return redirect(newURL)
         
     else:
+        minItem = page * 100 - 100
+        maxItem = page * 100
         if len(searchParams) > 0:
             search = searchParams.get("search")
             category = searchParams.get("category")
