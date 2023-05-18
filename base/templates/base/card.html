@@ -1,10 +1,10 @@
 {% load static %}
 <div class="textBlock" style="margin-bottom: 10px; max-width: 400px;">
     <div class="centralContainer" style="width: 400px;">
-        <div class="leftContainer" style="width: 125px;">
+        <div class="leftContainer" style="width: 125px; display: flex; margin: 5px 0px 5px -15px;">
             <img src="{{item.bidders}}" alt="thumbNail" style="width: 125px;"/>
         </div>
-        <div class="rightContainer" style="width: 250px;">
+        <div class="rightContainer" style="width: 250px; align-self: center;">
             <a href="{% url 'itemDetail' pk=item.pk %}">{{item.name}}</a>
             <br>
             £{{ item.price }}
