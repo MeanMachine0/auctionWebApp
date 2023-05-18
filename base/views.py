@@ -47,7 +47,7 @@ class HomeListView(ListView):
     model = Item
     def get_context_data(self, **kwargs):
         context = super(HomeListView, self).get_context_data(**kwargs)
-        context["username"]  = getUsernameBalance(self.request)[0]
+        context["username"] = getUsernameBalance(self.request)[0]
         context["balance"] = str(getUsernameBalance(self.request)[1])
         return context
 
@@ -123,9 +123,10 @@ def itemDetail(request, pk):
             loginPath = getLoginPath(request)
             return redirect(loginPath)
     else:
-        item = get_object_or_404(Item.objects.filter(ended=False), pk=pk)
+        item = get_object_or_404(Item.objects.all(), pk=pk)
+        active = not item.ended
         bidForm = BidForm()
-        context={"bidForm": bidForm, "item": item, "username": getUsernameBalance(request)[0], "balance": str(balance), "imgUrl": url,}
+        context={"bidForm": bidForm, "item": item, "username": getUsernameBalance(request)[0], "balance": str(balance), "imgUrl": url, "active": active}
 
     return render(request, "base/itemDetail.html", context)
     
@@ -328,7 +329,3 @@ def listAnItem(request):
 def itemListed(request, pk):
     item = get_object_or_404(Item, pk=pk)
     return render(request, "base/itemListed.html", {"item": item, "username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})
-
-def endedItemDetail(request, pk):
-    item = get_object_or_404(Item.objects.filter(ended=True), pk=pk)
-    return render(request, "base/endedItemDetail.html", {"item": item, "username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})

@@ -8,20 +8,12 @@
 {% endblock %}
 
 {% block subheader %}
-<h2 style="margin-top: -40px;">Recently Sold Items</h2>
+    <h2 style="margin-top: -40px;">Recently Sold Items</h2>
 {% endblock %}
 {% block content %}
-<ul class="itemList">
-    {% for item in itemList %}
-        <li class="borderli">
-            <a href="{% url 'endedItemDetail' pk=item.pk %}">{{item.name}}</a> at {{item.endDateTime|date:"M d Y, H:i"}}
-        </li>
-    {% empty %}
-        <p style="color: rgb(224, 224, 224)">No items found.</p>
-    {% endfor %}
-</ul>
+{% for item in itemList %}
+    {% include "base/card.html" %}
+{% empty %}
+    <p style="color: rgb(224, 224, 224)">No items found.</p>
+{% endfor %}
 {% endblock %}
-
-<li class="borderli" style="max-width: 800px;">
-    <a href="{% url 'itemDetail' pk=item.pk %}">{{item.name}}</a> - £{{item.price}}
-  </li>
