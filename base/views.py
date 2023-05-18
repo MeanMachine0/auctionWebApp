@@ -29,6 +29,11 @@ def getLoginPath(request):
     loginPath = f"/login/?{loginParams.urlencode()}"
     return loginPath
 
+def getDownloadUrl(path):
+    blob = bucket.blob(path)
+    url = blob.generate_signed_url(datetime.utcnow() + timedelta(hours=1))
+    return url
+
 def getUsernameBalance(request):
     username = None
     balance = None
@@ -82,8 +87,7 @@ def logoutView(request):
 def itemDetail(request, pk):
     username = getUsernameBalance(request)[0]
     balance = getUsernameBalance(request)[1]
-    blob = bucket.blob(f'uploads/images/{pk}/smallerImage')
-    url = blob.generate_signed_url(datetime.utcnow() + timedelta(seconds=30))
+    url = getDownloadUrl(f'uploads/images/{pk}/smallerImage')
     if request.method == "POST":
         bidForm = BidForm(request.POST)
         item = get_object_or_404(Item.objects.filter(ended=False), pk=pk)
@@ -271,7 +275,9 @@ def browse(request, page):
                     maxItem = results
             items = items[minItem:maxItem]
             browseForm = BrowseForm()
-        
+        for item in items:
+            item.bidders = getDownloadUrl(f'uploads/images/{item.id}/thumbNail')
+
         context = {
             "items": items, 
             "browseForm": browseForm,
