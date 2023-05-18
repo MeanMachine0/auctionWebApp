@@ -39,6 +39,12 @@ class BrowseForm(forms.Form):
         ("name", "Name"),
         ("endDateTime", "End"),
     ]
+    showNItemsChoices = [
+        (10, "10"),
+        (20, "20"),
+        (50, "50"),
+        (100, "100"),
+    ]
     categoriesWithAll = ItemForm.categories
     categoriesWithAll.insert(0, ("all", "All"))
     conditions = ("new", "excellent", "good", "used", "refurbished", "partsOnly")
@@ -56,6 +62,7 @@ class BrowseForm(forms.Form):
     partsOnly = forms.BooleanField(label="Parts Only", required=False, initial=True)
     areReturnsAccepted = forms.BooleanField(label="Returns Accepted", required=False, initial=True)
     areReturnsNotAccepted = forms.BooleanField(label="Returns Not Accepted", required=False, initial=True)
+    showNItems = forms.ChoiceField(choices=showNItemsChoices, label="Max Results/Page", initial=20, widget=forms.Select(attrs={"style": "background-color: lightblue;" "font-size: 20px;" "border: 2px solid black;" "max-width: 160px;"}))
 
 class BidForm(forms.Form):
     bid = forms.DecimalField(label="Bid (£)", decimal_places=2, max_digits=10)

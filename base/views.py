@@ -205,14 +205,13 @@ def browse(request, page):
                 "partsOnly": browseForm.cleaned_data["partsOnly"],
                 "rA": browseForm.cleaned_data["areReturnsAccepted"],
                 "rNA": browseForm.cleaned_data["areReturnsNotAccepted"],
+                "n": browseForm.cleaned_data["showNItems"], 
                 "conditionsFilter": conditionsFilter,
             })
             newUrl = getBaseUrl(request) + '/browse/page1/?' + searchParams.urlencode()
             return redirect(newUrl)
         
     else:
-        minItem = page * 100 - 100
-        maxItem = page * 100
         if len(searchParams) > 0:
             search = searchParams.get("search")
             category = searchParams.get("category")
@@ -220,9 +219,12 @@ def browse(request, page):
             ascending = toBool[searchParams.get("asc").lower()]
             lThan = float(searchParams.get("lT"))
             gThan = float(searchParams.get("gT"))
-            conditionsFilter = ast.literal_eval(searchParams.get("conditionsFilter"))
             areReturnsAccepted = toBool[searchParams.get("rA").lower()]
             areReturnsNotAccepted = toBool[searchParams.get("rNA").lower()]
+            conditionsFilter = ast.literal_eval(searchParams.get("conditionsFilter"))
+            n = int(searchParams.get("n"))
+            minItem = page * n - n
+            maxItem = page * n
             browseDict = {
                 "search": search,
                 "category": category,
@@ -270,8 +272,12 @@ def browse(request, page):
                 "partsOnly": toBool[searchParams.get("partsOnly").lower()],
                 "areReturnsAccepted": areReturnsAccepted,
                 "areReturnsNotAccepted": areReturnsNotAccepted,
+                "showNItems": n,
             })
         else:
+            n = 20
+            minItem = page * n - n
+            maxItem = page * n
             items = Item.objects.filter(ended=False).order_by("price")
             results = items.__len__()
             if minItem > results:
@@ -289,7 +295,7 @@ def browse(request, page):
             "username": getUsernameBalance(request)[0],
             "balance": str(getUsernameBalance(request)[1]),
             "currentPage": page,
-            "pages": createPages(results),
+            "pages": createPages(results, n),
             "minItem": minItem + 1,
             "maxItem": maxItem,
             "results": results,
@@ -297,8 +303,12 @@ def browse(request, page):
             }
         return render(request, "base/browse.html", context)
 
-def createPages(results):
-    numPages = int(results/100 + 1)
+def createPages(results, n):
+    numPages = results/n
+    if numPages != int(numPages):
+        numPages = int(numPages + 1)
+    else: 
+        numPages = int(numPages)
     pages = []
     if numPages > 1:
         for pageNum in range(numPages):
