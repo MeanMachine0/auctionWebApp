@@ -43,13 +43,18 @@ def getUsernameBalance(request):
         balance = Account.objects.get(user__pk=pK).balance
     return (username, balance)
 
-class HomeListView(ListView):
-    model = Item
-    def get_context_data(self, **kwargs):
-        context = super(HomeListView, self).get_context_data(**kwargs)
-        context["username"] = getUsernameBalance(self.request)[0]
-        context["balance"] = str(getUsernameBalance(self.request)[1])
-        return context
+def homeView(request):
+    username, balance = getUsernameBalance(request)
+    items = Item.objects.filter(sold=True).order_by("-endDateTime")[:100]
+    for item in items:
+        item.bidders = getDownloadUrl(f"uploads/images/{item.id}/thumbNail")
+    context = {
+        "items": items,
+        "username": username,
+        "balance": balance,
+        "home": True,
+    }
+    return render(request, 'base/browse.html', context)
 
 AuthenticationForm.error_messages = {
     "invalid_login": "Invalid username and/or password.",
@@ -85,8 +90,7 @@ def logoutView(request):
     return redirect("/")
 
 def itemDetail(request, pk):
-    username = getUsernameBalance(request)[0]
-    balance = getUsernameBalance(request)[1]
+    username, balance = getUsernameBalance(request)
     url = getDownloadUrl(f'uploads/images/{pk}/smallerImage')
     if request.method == "POST":
         bidForm = BidForm(request.POST)

@@ -1,15 +1,8 @@
 from django.urls import path
 from base import views
-from .models import Item
-
-homeListView = views.HomeListView.as_view(
-    queryset=Item.objects.filter(sold=True).order_by("-endDateTime")[:100],
-    context_object_name="itemList",
-    template_name="base/home.html",
-)
 
 urlpatterns = [
-    path("", homeListView, name="home"),
+    path("", views.homeView, name="home"),
     path("login/", views.loginView, name="login"),
     path("logout/", views.logoutView, name="logout"),
     path("about/", views.about, name="about"),
