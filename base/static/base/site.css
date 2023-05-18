@@ -51,6 +51,34 @@
     margin-left: 20px;
 }
 
+.grid {
+    margin: auto;
+}
+
+.gridCards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+}
+
+@media (max-width: 2000px) {
+    .gridCards {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 1580px) {
+    .gridCards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 1200px) {
+    .gridCards {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+
 h2 {
     color: rgb(224, 224, 224);
 }
@@ -82,7 +110,7 @@ h4 {
     border: 2px solid black;
     border-radius: 30px;
     background-color: lightblue;
-    line-height: 30px;
+    padding: 5px 0px 5px 8px
 }
 
 body {

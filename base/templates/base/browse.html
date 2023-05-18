@@ -18,10 +18,10 @@
   });
 </script>
 
-<div style="max-width: 800px; margin-top: -60px;">
+<div style="margin-top: -60px; max-width: 1800px;">
   {% if not home %}
     {% if results > 100 %}
-    <h2>
+    <h2 style="text-align: center">
       Showing {{minItem}}-{{maxItem}} of {{results}} Results <button id="collapse" style="color: rgb(224, 224, 224); background-color: dimgray; font-size: 18px; border: 0px;">Toggle →</button>
     </h2>
     {% else %}
@@ -32,11 +32,15 @@
   {% else %}
     <h2 style="text-align: center;">Recently Sold Items</h2>
   {% endif %}
-  {% for item in items %}
-    {% include "base/card.html" %}
-  {% empty %}
-    <p style="color: rgb(224, 224, 224)">No items found.</p>
-  {% endfor %}
+  <div class="grid">
+    <div class="gridCards">
+      {% for item in items %}
+        {% include "base/card.html" %}
+      {% empty %}
+        <p style="color: rgb(224, 224, 224)">No items found.</p>
+      {% endfor %}
+    </div>
+  </div>
 </div>
 
 {% if not home %}
