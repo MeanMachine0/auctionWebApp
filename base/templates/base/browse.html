@@ -43,9 +43,7 @@ Auction - Browse Items
   </h2>
   {% endif %}
   {% for item in items %}
-  <li class="borderli" style="max-width: 800px;">
-    <a href="{% url 'itemDetail' pk=item.pk %}">{{item.name}}</a> - £{{item.price}}
-  </li>
+  {% include "base/card.html" %}
   {% empty %}
     <p style="color: rgb(224, 224, 224)">No items found.</p>
   {% endfor %}
