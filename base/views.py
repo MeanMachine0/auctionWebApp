@@ -5,7 +5,6 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils import timezone
 from django.shortcuts import redirect
-from django.views.generic import ListView
 from django.db.models import Q
 from .models import Item, Account
 from .forms import ItemForm, BrowseForm, BidForm
@@ -190,6 +189,7 @@ def browse(request, page):
             for i in range(6):
                 if browseForm.cleaned_data[browseForm.conditions[i]]:
                     conditionsFilter[i] = browseForm.conditions[i]
+            searchParams.clear()
             searchParams.update({
                 "search": browseForm.cleaned_data["search"],
                 "category": browseForm.cleaned_data["category"],
