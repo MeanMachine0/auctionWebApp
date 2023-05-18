@@ -18,7 +18,7 @@ Auction - {{item.name}}
 {% block content %}
 <div class="leftContainer" style="max-width: 300px;">
   {% if active %}
-    <p class="textBlock" style="max-width: 245px;">
+    <p class="textBlock" style="max-width: 245px; line-height: 30px; padding: 10px 20px; margin: 0px 0px 0px 0px;">
       <strong>Summary:</strong><br>
       Current Price: £{{item.price}}<br>
       Postage Cost: £{{item.postageCost}}<br>
@@ -35,7 +35,7 @@ Auction - {{item.name}}
       {% endif %}
     </p>
   {% else %}
-    <p class="textBlock" style="max-width: 260px;">
+    <p class="textBlock" style="max-width: 260px; line-height: 30px; padding: 10px 20px; margin: 0px 0px 0px 0px;">
       <strong>Summary:</strong><br>
       Sale Price: £{{item.price}}<br>
       Postage Cost: £{{item.postageCost}}<br>
@@ -55,7 +55,7 @@ Auction - {{item.name}}
 </div>
 
 <div class="rightContainer" style="max-width: 50vw;">
-  <p class="textBlock">
+  <p class="textBlock" style="line-height: 30px; padding: 10px 20px; margin: 0px 0px 0px 0px;">
     <strong style="margin-top: 0px;">Description:</strong><br>
     <span style="white-space: pre-line;">{{item.description}}</span>
   </p>
