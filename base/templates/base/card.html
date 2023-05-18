@@ -1,0 +1,19 @@
+{% load static %}
+<div class="textBlock" style="margin-bottom: 10px; max-width: 400px;">
+    <div class="centralContainer" style="width: 400px;">
+        <div class="leftContainer" style="width: 125px;">
+            <img src="{{item.bidders}}" alt="thumbNail" style="width: 125px;"/>
+        </div>
+        <div class="rightContainer" style="width: 250px;">
+            <a href="{% url 'itemDetail' pk=item.pk %}">{{item.name}}</a>
+            <br>
+            £{{ item.price }}
+            <br>
+            {{ item.numBids }} bids
+            <br>
+            {{ item.condition }}
+            <br>
+            Listed by {{ item.seller.user.username }}
+        </div>
+    </div>
+</div>
