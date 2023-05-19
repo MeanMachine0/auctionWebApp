@@ -2,7 +2,7 @@
 <div class="textBlock" style="width: 400px; height: 210px; display: inline-block;">
     <div class="centralContainer" style="width: 400px;">
         <div class="leftContainer" style="width: 125px;  padding-top: 12px;">
-            <img src="{% static 'images/462.jpeg' %}" alt="thumbNail" style="width: 125px;"/>
+            <img src="{{item.bidders}}" alt="thumbNail" style="width: 125px;"/>
         </div>
         <div class="rightContainer" style="width: 250px; align-self: center; margin-left: 10px;">
             <a href="{% url 'itemDetail' pk=item.pk %}">{{item.name}}</a>
