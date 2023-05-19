@@ -36,10 +36,22 @@ def getDownloadUrl(path):
 def getUsernameBalance(request):
     username = None
     balance = None
-    if request.user.is_authenticated:
-        username = request.user.username
-        pK = request.user.pk
-        balance = Account.objects.get(user__pk=pK).balance
+    user = request.user
+    if user.is_authenticated:
+        username = user.username
+        balance = str(Account.objects.get(user=user).balance)
+        b1, b2 = balance.split('.')
+        lb1 = len(b1)
+        if lb1 >= 4:
+            first = True
+            indices = []
+            while lb1 >= 3:
+                lb1 = lb1 - 4 if first else lb1 - 3
+                indices.append(lb1)
+                first = False
+            for index in indices:
+                b1 = f"{b1[:index]}{b1[index]},{b1[index+1:]}"
+            balance = '.'.join([b1, b2])     
     return (username, balance)
 
 def homeView(request):
@@ -97,14 +109,16 @@ def itemDetail(request, pk):
         item = get_object_or_404(Item.objects.filter(ended=False), pk=pk)
         if request.user.is_authenticated:
             if bidForm.is_valid():
+                account = Account.objects.get(user=request.user)
+                balance = account.balance
                 bid = bidForm.cleaned_data["bid"]
                 minPrice = item.price + item.bidIncrement
-                buyerId = Account.objects.get(user__pk=request.user.pk).pk
+                buyerId = account.id
                 sellerId = item.seller_id
                 if bid >= minPrice and balance >= bid and buyerId != sellerId and timezone.now() < item.endDateTime:
                     item.price = bid
                     item.numBids += 1
-                    item.buyer = Account.objects.get(user__pk=request.user.pk)
+                    item.buyer = account
                     bidders=item.getBidders()
                     bidders.append(item.buyer_id)
                     item.setBidders(bidders)
@@ -118,6 +132,7 @@ def itemDetail(request, pk):
                     message = "Could not submit bid: bid < £" + str(minPrice) + "."
                 elif bid > balance:
                     message = "Could not submit bid: balance < bid."
+                balance = getUsernameBalance(request)[1]
                 context={"bidForm": bidForm, "item": item, "username": username, "balance": balance, "message": message, "imgUrl": url,}
             else: 
                 item = get_object_or_404(Item.objects.filter(ended=False), pk=pk)
