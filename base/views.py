@@ -127,10 +127,10 @@ def itemDetail(request, pk):
             return redirect(loginPath)
     else:
         item = get_object_or_404(Item.objects.all(), pk=pk)
-        active = not item.ended
         bidForm = BidForm()
-        context={"bidForm": bidForm, "item": item, "username": getUsernameBalance(request)[0], "balance": str(balance), "imgUrl": url, "active": active}
-
+        context={"bidForm": bidForm, "item": item, "username": getUsernameBalance(request)[0], "balance": str(balance), "imgUrl": url,}
+    active = not item.ended
+    context["active"] = active
     return render(request, "base/itemDetail.html", context)
     
 
