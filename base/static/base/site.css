@@ -154,6 +154,18 @@ button[type="submit"]:hover {
     box-shadow: 0px 0px 10px yellow;
 }
 
+.toggle {
+    color: rgb(224, 224, 224);
+    background-color: dimgray;
+    font-size: 18px;
+    border: 0px;
+    
+}
+
+.toggle:hover {
+    text-shadow: 0px 0px 5px yellow;
+}
+
 .sortAndFilterByMenu {
     border: 2px solid black;
     border-radius: 20px;
