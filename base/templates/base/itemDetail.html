@@ -17,10 +17,11 @@ Auction - {{item.name}}
 
 {% block content %}
 <div class="leftContainer" style="max-width: 300px;">
+  {% numToMoney item.price as currentPrice %}
   {% if active %}
     <p class="textBlock" style="max-width: 245px; line-height: 30px; padding: 10px 20px; margin: 0px 0px 0px 0px;">
       <strong>Summary:</strong><br>
-      Current Price: £{{item.price}}<br>
+      Current Price: £{{currentPrice}}<br>
       Postage Cost: £{{item.postageCost}}<br>
       Bid Increment: £{{item.bidIncrement}}<br>
       Condition: {{item.get_condition_display}}<br>
@@ -37,7 +38,7 @@ Auction - {{item.name}}
   {% else %}
     <p class="textBlock" style="max-width: 260px; line-height: 30px; padding: 10px 20px; margin: 0px 0px 0px 0px;">
       <strong>Summary:</strong><br>
-      Sale Price: £{{item.price}}<br>
+      Sale Price: £{{currentPrice}}<br>
       Postage Cost: £{{item.postageCost}}<br>
       Bid Increment: £{{item.bidIncrement}}<br>
       Condition: {{item.get_condition_display}}<br>

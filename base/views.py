@@ -39,19 +39,7 @@ def getUsernameBalance(request):
     user = request.user
     if user.is_authenticated:
         username = user.username
-        balance = str(Account.objects.get(user=user).balance)
-        b1, b2 = balance.split('.')
-        lb1 = len(b1)
-        if lb1 >= 4:
-            first = True
-            indices = []
-            while lb1 >= 3:
-                lb1 = lb1 - 4 if first else lb1 - 3
-                indices.append(lb1)
-                first = False
-            for index in indices:
-                b1 = f"{b1[:index]}{b1[index]},{b1[index+1:]}"
-            balance = '.'.join([b1, b2])     
+        balance = Account.objects.get(user=user).balance
     return (username, balance)
 
 def homeView(request):
@@ -110,7 +98,6 @@ def itemDetail(request, pk):
         if request.user.is_authenticated:
             if bidForm.is_valid():
                 account = Account.objects.get(user=request.user)
-                balance = account.balance
                 bid = bidForm.cleaned_data["bid"]
                 minPrice = item.price + item.bidIncrement
                 buyerId = account.id

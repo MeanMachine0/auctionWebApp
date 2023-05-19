@@ -1,8 +1,9 @@
 {% if username %}
 <p style="color: rgb(224, 224, 224)">
+    {% load myTags %}
     Logged in as {{username}}. 
     <br>
-    Balance: £{{balance}}
+    Balance: £{% numToMoney balance %}
     <br>
     <a href="{% url 'logout' %}">Logout</a>
 </p>
