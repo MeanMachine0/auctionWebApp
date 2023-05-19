@@ -17,7 +17,7 @@ toBool = {
     'false': False,
 }
 def getBaseUrl(request):
-    baseUrl = request.scheme + "://" + request.get_host()
+    baseUrl = f"{request.scheme}://{request.get_host()}"
     return baseUrl
 
 def getLoginPath(request):
@@ -82,7 +82,8 @@ def loginView(request):
                 return render(request, "base/login.html", {"form": form, "username": username})
     else:
         form = AuthenticationForm()
-    return render(request, "base/login.html", {"form": form, "username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})
+    username, balance = getUsernameBalance(request)
+    return render(request, "base/login.html", {"form": form, "username": username, "balance": balance})
      
 def logoutView(request): 
     logout(request)
@@ -117,30 +118,32 @@ def itemDetail(request, pk):
                     message = "Could not submit bid: bid < £" + str(minPrice) + "."
                 elif bid > balance:
                     message = "Could not submit bid: balance < bid."
-                context={"bidForm": bidForm, "item": item, "username": username, "balance": str(balance), "message": message, "imgUrl": url,}
+                context={"bidForm": bidForm, "item": item, "username": username, "balance": balance, "message": message, "imgUrl": url,}
             else: 
                 item = get_object_or_404(Item.objects.filter(ended=False), pk=pk)
                 bidForm = BidForm()
-                context={"bidForm": bidForm, "item": item, "username": getUsernameBalance(request)[0], "balance": str(balance), "imgUrl": url,}
+                context={"bidForm": bidForm, "item": item, "username": username, "balance": balance, "imgUrl": url,}
         else:
             loginPath = getLoginPath(request)
             return redirect(loginPath)
     else:
         item = get_object_or_404(Item.objects.all(), pk=pk)
         bidForm = BidForm()
-        context={"bidForm": bidForm, "item": item, "username": getUsernameBalance(request)[0], "balance": str(balance), "imgUrl": url,}
+        context={"bidForm": bidForm, "item": item, "username": username, "balance": balance, "imgUrl": url,}
     active = not item.ended
     context["active"] = active
     return render(request, "base/itemDetail.html", context)
     
 
 def about(request):
-    return render(request, "base/about.html", {"username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})
+    username, balance = getUsernameBalance(request)
+    return render(request, "base/about.html", {"username": username, "balance": balance})
 
 def userBids(request):
     if not request.user.is_authenticated:
         loginPath = getLoginPath(request)
         return redirect(loginPath)
+    username, balance = getUsernameBalance(request)
     items = Item.objects.filter(ended=False).order_by("endDateTime")
     myCurrentItems = []
     for item in items:
@@ -155,8 +158,8 @@ def userBids(request):
     return render(
         request, "base/userBids.html", 
         {
-        "username": getUsernameBalance(request)[0],
-        "balance": str(getUsernameBalance(request)[1]),
+        "username": username,
+        "balance": balance,
         "myCurrentItems": myCurrentItems, 
         "myOldItems": myOldItems,
         }
@@ -166,14 +169,15 @@ def userListings(request, pk):
     if not request.user.is_authenticated and pk == 0:
         loginPath = getLoginPath(request)
         return redirect(loginPath)
+    username, balance = getUsernameBalance(request)
     myCurrentItems = Item.objects.filter(Q(ended=False) & Q(seller=pk)).order_by("endDateTime")
     myOldItems = Item.objects.filter(Q(ended=True) & Q(seller=pk)).order_by("-endDateTime")
     you = True if request.user.pk == pk else False
     return render(
         request, "base/userListings.html", 
         {
-        "username": getUsernameBalance(request)[0],
-        "balance": str(getUsernameBalance(request)[1]),
+        "username": username,
+        "balance": balance,
         "myCurrentItems": myCurrentItems, 
         "myOldItems": myOldItems,
         "you": you,
@@ -208,10 +212,11 @@ def browse(request, page):
                 "n": browseForm.cleaned_data["showNItems"], 
                 "conditionsFilter": conditionsFilter,
             })
-            newUrl = getBaseUrl(request) + '/browse/page1/?' + searchParams.urlencode()
+            newUrl = f"{getBaseUrl(request)}/browse/page1/?{searchParams.urlencode()}"
             return redirect(newUrl)
         
     else:
+        username, balance = getUsernameBalance(request)
         if len(searchParams) > 0:
             search = searchParams.get("search")
             category = searchParams.get("category")
@@ -292,8 +297,8 @@ def browse(request, page):
         context = {
             "items": items, 
             "browseForm": browseForm,
-            "username": getUsernameBalance(request)[0],
-            "balance": str(getUsernameBalance(request)[1]),
+            "username": username,
+            "balance": balance,
             "currentPage": page,
             "pages": createPages(results, n),
             "minItem": minItem + 1,
@@ -335,11 +340,13 @@ def listAnItem(request):
                 seller=Account.objects.get(pk=request.user.pk),
                 category=itemData["category"],
             )
-            return redirect("itemListed/" + str(item.pk) + "/")
+            return redirect(f"itemListed/{item.pk}/")
     else:
+        username, balance = getUsernameBalance(request)
         form = ItemForm()
-    return render(request, "base/listAnItem.html", {"form": form, "username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})
+    return render(request, "base/listAnItem.html", {"form": form, "username": username, "balance": balance,})
     
 def itemListed(request, pk):
+    username, balance = getUsernameBalance(request)
     item = get_object_or_404(Item, pk=pk)
-    return render(request, "base/itemListed.html", {"item": item, "username": getUsernameBalance(request)[0], "balance": str(getUsernameBalance(request)[1])})
+    return render(request, "base/itemListed.html", {"item": item, "username": username, "balance": balance})
