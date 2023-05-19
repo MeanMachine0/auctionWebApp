@@ -12,7 +12,7 @@
 <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
 <script>
   $(document).ready(function() {
-    $('#collapse').click(function() {
+    $('#toggle').click(function() {
       $('#sortAndFilterByMenu').slideToggle();
     });
   });
@@ -22,11 +22,19 @@
   {% if not home %}
     {% if results > 100 %}
     <h2 style="text-align: center">
-      Showing {{minItem}}-{{maxItem}} of {{results}} Results <button id="collapse" style="color: rgb(224, 224, 224); background-color: dimgray; font-size: 18px; border: 0px;">Toggle →</button>
+      Showing {{minItem}}-{{maxItem}} of {{results}} Results <button id="toggle" class="toggle">Toggle →</button>
+    </h2>
+    {% elif results == 0 %}
+    <h2 style="text-align: center">
+      No Results <button id="toggle" class="toggle">Toggle →</button>
+    </h2>
+    {% elif results == 1 %}
+    <h2 style="text-align: center">
+      {{results}} Result <button id="toggle" class="toggle">Toggle →</button>
     </h2>
     {% else %}
-    <h2>
-      {{results}} Results <button id="collapse" style="color: rgb(224, 224, 224); background-color: dimgray; font-size: 18px; border: 0px;">Toggle →</button>
+    <h2 style="text-align: center">
+      {{results}} Results <button id="toggle" class="toggle">Toggle →</button>
     </h2>
     {% endif %}
   {% else %}
