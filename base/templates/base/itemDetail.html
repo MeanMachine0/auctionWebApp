@@ -25,7 +25,7 @@ Auction - {{item.name}}
       Postage Cost: £{{item.postageCost}}<br>
       Bid Increment: £{{item.bidIncrement}}<br>
       Condition: {{item.get_condition_display}}<br>
-      Ends at: {{item.endDateTime|date:"M d Y, H:i"}}<br>
+      End: {{item.endDateTime|date:"M d Y, H:i"}}<br>
       Accepts Returns: {% if item.acceptReturns %}Yes{% else %}No{% endif %}<br>
       Bids: {{item.numBids}}<br>
       {% idToUsername item.seller_id as sellerUsername %}
@@ -42,7 +42,7 @@ Auction - {{item.name}}
       Postage Cost: £{{item.postageCost}}<br>
       Bid Increment: £{{item.bidIncrement}}<br>
       Condition: {{item.get_condition_display}}<br>
-      Ended at: {{item.endDateTime|date:"M d Y, H:i"}}<br>
+      End: {{item.endDateTime|date:"M d Y, H:i"}}<br>
       Accepts Returns: {% if item.acceptReturns %}Yes{% else %}No{% endif %}<br>
       Bids: {{item.numBids}}<br>
       {% idToUsername item.seller_id as sellerUsername %}
